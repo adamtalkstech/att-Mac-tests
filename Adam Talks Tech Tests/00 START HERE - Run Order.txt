@@ -82,6 +82,11 @@ The scripted tests do this on their own.
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro"
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Lightroom Classic"
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
+        Copy Puget's test files (quit Puget, test SSD plugged in):
+          Mac -> drive (the Mac that downloaded them):
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh save
+          drive -> Mac (every other Mac):
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh load
         Ran it from the Puget app instead? Collect the CSVs (copies them to the
         Results folder and any plugged-in test drive):
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh collect
