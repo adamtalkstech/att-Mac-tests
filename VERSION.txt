@@ -1,1 +1,1 @@
-2026-11-20 13:20 Nov 20 2026 - Puget works with no drive plugged in
+2026-11-20 13:24 Nov 20 2026 - Run Order step 12 has the full Puget setup

@@ -78,23 +78,38 @@ The scripted tests do this on their own.
         (rests 10 min by itself, then starts. Same on every Mac. Walk away / test another Mac.)
 [ ] 11. HandBrake:
                    cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh         (HandBrakeCLI comes out of Apps & Installers by itself)
-[ ] 12. Puget Bench (key in LICENSES). One app at a time:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro"
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Lightroom Classic"
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
-        Copy Puget's test files (quit Puget, test SSD plugged in):
-          Mac -> drive (the Mac that downloaded them):
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh save
-          drive -> Mac (every other Mac):
+[ ] 12. Puget Bench (5 apps: Resolve, Premiere, Photoshop, Lightroom, After Effects).
+        SET UP ONCE PER MAC
+          a. Apps installed: PugetBench for Creators, DaVinci Resolve Studio (activate
+             with the key in _Read Me First/LICENSES - keep private.txt), and through
+             Creative Cloud: Premiere Pro, Photoshop, Lightroom Classic, After Effects.
+             Adobe: only 2 Macs signed in at a time (sign out on another Mac first).
+          b. Open each of those apps once and click through the first-launch screens.
+             Then quit them all.
+          c. Test files (24GB): plug in a test SSD, quit Puget, then
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh load
-        Ran it from the Puget app instead? Collect the CSVs (copies them to the
-        Results folder and any plugged-in test drive):
+             (no drive has them? open Puget, click each app, let its assets download,
+              quit, then cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zshsave )
+          d. FIRST run of each app on a Mac: macOS asks for your password (Puget
+             installs its plugin). Terminal can't show that box, so the run fails with
+             "No result file". Do that first run from the Puget app (Standard preset,
+             "Write CSV log file" ON), type the password, let it finish.
+             After that, Terminal works for that app on that Mac.
+        RUN (one app at a time, hands off, cooldown + app-quit are automatic)
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro"
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Photoshop"
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Lightroom Classic"      (cool start: run it first after a break)
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "After Effects"          (run it TWICE, log the 2nd)
+          All four Adobe ones in a row:
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro" "Photoshop" "Lightroom Classic" "After Effects"
+        AFTER
+          Ran any from the Puget app? Copy those CSVs to Results + the plugged-in drive:
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh collect
-        Adobe: 2 Macs signed in at a time, open each app once first.
-        Resolve Studio: activate with the key. Test files: the script copies them
-        from the drive by itself. If no drive has them yet it says so: open Puget,
-        let each app's assets download, quit, run again. After a good run it saves
-        them to the plugged-in drive for the next Macs.
+          Send Claude a photo of each score (or the collect card).
+          Resolve: Super Scale under ~5 fps = rerun.
+          Results only upload to Puget if you turn it on (leave it off).
+          Before a loaner ships: Resolve Help > Deactivate License, sign out of Adobe.
 [ ] 13. Logic: open the Gearspace benchmark project, buffer 256 then 32,
         unmute tracks until overload (Logic Test/LOGIC TEST - READ ME.txt).
         Log each with:
