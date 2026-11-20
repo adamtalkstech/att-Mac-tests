@@ -54,9 +54,9 @@ att_quit_apps() {
 
 # ATT cooldown gate: waits until the Mac is cool and idle before a test starts.
 #  - macOS heat level must read Nominal (notifyutil, no password needed)
-#  - CPU must be quiet (all processes under ~50% of one core combined) for QUIET seconds
+#  - CPU must be quiet (all processes under ~1.5 cores combined (Spotlight etc. can idle along)) for QUIET seconds
 #  - plus an optional fixed rest first: COOL=300 zsh blender-bench.sh
-#  Skip it with NOCOOL=1. Gives up after 15 min and says so (logged as a warning).
+#  Skip it with NOCOOL=1. Gives up after 10 min and says so (logged as a warning).
 att_cooldown() {
   local again=0; [[ $1 == --again ]] && again=1
   (( again )) || att_quit_apps
@@ -65,14 +65,14 @@ att_cooldown() {
   (( again )) && rest=0
   if (( rest > 0 )); then print "Resting ${rest}s before the test (COOL=$rest)..."; sleep $rest; fi
   print -n "Cooldown check: waiting for Nominal heat + ${need}s of idle CPU"
-  while (( waited < 900 )); do
+  while (( waited < 600 )); do
     lvl=$(notifyutil -g com.apple.system.thermalpressurelevel 2>/dev/null | awk '{print $NF}')
     load=$(ps -A -o %cpu= | awk '{s+=$1} END {printf "%d", s}')
-    if [[ ${lvl:-0} == 0 ]] && (( load < 50 )); then (( quiet += 5 )); else quiet=0; fi
+    if [[ ${lvl:-0} == 0 ]] && (( load < 150 )); then (( quiet += 5 )); else quiet=0; fi
     (( quiet >= need )) && { print "\nCool and idle. Starting (waited ${waited}s)."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }cooldown ok after ${waited}s"; return 0; }
     print -n "."; sleep 5; (( waited += 5 ))
   done
   case ${lvl:-0} in 0) name=Nominal;; 1) name=Moderate;; 2) name=Heavy;; *) name="level $lvl";; esac
-  print "\n!! Still not cool/idle after 15 min (heat: $name, CPU load ${load}%). Starting anyway; note it in the results."
-  ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING not cool after 15 min (heat $name, load ${load}%)"
+  print "\n!! Still not cool/idle after 10 min (heat: $name, CPU load ${load}%). Starting anyway; note it in the results."
+  ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING not cool after 10 min (heat $name, load ${load}%)"
 }

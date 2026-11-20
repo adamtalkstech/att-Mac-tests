@@ -1,1 +1,1 @@
-2026-11-20 12:18 Nov 20 2026 - sustained test rests 10 min by default (COOL=600 built in)
+2026-11-20 12:19 Nov 20 2026 - cooldown check less picky (background Spotlight no longer blocks it), gives up after 10 min
