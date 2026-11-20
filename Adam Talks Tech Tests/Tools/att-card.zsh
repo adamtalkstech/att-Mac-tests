@@ -22,7 +22,7 @@ att_card_end() {
 }
 
 # ATT quit-apps: politely quits every other app + common background helpers before a test.
-#  Keeps Terminal/Finder (and anything in ATT_KEEP, e.g. ATT_KEEP="LM Studio").
+#  Keeps Terminal/Finder/TextEdit (the Run Order is usually open in TextEdit) (and anything in ATT_KEEP, e.g. ATT_KEEP="LM Studio").
 #  Polite quit only: an app with unsaved work asks you first and stays open.
 #  Skip it with NOQUIT=1.
 ATT_HELPERS=("Creative Cloud" "Adobe Creative Cloud" "Dropbox" "Google Drive" "OneDrive" "Backblaze" "Spotify" "Discord" "Slack" "zoom.us" "Microsoft Teams" "Steam" "Logi Options+" "Elgato Stream Deck" "Stream Deck" "Docker Desktop" "Music" "Photos" "Mail" "Messages")
@@ -30,7 +30,7 @@ att_quit_apps() {
   [[ $NOQUIT == 1 ]] && { print "Quitting other apps skipped (NOQUIT=1)."; return 0; }
   local -a keep names ids closed stuck
   ATT_COOL_NOTE=""
-  keep=("Terminal" "iTerm2" "Ghostty" "Warp" "Finder" ${(s:,:)ATT_KEEP})
+  keep=("Terminal" "iTerm2" "Ghostty" "Warp" "Finder" "TextEdit" ${(s:,:)ATT_KEEP})
   names=("${(@f)$(osascript -e 'tell application "System Events" to get name of every process whose background only is false' 2>/dev/null | tr ',' '\n' | sed 's/^ *//')}")
   ids=("${(@f)$(osascript -e 'tell application "System Events" to get bundle identifier of every process whose background only is false' 2>/dev/null | tr ',' '\n' | sed 's/^ *//')}")
   local i n id h

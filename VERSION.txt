@@ -1,1 +1,1 @@
-2026-11-20 12:19 Nov 20 2026 - cooldown check less picky (background Spotlight no longer blocks it), gives up after 10 min
+2026-11-20 12:28 Nov 20 2026 - TextEdit stays open during tests (Run Order)
