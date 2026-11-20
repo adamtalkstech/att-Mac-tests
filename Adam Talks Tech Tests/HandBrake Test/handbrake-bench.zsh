@@ -63,7 +63,13 @@ done
 [[ -z $HB ]] && HB=$(command -v HandBrakeCLI 2>/dev/null)
 # Not installed? Pull it out of the dmg in Apps & Installers automatically
 if [[ -z $HB ]]; then
-  DMG=$(ls "$ROOT/Apps & Installers"/HandBrakeCLI-*.dmg /Volumes/*/"Adam Talks Tech Tests"/"Apps & Installers"/HandBrakeCLI-*.dmg 2>/dev/null | head -1)
+  DMG=$(print -l "$ROOT/Apps & Installers"/HandBrakeCLI-*.dmg(N) /Volumes/*/"Adam Talks Tech Tests"/"Apps & Installers"/HandBrakeCLI-*.dmg(N) | head -1)
+  # Not in the test folder or on a plugged-in drive: download the same version from HandBrake's GitHub
+  if [[ -z $DMG ]]; then
+    print "HandBrakeCLI isn't in Apps & Installers here. Downloading HandBrakeCLI 1.11.2 from HandBrake's GitHub..."
+    curl -fL --progress-bar -o "$TMPD/HandBrakeCLI-1.11.2.dmg" \
+      "https://github.com/HandBrake/HandBrake/releases/download/1.11.2/HandBrakeCLI-1.11.2.dmg" && DMG="$TMPD/HandBrakeCLI-1.11.2.dmg"
+  fi
   if [[ -n $DMG ]]; then
     print "Copying HandBrakeCLI out of ${DMG:t}..."
     MNT=$(mktemp -d)
