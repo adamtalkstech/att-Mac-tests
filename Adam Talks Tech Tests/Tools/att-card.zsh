@@ -52,6 +52,16 @@ att_quit_apps() {
   return 0
 }
 
+# Every cooldown is also saved to Results/<Mac>/cooldowns.csv (date, time, test, waited s, result)
+att_cool_log() {   # $1 waited seconds, $2 result
+  local r=${ROOT:-$HOME/Downloads/Adam Talks Tech Tests}
+  local mac=$(scutil --get ComputerName 2>/dev/null)
+  local f="$r/Results/${mac:-this Mac}/cooldowns.csv"
+  mkdir -p "${f:h}" 2>/dev/null || return 0
+  [[ -f $f ]] || print "Date,Time,Test script,Waited (s),Result" > "$f"
+  print "$(date +%F),$(date +%H:%M:%S),${ZSH_ARGZERO:t},$1,$2" >> "$f"
+}
+
 # ATT cooldown gate: waits until the Mac is cool and idle before a test starts.
 #  - macOS heat level must read Nominal (notifyutil, no password needed)
 #  - CPU must be quiet (all processes under ~1.5 cores combined (Spotlight etc. can idle along)) for QUIET seconds
@@ -69,12 +79,13 @@ att_cooldown() {
     lvl=$(notifyutil -g com.apple.system.thermalpressurelevel 2>/dev/null | awk '{print $NF}')
     load=$(ps -A -o %cpu= | awk '{s+=$1} END {printf "%d", s}')
     if [[ ${lvl:-0} == 0 ]] && (( load < 150 )); then (( quiet += 5 )); else quiet=0; fi
-    (( quiet >= need )) && { print "\nCool and idle. Starting (waited ${waited}s)."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }cooldown ok after ${waited}s"; return 0; }
+    (( quiet >= need )) && { print "\nCool and idle. Starting (waited ${waited}s)."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }cooldown ok after ${waited}s"; att_cool_log $waited ok; return 0; }
     print -n "."; sleep 5; (( waited += 5 ))
   done
   case ${lvl:-0} in 0) name=Nominal;; 1) name=Moderate;; 2) name=Heavy;; *) name="level $lvl";; esac
   print "\n!! Still not cool/idle after 10 min (heat: $name, CPU load ${load}%). Starting anyway; note it in the results."
   ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING not cool after 10 min (heat $name, load ${load}%)"
+  att_cool_log $waited "gave up (heat $name, load ${load}%)"
 }
 
 # ATT background watch: while a test runs, every 10s note any OTHER process
