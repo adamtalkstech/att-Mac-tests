@@ -1,1 +1,1 @@
-2026-11-20 13:05 Nov 20 2026 - Puget run copies/saves its test files by itself
+2026-11-20 13:10 Nov 20 2026 - att-puget.zsh collect (copies Puget CSVs to the drive)

@@ -16,6 +16,8 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.
 #                               assets first) -> copies them to the LaCie
 #  zsh att-puget.zsh load      on each test Mac (Puget installed, quit) ->
 #                               copies the assets from the LaCie into Puget
+#  zsh att-puget.zsh collect   copies every Puget result CSV on this Mac (app or
+#                               script runs) to Results/<Mac>/Puget and to the drive
 #  zsh att-puget.zsh license   applies the press key from LICENSES - keep private.txt
 #  zsh att-puget.zsh run "Photoshop"   runs one benchmark, Standard preset
 #     (v1.1: run copies the test files in from the drive by itself if this Mac
@@ -158,5 +160,32 @@ case ${1:-} in
     done
     print "\nSend Claude the result files (or just say they're done; they're in Results/$MACNAME/Puget)."
     ;;
-  *) print 'Usage: zsh att-puget.zsh save | load | license | run "App" | run all'; exit 1 ;;
+  collect)
+    # Gather every Puget result CSV on this Mac (app runs and script runs) and
+    # copy them to Results/<Mac>/Puget here and on every plugged-in test drive.
+    OUT="$ROOT/Results/$MACNAME/Puget"; mkdir -p "$OUT"
+    typeset -a found dests
+    while IFS= read -r f; do found+=("$f"); done < <(
+      find "$LOCAL" "$HOME/Documents" "$HOME/Desktop" "$HOME/Downloads" \
+           "$HOME/Library/Application Support/PugetBench for Creators" \
+           -maxdepth 6 -iname '*.csv' -not -path "*/Results/*" 2>/dev/null |
+      while IFS= read -r f; do
+        [[ $f == *[Pp]uget* ]] && { print -r -- "$f"; continue; }
+        head -c 4000 "$f" 2>/dev/null | grep -qi 'puget' && print -r -- "$f"
+      done)
+    print "Found ${#found} Puget CSV(s) outside the Results folder."
+    for f in $found; do
+      [[ -e "$OUT/${f:t}" ]] || { cp -p "$f" "$OUT/" && print "  + ${f:t}"; }
+    done
+    dests=(/Volumes/*/"$NAME"(N/))
+    (( ${#dests} )) || print "No test drive plugged in, so they're only in $OUT"
+    for d in $dests; do
+      mkdir -p "$d/Results/$MACNAME/Puget"
+      rsync -a --ignore-existing "$OUT/" "$d/Results/$MACNAME/Puget/" && print "Copied to ${d:h:t}: Results/$MACNAME/Puget"
+    done
+    att_card_start "PUGET CSVs on $MACNAME"
+    ls -1t "$OUT" | head -20
+    att_card_end
+    ;;
+  *) print 'Usage: zsh att-puget.zsh save | load | license | run "App" | run all | collect'; exit 1 ;;
 esac
