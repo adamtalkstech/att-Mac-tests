@@ -3,12 +3,12 @@
 #  att-update.zsh  -  get the latest ATT test scripts on this Mac
 # =============================================================================
 #  Run on any test Mac (no GitHub login needed):
-#    curl -fsSL https://raw.githubusercontent.com/adamtalkstech/att-mac-tests/main/att-update.zsh | zsh
+#    curl -fsSL https://raw.githubusercontent.com/adamtalkstech/att-Mac-tests/main/att-update.zsh | zsh
 #  It downloads the newest scripts and instructions from GitHub and copies them
 #  over ~/Downloads/Adam Talks Tech Tests. Only scripts and text files change:
 #  Results, models, games, apps, license keys and test footage are never touched.
 # =============================================================================
-REPO=${ATT_REPO:-adamtalkstech/att-mac-tests}
+REPO=${ATT_REPO:-adamtalkstech/att-Mac-tests}
 DEST=${ATT_DEST:-"$HOME/Downloads/Adam Talks Tech Tests"}
 TMP=$(mktemp -d)
 print "Getting the latest ATT test scripts from github.com/$REPO ..."

@@ -23,7 +23,7 @@ Results and methods are published on [Adam Talks Tech](https://adamtalks.tech)
 The test folder has to be in `~/Downloads` already (dragged from a test drive). Then:
 
 ```
-curl -fsSL https://raw.githubusercontent.com/adamtalkstech/att-mac-tests/main/att-update.zsh | zsh
+curl -fsSL https://raw.githubusercontent.com/adamtalkstech/att-Mac-tests/main/att-update.zsh | zsh
 ```
 
 It only replaces scripts and instructions. Results, models, games and apps aren't touched.
