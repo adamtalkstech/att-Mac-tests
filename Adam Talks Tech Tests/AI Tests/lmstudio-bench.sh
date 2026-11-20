@@ -280,7 +280,9 @@ load_model() { # $1=key $2=context -> LOAD_S, INSTANCE, LOAD_ERR
 make_payload() { # out model file question reasoning maxtokens
   jq -n --arg m "$2" --rawfile f "$3" --arg q "$4" --arg r "$5" --argjson mx "$6" --argjson t "$TEMP" '
     { model: $m,
-      input: (if $f == "" then $q elif $q == "" then $f else ($f | rtrimstr("\n")) + "\n" + $q end),
+      input: ((if $f == "" then $q elif $q == "" then $f else ($f | rtrimstr("\n")) + "\n" + $q end)
+              # no API switch to turn thinking off for this model? Qwen honors /no_think in the prompt
+              + (if $r == "" and ($m | ascii_downcase | test("qwen")) then "\n/no_think" else "" end)),
       store: false, temperature: $t, max_output_tokens: $mx }
     + (if $r == "" then {} else {reasoning: $r} end)' > "$1"
 }
@@ -473,7 +475,7 @@ test_gemma() {
 qwen_suite() { # $1 test id  $2 key
   local test=$1 key=$2 reason="off" fa fb fc first=1
   if ! reasoning_off_ok "$key"; then
-    warn "LM Studio doesn't list a thinking OFF option for this model. Running its default and flagging thinking tokens."
+    warn "LM Studio doesn't list a thinking OFF option for this model. Adding /no_think to the prompt (Qwen) and flagging any thinking tokens."
     reason=""
   fi
   fa=$(need_file "$TRANSCRIPT_A"); fb=$(need_file "$TRANSCRIPT_B"); fc=$(need_file "$TRANSCRIPT_C")

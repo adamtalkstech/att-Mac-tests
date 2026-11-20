@@ -1,1 +1,1 @@
-2026-11-20 14:15 Nov 20 2026 - Every cooldown saved to Results/<Mac>/cooldowns.csv
+2026-11-20 14:25 Nov 20 2026 - LM Studio: /no_think for Qwen when the API can't turn thinking off
