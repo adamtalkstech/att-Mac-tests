@@ -1,1 +1,1 @@
-2026-11-20 11:36 Nov 20 2026 - first GitHub version (Blender v1.3, stacker, cooldown gate, photo boxes, app installer)
+2026-11-20 11:48 Nov 20 2026 - Blender v1.3 (crash retry), HandBrake CLI fix, sustained COOL=600, Run Order 9b (Red Autumn)
