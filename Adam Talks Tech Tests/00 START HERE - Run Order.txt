@@ -83,8 +83,10 @@ The scripted tests do this on their own.
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Lightroom Classic"
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
         Adobe: 2 Macs signed in at a time, open each app once first.
-        Resolve Studio: activate with the key. First Puget run on the drive?
-        Copy its downloaded assets into Puget Test/Assets for the next Macs.
+        Resolve Studio: activate with the key. Test files: the script copies them
+        from the drive by itself. If no drive has them yet it says so: open Puget,
+        let each app's assets download, quit, run again. After a good run it saves
+        them to the plugged-in drive for the next Macs.
 [ ] 13. Logic: open the Gearspace benchmark project, buffer 256 then 32,
         unmute tracks until overload (Logic Test/LOGIC TEST - READ ME.txt).
         Log each with:

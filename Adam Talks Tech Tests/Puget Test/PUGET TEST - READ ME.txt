@@ -17,6 +17,8 @@ EACH TEST MAC
   2. zsh att-puget.zsh load      -> copies Assets from the LaCie into Puget
   3. zsh att-puget.zsh license   -> applies the press key (once per Mac)
   4. zsh att-puget.zsh run all   or   run "Photoshop"
+     (run does step 2 by itself when this Mac is missing the files, and saves
+      new files back to the plugged-in drive after a good run)
      Extended preset: PRESET=Extended zsh att-puget.zsh run "Lightroom Classic"
   Results: Results/<Mac name>/Puget/
 
