@@ -63,6 +63,12 @@ app_version() {
   app=$(find /Applications /Applications/Utilities "$HOME/Applications" -maxdepth 2 -iname "$pattern" -type d 2>/dev/null | head -1)
   [[ -z $app ]] && { print -r -- "not installed"; return; }
   v=$(defaults read "$app/Contents/Info" CFBundleShortVersionString 2>/dev/null)
+  # Pro apps: say which kind is installed (Adam tests the Apple Creator Studio versions)
+  case ${app:t} in
+    "Final Cut Pro.app"|"Logic Pro.app"|"Compressor.app"|"Motion.app")
+      local bid=$(defaults read "$app/Contents/Info" CFBundleIdentifier 2>/dev/null)
+      v="${v} (app ID $bid, so Claude can tell Creator Studio from one-time purchase)" ;;
+  esac
   local b=$(defaults read "$app/Contents/Info" CFBundleVersion 2>/dev/null)
   [[ -n $b && $b != $v ]] && v="$v ($b)"
   print -r -- "${v:-installed, version unknown}"

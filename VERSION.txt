@@ -1,1 +1,1 @@
-2026-11-20 12:32 Nov 20 2026 - double-click Update Scripts.command
+2026-11-20 12:35 Nov 20 2026 - Apple Creator Studio apps in the installer + version card

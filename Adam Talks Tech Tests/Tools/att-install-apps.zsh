@@ -82,9 +82,14 @@ kill $KEEP 2>/dev/null
 typeset -a STORE
 store() { [[ -d "/Applications/$1.app" ]] || { open "macappstore://apps.apple.com/app/id$2"; STORE+=("$1"); }; }
 store "Xcode" 497799835
-store "Final Cut Pro" 424389933
-store "Logic Pro" 634148309
-store "Compressor" 424390742
+# Final Cut Pro, Logic Pro, Compressor, Motion: Adam tests the APPLE CREATOR STUDIO versions
+# (decided Nov 20 2026). Opens the Creator Studio bundle page; install those four from it.
+cs_missing=()
+for a in "Final Cut Pro" "Logic Pro" "Compressor" "Motion"; do [[ -d "/Applications/$a.app" ]] || cs_missing+=("$a"); done
+if (( ${#cs_missing} )); then
+  open "macappstore://apps.apple.com/us/app-bundle/apple-creator-studio/id1868448255?mt=12"
+  STORE+=("Apple Creator Studio bundle: install ${(j:, :)cs_missing} (the Creator Studio versions, not the one-time purchase ones)")
+fi
 CC=0
 if [[ ! -d "/Applications/Utilities/Adobe Creative Cloud" && ! -d "/Applications/Adobe Creative Cloud" ]]; then
   ccd=$(ls "$SRC"/Creative_Cloud_Installer*.dmg 2>/dev/null | head -1)
