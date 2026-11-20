@@ -45,6 +45,10 @@ Terminal in the right folder; without it you get "can't open input file".
 [ ] 1. Plugged in, Low Power Mode off, macOS + App Store auto updates off,
        same macOS as the other Macs in the batch.
 [ ] 2. Drag "Adam Talks Tech Tests" into ~/Downloads (see HOW IT WORKS above).
+[ ] 2b. Get the newest scripts (do this every time you sit down at a Mac that
+        already has the folder, and after Claude says a script was fixed):
+         curl -fsSL https://raw.githubusercontent.com/adamtalkstech/att-Mac-tests/main/att-update.zsh | zsh
+        Only scripts and instructions change. Results, models, games and apps stay put.
 [ ] 3. Name the Mac (wallpaper + Mac name that every result uses):
          cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-name-this-mac.zsh
 [ ] 4. Version card (every test day, before the first test):
