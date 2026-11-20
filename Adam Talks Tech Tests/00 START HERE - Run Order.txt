@@ -69,7 +69,8 @@ The scripted tests do this on their own.
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh redautumn
         Sheet: Main Results CQ.
 [ ] 10. Throttling (laptops for sure, desktops if time):
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh sustained-test.sh
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && COOL=600 zsh sustained-test.sh
+        (rests 10 min by itself, then starts. Same on every Mac. Walk away / test another Mac.)
 [ ] 11. HandBrake:
                    cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh         (HandBrakeCLI comes out of Apps & Installers by itself)
 [ ] 12. Puget Bench (key in LICENSES). One app at a time:

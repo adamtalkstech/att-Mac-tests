@@ -76,7 +76,10 @@ echo "Power:    $POWER"
 echo "======================================================"
 [[ "$POWER" != "AC Power" ]] && echo "WARNING: not on AC power. Plug in."
 [[ "$LOWPOWER" == "1" ]] && echo "WARNING: Low Power Mode is on. Turn it off."
-echo "Close every other app. Start this on a COOL Mac (shut down 15 min first)."
+if [[ ${COOL:-0} -lt 600 && $NOCOOL != 1 ]]; then
+  echo "Heat test: it should start cool. Tip: run it as  COOL=600 zsh sustained-test.sh  (rests 10 min first, then starts by itself)."
+fi
+echo "You don't need to do anything else: it closes other apps and waits for the Mac to cool before starting."
 echo ""
 echo "Enter your password for powermetrics:"
 sudo -v || exit 1
