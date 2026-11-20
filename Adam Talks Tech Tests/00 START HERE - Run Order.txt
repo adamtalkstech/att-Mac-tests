@@ -65,6 +65,9 @@ The scripted tests do this on their own.
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Xcode Test" && zsh xcode-bench.sh
 [ ] 9. Blender:
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh            (install Blender 5.2.3 first)
+[ ]  9b. Blender animation (Red Autumn Forest, frames 1-25, GPU), right after 9:
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh redautumn
+        Sheet: Main Results CQ.
 [ ] 10. Throttling (laptops for sure, desktops if time):
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh sustained-test.sh
 [ ] 11. HandBrake:
