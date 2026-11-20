@@ -149,7 +149,6 @@ case ${1:-} in
     fi
     ensure_assets || exit 1
     OUT="$ROOT/Results/$MACNAME/Puget"; mkdir -p "$OUT"
-    LOGDIRS=("$LOCAL/logs" "$HOME/Library/Logs/com.puget.benchmark" "$LOCAL")
     for a in $apps; do
       f="$OUT/${a// /-}_${PRESET}_$(date +%Y-%m-%d_%H%M).csv"
       att_cooldown
@@ -158,11 +157,15 @@ case ${1:-} in
       touch "$TMPDIR/att-puget-start"
       "$APP" --app "$a" --preset "$PRESET" --rerun_count 1 2>&1 | tee "$OUT/${f:t:r}_console.txt"
       # newest CSV Puget wrote during this run
-      newest=$(find $LOGDIRS -maxdepth 3 -iname '*.csv' -newer "$TMPDIR/att-puget-start" 2>/dev/null | xargs ls -t 2>/dev/null | head -1)
+      # Puget prints "CSV has been saved to: <path>" (path has spaces, so read it whole)
+      newest=$(grep -o 'CSV has been saved to: .*' "$OUT/${f:t:r}_console.txt" | tail -1 | sed 's/^CSV has been saved to: //; s/[[:space:]]*$//')
+      [[ -f $newest ]] || newest=$(print -l "$LOCAL"/csv/*.csv(N.om[1]) "$LOCAL"/**/*.csv(N.om[1]) | head -1)
+      [[ -n $newest && $newest -nt "$TMPDIR/att-puget-start" ]] || newest=""
       [[ -n $newest ]] && cp -p "$newest" "$f"
       if [[ -s $f ]]; then
         save_assets
         att_card_start "Puget Bench for $a ($PRESET)"
+        grep -iE 'Overall Score' "$OUT/${f:t:r}_console.txt" | tail -1
         grep -iE 'score|version|error' "$f" | head -30 | cut -c1-120
         print "File: ${f:t}"
         att_card_end

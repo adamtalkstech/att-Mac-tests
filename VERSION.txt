@@ -1,1 +1,1 @@
-2026-11-20 13:40 Nov 20 2026 - Background CPU watch in sustained, Blender and HandBrake
+2026-11-20 13:40 Nov 20 2026 - Puget v1.2.1: picks up the CSV Puget saves (path with spaces)
