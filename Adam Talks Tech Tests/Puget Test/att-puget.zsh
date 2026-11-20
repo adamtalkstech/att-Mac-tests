@@ -95,7 +95,7 @@ save_assets() {
 size_gb() { du -sk "$1" 2>/dev/null | awk '{printf "%.1f", $1/1048576}'; }
 puget_running() { pgrep -fq "PugetBench for Creators"; }
 puget_key() {
-  local lic=$(find /Volumes/*/"$NAME"/"_Read Me First" "$ROOT/_Read Me First" -maxdepth 1 -name "LICENSES - keep private.txt" 2>/dev/null | head -1)
+  local lic=$(print -l "$ROOT/_Read Me First/LICENSES - keep private.txt"(N.) /Volumes/*/"$NAME"/"_Read Me First"/"LICENSES - keep private.txt"(N.) | head -1)
   awk '/PUGET BENCH/{f=1} f&&/Key:/{print $2; exit}' "$lic" 2>/dev/null
 }
 
