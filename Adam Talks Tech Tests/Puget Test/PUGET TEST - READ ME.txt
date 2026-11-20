@@ -1,0 +1,27 @@
+PUGET TEST - READ ME
+Puget Bench for Creators (Puget Systems, pugetsystems.com). Press license.
+Name every test in full on screen and in writing: "Puget Bench for Photoshop".
+
+WHERE PUGET KEEPS ITS TEST FILES
+  ~/Library/Application Support/com.puget.benchmark/  -> assets + benchmarks
+  (Puget > Settings > Reveal Benchmark Files opens it.)
+  Copy both folders to another Mac and Puget skips the downloads.
+
+ONE TIME (any Mac with good internet)
+  1. Install Puget, open it, download assets for all five benchmarks. Quit.
+  2. zsh att-puget.zsh save      -> copies them to Puget Test/Assets on the LaCie
+
+EACH TEST MAC
+  1. Install PugetBench (Apps & Installers) plus the apps it tests
+     (Adobe seat rules + Resolve key are in LICENSES - keep private.txt)
+  2. zsh att-puget.zsh load      -> copies Assets from the LaCie into Puget
+  3. zsh att-puget.zsh license   -> applies the press key (once per Mac)
+  4. zsh att-puget.zsh run all   or   run "Photoshop"
+     Extended preset: PRESET=Extended zsh att-puget.zsh run "Lightroom Classic"
+  Results: Results/<Mac name>/Puget/
+
+RULES
+  Cool start before Lightroom. After Effects: run twice, log the 2nd.
+  Resolve: Super Scale under ~5 fps = rerun. Results only upload to Puget
+  if you add --upload_results (the script doesn't).
+  Before a loaner ships: deactivate Resolve and sign out of Adobe.

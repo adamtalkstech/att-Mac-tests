@@ -1,0 +1,15 @@
+# Never in this public repo: keys, results, big test files
+*LICENSES*
+*License File*
+FOR CLAUDE*
+Results/
+_To Delete/
+*.dmg
+*.pkg
+*.app/
+.tools/
+whisper-test/
+LM Studio Models/
+Steam Library/
+.DS_Store
+._*

@@ -1,0 +1,25 @@
+ATT MAC TESTS - FOLDER GUIDE
+============================
+Each test folder is self-contained: script, notes and files together.
+Everything runs from ~/Downloads/Adam Talks Tech Tests (not from the SSD).
+Use Tools/att-copy-tests.zsh to copy it over: small folders first, then one
+big block at a time on 256/512GB Macs. Results land in Results/<Mac name>.
+What changed and when: CHANGE LOG.txt. Downloads: INSTALLER LINKS.txt.
+
+Approx sizes (Nov 2026):
+  Xcode Test                 0.6 GB   xcode-bench.sh + XcodeBenchmark-master
+  WebKit Test                7.4 GB   att-webkit.zsh + WebKit.tar (script unpacks it)
+  Blender Test               0.6 GB   blender-bench.sh, sustained-test.sh, scenes
+  Logic Test                 0.2 GB   Alchemy, Diva, benchmark projects
+  Logic Test - Big Session    63 GB   recording session 2 (big track count)
+  Final Cut Test              45 GB   Test Library rev (renders rebuild on open:
+                                      let them finish before timing exports)
+  Lightroom Test              16 GB   500 RAWs to import
+  AI Tests                    tiny    LM Studio + Diffusion Bee prompts
+  Gaming Test                 tiny    Minecraft commands (Cyberpunk = Steam
+                                      library at the top of this drive)
+  Memory Test                 tiny    att-memlog.zsh + commands
+  Apps & Installers          5.4 GB   current versions only (links: INSTALLER LINKS.txt)
+  Tools                      2.4 MB   copy, name, version card, export timer
+  SSD Test                    tiny    att-ssd-test.zsh (external drives, run on the Studio)
+  Results                             saved results and logs

@@ -1,0 +1,11 @@
+{
+  "_note": "Draw Things settings card. Fill in model and app_version after running 'Draw Things: show current settings' from the menu on the Mac Studio. Keep these the same on every Mac.",
+  "app_version": "FILL IN",
+  "model": "",
+  "quantize_note": "",
+  "tests": {
+    "standard": {"width": 1024, "height": 1024, "steps": 8},
+    "stress": {"width": 2048, "height": 2048, "steps": 8}
+  },
+  "extra": {}
+}

@@ -1,0 +1,10 @@
+LM STUDIO - GEMMA 3 4B
+New chat for each prompt. Log: time to first token, tokens/sec, total tokens.
+
+Prompt 1 - Roman Empire, 50 paragraphs:
+Write a detailed, 50-paragraph essay explaining the historical significance of the Roman Empire on modern law, philosophy, and architecture. Be verbose and do not stop until you run out of tokens.
+
+Prompt 2 - Apple's environmental journey:
+Paste the whole file "LM Studio Gemma - Apple prompt (paste all).txt" every time.
+It opens with: "The following is a very long, technical document. Please read it and give me a two-sentence summary of the main conclusion." followed by the Apple environment section from Wikipedia.
+The file is in this AI Tests folder.

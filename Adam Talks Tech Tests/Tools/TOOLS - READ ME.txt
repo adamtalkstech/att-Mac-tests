@@ -1,0 +1,55 @@
+ATT MAC TESTS - TOOLS FOLDER
+
+THE RULE: every script works from  ~/Downloads/Adam Talks Tech Tests
+(the same folder layout as the LaCie). Results always land in
+Adam Talks Tech Tests/Results/<Mac name>/. Timed tests refuse to run from
+the LaCie, so they time the Mac and not the drive.
+
+0) att-copy-tests.zsh  -  getting the folder onto a Mac (run from the LaCie)
+     zsh "/Volumes/LaCie USB4/Adam Talks Tech Tests/Tools/att-copy-tests.zsh"
+   Option 1 copies the small folders (scripts, prompts, Blender, Xcode,
+   Logic). Option 2 copies ONE big block (Final Cut 45GB, Lightroom 16GB,
+   Logic Big Session 63GB, WebKit 7GB, models). Option 3 removes a big block
+   from the Mac when its tests are done. Option 4 copies the Mac's Results
+   back to the LaCie. It always leaves 40GB free and logs free space before
+   and after each block. On a 512GB Mac: one big block at a time.
+
+Built Nov 16 2026 from the Nov 12 Testing Process Audit. None of these
+change test results; they make results easier to capture and trust.
+All three are untested on a real Mac until their first run.
+
+1) att-name-this-mac.zsh  +  "Mac Name Wallpapers" folder
+   Do this first on every Mac, on setup day.
+     zsh att-name-this-mac.zsh
+   Pick the Mac from the list. It sets a wallpaper with the Mac's name in
+   huge text and renames the Mac to match (asks for your password).
+   Every photo and screenshot now says which Mac it is, and every script
+   prints that name in its results.
+   Need a Mac that isn't on the list? Ask Claude for a new wallpaper.
+
+2) att-versions.zsh  -  the version card
+   Run once per Mac per test day, before the first test:
+     zsh att-versions.zsh
+   Prints the Mac's chip, cores (all 3 tiers on M6), GPU cores, RAM, SSD
+   and free space, macOS build, and the version of every test app.
+   Also warns if macOS or App Store auto updates are on, if Low Power Mode
+   is on, or if it's on battery.
+   Saves to Results/<Mac name> (the card) plus Results/All Macs versions.csv.
+   Send Claude the card and it goes into the sheet's version columns.
+
+3) att-export-timer.zsh  -  no more stopwatch
+   For Final Cut exports, Lightroom exports, Blender animation renders,
+   Compressor and HandBrake.
+     a. In the app, pick an EMPTY folder as the export location
+        (default: the Export folder inside Adam Talks Tech Tests).
+     b. zsh att-export-timer.zsh "" "FCP 30 min Apple Devices"   ("" = the Mac's name)
+     c. Press Return in Terminal the moment you click Export / Share.
+     d. Walk away. It stops on its own when the folder has been quiet for
+        30 seconds, and the end time is the last file change, so the wait
+        isn't counted.
+   Lightroom 500:   add  COUNT=500   (stops as soon as all 500 are in)
+   Blender frames:  add  STABLE=120  (frames can take over a minute each)
+   Other folder:    add  FOLDER=~/Downloads/render
+   Results go to Results/All Macs exports.csv.
+   Empty the export folder before each run (the script refuses to start
+   if it isn't empty, so old files can't sneak into a result).

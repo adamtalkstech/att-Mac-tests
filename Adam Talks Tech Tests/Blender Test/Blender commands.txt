@@ -1,0 +1,4 @@
+BLENDER RED AUTUMN FOREST - render time (Terminal)
+Change the folder/name to match the output path. Modified minus Created = render time.
+
+stat -f "%N   Created %SB   Modified %Sm" -t "%H:%M:%S" ~/Downloads/RedAutumnForest_Video1*

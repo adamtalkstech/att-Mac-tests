@@ -1,0 +1,51 @@
+ATT XCODE 27 BUILD TEST - SETUP
+================================
+
+WHAT GOES ON THE SSD (already set up: the "Xcode Test" folder)
+  1. xcode-bench.sh
+  2. XcodeBenchmark-master     (the project folder)
+
+  Getting the project folder:
+   - Best: copy XcodeBenchmark-master from Downloads on the M6 mini or
+     M4 Max Studio (the one every Mac in the sheet already used).
+   - Or download it fresh:
+     https://github.com/devMEremenko/XcodeBenchmark/archive/refs/heads/master.zip
+     Unzip it. It compiles the same code, so the sheet stays fair.
+
+ON EACH MAC (once per Mac)
+  1. Install Xcode 27 (same exact version on every Mac you compare).
+  2. Open Xcode once and let it finish installing components. Quit it.
+  3. In Terminal, one at a time (asks for your password):
+       sudo xcode-select -s /Applications/Xcode.app
+       sudo xcodebuild -license accept
+       xcodebuild -runFirstLaunch
+  4. Copy the whole "Xcode Test" folder from the SSD to the Mac's Downloads
+     (xcode-bench.sh and XcodeBenchmark-master stay together inside it).
+     (Run it from the internal drive, NOT the SSD. Building off the SSD
+      would test the SSD instead of the Mac.)
+
+RUN IT
+  - Plug in power. Low Power Mode off. Close every other app.
+  - Let the Mac cool down if it just ran something heavy.
+  - In Terminal:
+       cd ~/Downloads/"Xcode Test"
+       zsh xcode-bench.sh
+  - Takes about 8-10 minutes (3 builds + 2 cooldowns). Don't touch the Mac.
+
+WHAT YOU GET
+  - Each run's time, plus best and average, printed at the end.
+  - A copy saved to Desktop > xcode-bench-results.
+  - Send Claude the summary lines (photo is fine).
+
+IF SOMETHING LOOKS WRONG
+  - Under 30 seconds = Xcode quit early. Script stops itself.
+    Redo step 3 above, then rerun.
+  - "Can't find XcodeBenchmark.xcworkspace" = the project folder isn't next
+    to the script. Check the folder names.
+
+SHEET COLUMNS (Main Results tab)
+  Xcode 27 Run 1 / Run 2 / Run 3 / Average, plus Xcode 27 build test (best).
+
+NOTE: this script is a rebuild of v2. Before trusting it next to older sheet
+numbers, run it once on the M4 Max Studio (old average 96.05s). Within about
+a second = good to mix.

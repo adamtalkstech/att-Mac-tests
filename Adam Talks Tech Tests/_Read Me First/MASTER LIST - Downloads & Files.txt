@@ -1,0 +1,144 @@
+ATT MAC TESTS - MASTER LIST
+Everything the test suite needs: what to download, where to get it, and
+what's still missing from this drive.
+Updated Nov 20 2026 (models on drive). Replaces MAC TEST DOWNLOADS.txt.
+Installer links: INSTALLER LINKS.txt. What changed: CHANGE LOG.txt.
+==========================================================================
+
+HOW TO USE THIS
+  [x] = already on this drive
+  [ ] = not on this drive yet (download it, or copy it in from the chat it came from)
+  App Store apps can't be stored on the drive. Install them on each Mac.
+
+--------------------------------------------------------------------------
+1. APP STORE APPS (install on every Mac, same version everywhere)
+--------------------------------------------------------------------------
+Xcode 27
+  https://apps.apple.com/us/app/xcode/id497799835
+Final Cut Pro
+  https://apps.apple.com/us/app/final-cut-pro/id424389933
+Logic Pro
+  https://apps.apple.com/us/app/logic-pro/id634148309
+Numbers  (RAM stack test workbook)
+  https://apps.apple.com/us/app/numbers/id409203825
+Draw Things  (image gen test, optional; turn on Settings > API Server, port 7860)
+  https://apps.apple.com/us/app/draw-things-offline-ai-art/id6444050820
+  The model lives inside the app, so install the test model on each Mac.
+Blackmagic Disk Speed Test
+  https://apps.apple.com/us/app/id425264550
+Blackmagic RAW Speed Test  (copy also on drive)
+  https://apps.apple.com/us/app/id1466185689
+AJA System Test Lite  (16GB file, 4K)
+  https://apps.apple.com/app/id1092006274
+
+--------------------------------------------------------------------------
+2. OTHER APPS (direct downloads)
+--------------------------------------------------------------------------
+[x] Geekbench 7 / Geekbench AI / Geekbench 6   (on drive: Apps & Installers)
+      https://www.geekbench.com/download/
+      https://www.geekbench.com/ai/download/mac
+[x] Blender 5.2.3   (on drive)
+      https://www.blender.org/download/
+[x] LM Studio 0.4.28   (on drive)
+      https://lmstudio.ai/download
+[x] Diffusion Bee 2.5.1   (on drive)
+      https://diffusionbee.com/download
+[x] Stats (menu bar monitor)   (on drive)
+      https://github.com/exelban/stats
+[x] Cinebench 2026   (on drive. 2024 and 2026 scores can't be compared)
+      https://www.maxon.net/en/downloads/cinebench-2026-downloads
+[x] PugetBench for Creators   (key: _Read Me First/LICENSES - keep private.txt)
+      https://www.pugetsystems.com/pugetbench/creators/download/
+      Copy its test assets to the drive once so every Mac skips the download
+      (user guide: "copying assets between systems")
+      https://www.pugetsystems.com/pugetbench/creators/user-guide/
+[x] DaVinci Resolve Studio 21.2   (dmg in Apps & Installers. Key in the LICENSES file)
+      https://www.blackmagicdesign.com/products/davinciresolve
+[ ] Lightroom Classic 16 / Photoshop 28   (Creative Cloud, 2 Macs signed in at a time)
+      https://www.adobe.com/products/photoshop-lightroom-classic.html
+[x] TG Pro   (temps and fans during long tests)
+      https://www.tunabellysoftware.com/tgpro/
+[x] Steam   (Cyberpunk 2077, app 1091500, is installed in the Steam library at
+      Gaming Test/Steam Library. Add it in Steam > Settings > Storage on each Mac)
+      https://store.steampowered.com/about/
+[x] Minecraft Java 26.3   (minecraft.net, same Microsoft account)
+      https://www.minecraft.net/en-us/download
+[ ] Homebrew + tools, only on the Mac that runs the extra AI tests:
+      https://brew.sh
+      brew install cmake llama.cpp
+[x] UL Procyon (all macOS tests)   (on drive: Apps & Installers/UL Procyon (all macOS tests),
+      one .pkg per test; AI Image Generation is the core one. Keys in LICENSES)
+[x] 3DMark for macOS 1.1.350   (on drive: Apps & Installers. Key in LICENSES)
+
+--------------------------------------------------------------------------
+3. AI MODELS (download once, copy the folder from this drive to each Mac)
+--------------------------------------------------------------------------
+[x] Gemma 3 4B   (on drive: mlx-community/gemma-3-4b-it-qat-4bit; search "Gemma 3 4B" in LM Studio's Discover tab, same build everywhere)
+[x] Gemma 3 4B Q4_K_M GGUF   (only for the llama-bench check)
+      https://huggingface.co/lmstudio-community/gemma-3-4b-it-GGUF
+[x] Qwen 3.5 9B MLX 4-bit   (5.95GB, fits every Mac)
+      https://huggingface.co/lmstudio-community/Qwen3.5-9B-MLX-4bit
+[x] Qwen3.8 27B MLX 4-bit   (~18GB, the RAM wall test; kernel panicked the 16GB mini)
+      https://huggingface.co/lmstudio-community/Qwen3.8-27B-MLX-4bit
+[x] Qwen3.8 27B at 5, 6 and 8-bit   (the RAM ladder; same model, bigger builds)
+[x] MoE model, 30B-A3B MLX 4-bit   (the MoE test)
+      https://huggingface.co/lmstudio-community/Qwen3-30B-A3B-MLX-4bit
+[ ] Whisper large-v3-turbo + Core ML encoder   (whisper-coreml-setup.sh downloads
+      these and builds the whisper-test folder. Run it once, saved to this drive)
+
+--------------------------------------------------------------------------
+4. SCRIPTS AND KITS (built in Claude chats, not on this drive yet)
+--------------------------------------------------------------------------
+[x] xcode-bench.sh v2.1             Xcode Test (Nov 16: prints M6's 3 core tiers right)
+[x] att-name-this-mac.zsh           Tools (name wallpaper + rename the Mac, do first)
+[x] att-versions.zsh                Tools (version card for the sheet)
+[x] att-export-timer.zsh            Tools (times FCP / Lightroom / Blender exports)
+[x] att-copy-tests.zsh              Tools (copies the folder to a Mac in blocks, 512GB-safe)
+[x] LICENSES - keep private.txt     _Read Me First (Puget, Resolve, Adobe seats)
+[x] att-ssd-test.zsh + README       SSD Test
+[x] lmstudio-bench.sh v2.1          AI Tests  (Gemma, Qwen 9B/27B, ladder, MoE,
+                                      coding, agents, whisper, llama-bench)
+[x] whisper-coreml-setup.sh         AI Tests  (run once, builds whisper-test folder)
+[x] ATT-Image-Tests kit  (now the "Image Gen Test" folder)       mflux + Draw Things + Diffusion Bee logger,
+                                      Run Image Tests.command, Prep This Drive.command
+                                      (Prep needs the drive formatted APFS; puts mflux
+                                      and its model on the drive, several GB)
+[x] blender-bench.sh v1.1           Blender Test (+ Red Autumn mode)
+[x] sustained-test.sh v1.1          Blender Test
+[x] att-webkit.zsh v1.1             WebKit Test
+[x] att-memlog.zsh v1.1             Memory Test
+[x] att-tabtest.zsh                 Memory Test
+[x] att-responsiveness.zsh          Memory Test
+
+--------------------------------------------------------------------------
+5. TEST FILES (your own files, not downloadable)
+--------------------------------------------------------------------------
+[x] Xcode: XcodeBenchmark-master
+[x] WebKit.tar
+[x] Blender: Classroom, Barbershop, UDIM Monster, Red Autumn Forest
+      (blender-2.91-splash.blend)
+[x] Final Cut: Test Library rev
+[x] Lightroom: 500 RAWs (imported fresh every run, no catalog)
+[x] Logic: Alchemy, Diva, benchmark project, Big Session
+[x] Prompt text: Diffusion Bee, Gemma, Qwen
+[x] Gemma Apple prompt file: "LM Studio Gemma - Apple prompt (paste all).txt" (AI Tests)
+[x] Gemma prompts file now has the exact Roman wording (AI Tests)
+[x] Qwen transcripts (AI Tests, from the Nov 5 chat): "Qwen test A_short_10min.txt", "B_medium_30min.txt",
+      "C_full_stream.txt"
+[x] Whisper test audio (AI Tests, first 10 min of the Oct 27 stream, same as transcript A): about 10 min of a livestream as "Whisper test audio.wav"
+      (or .mp3)
+[ ] RAM stack test: "ATT Stack Test Workbook v1.1.numbers"
+      (open the .xlsx in Numbers once, check the Dashboard, save as .numbers here)
+[ ] RAM stack test: one layered thumbnail PSD
+[x] Optional: Tears of Steel 4K for the HandBrake test
+
+--------------------------------------------------------------------------
+6. TEST RULES THAT APPLY TO EVERYTHING
+--------------------------------------------------------------------------
+- Same macOS on every Mac, log the version. Turn off auto updates during a batch.
+- Plugged in, Low Power Mode off, cooldown (shut down or idle 15+ min) before
+  Lightroom and long tests.
+- Everything runs from ~/Downloads/Adam Talks Tech Tests. Use
+  Tools/att-copy-tests.zsh to copy it in blocks (it logs free GB for you).
+- Timed files run from the internal drive, not from this SSD (except the
+  image gen kit, which is built to run from the SSD).

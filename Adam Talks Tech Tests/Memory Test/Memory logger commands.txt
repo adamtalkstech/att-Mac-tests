@@ -1,0 +1,6 @@
+MEMORY LOGGER (Terminal)
+
+zsh att-memlog.zsh "M6 MBP stacker"
+
+Mark a step (second Terminal tab):
+echo "lightroom open" > /tmp/att-step

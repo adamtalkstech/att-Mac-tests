@@ -1,0 +1,14 @@
+XCODE - first-time setup (Terminal, one at a time):
+
+sudo xcode-select -s /Applications/Xcode.app
+sudo xcodebuild -license accept
+xcodebuild -runFirstLaunch
+
+Run the test:
+
+cd ~/Downloads/"Xcode Test"
+zsh xcode-bench.sh
+
+Find a copy of the script on a Mac or plugged-in drive:
+
+mdfind -name xcode-bench.sh

@@ -1,0 +1,16 @@
+LM STUDIO - QWEN3.8 27B MLX 4-BIT
+Thinking OFF. Context 8K for files A and B, 32K for file C (set before loading).
+New chat for each prompt.
+
+PROMPT A - paste the whole transcript file, then this on a new line:
+
+Summarize this livestream. Give me the 5 main topics, every viewer question with my answer in one line, and every product I recommended.
+
+  Files: Qwen test A_short_10min.txt / B_medium_30min.txt / C_full_stream.txt
+  Log: time to first token for A / B / C, prompt token count, any swap or fail.
+
+PROMPT B:
+
+Write exactly 10 paragraphs about the history of the Roman Empire, from its founding to the fall of the Western Empire.
+
+  Log: tokens/sec.

@@ -1,0 +1,50 @@
+ATT LOGIC TRACK COUNT TEST - HOW TO RUN (v1, Nov 16 2026)
+==========================================================
+
+WHAT THE PROJECTS ARE
+  These three projects are the free MusicProd "Logic Pro Benchmark Tests"
+  (music-prod.com/logic-pro-benchmarks, also on Gumroad):
+   - NewLogicBenchmarkTest 2  the main one. The Gearspace "new" benchmark:
+                              600 tracks of Logic's Sculpture synth + Channel EQ,
+                              all MIDI, 44.1kHz. This is the sheet's "Logic Tracks".
+   - LogicAlchemyTest         same idea with Alchemy (stock, heavier)
+   - DivaTest                 needs u-he Diva installed (third-party). Optional.
+  Results from other people: music-prod.com/logic-pro-benchmarks and
+  logicbenchmarks.com, so viewers can compare.
+
+SETTINGS (same on every Mac, check before every run)
+  Logic Pro > Settings > Audio > Devices
+    - Output: the Mac's built-in speakers/headphones (no interface, so every Mac matches)
+    - I/O Buffer Size: 256   (main test)
+    - Processing Threads: the highest number offered (NOT Automatic)
+    - Process Buffer Range: Medium
+    - Multithreading: Playback & Live Tracks
+  Logic Pro > Settings > General > Editing (or Project Handling on older versions)
+    - Track Mute/Solo: CPU-saving
+  Project: open it from the Mac's internal drive (Logic Test folder in
+  ~/Downloads/Adam Talks Tech Tests), not from the LaCie.
+
+THE TEST (track count at the overload point)
+  1. Cool Mac, plugged in, everything else closed. Open the project.
+  2. Make sure every track is muted except the first. Nothing record-armed
+     (arming moves a track to the live thread and changes the result).
+  3. Press Play (loop is on). Unmute tracks one at a time, a couple of
+     seconds apart, while it plays.
+  4. When Logic shows "System Overload", press Play again. It's OK for it to
+     overload once or twice early while Logic spreads the load.
+  5. The result is the highest number of unmuted tracks that plays for
+     30 seconds straight with no overload. Two tries; log the lower.
+  6. Note the CPU meter: if every core bar is pinned, the CPU is the limit.
+
+LOW-LATENCY PASS (music producers asked for this)
+  Same project, I/O Buffer Size 32. Same steps. This is what recording
+  live with plugins feels like. Log it as its own number.
+
+LOG IT
+  zsh att-logic-log.zsh
+  It asks for the track counts and saves them with the Mac, chip, macOS and
+  Logic version to Results/<Mac name>/Logic and Results/All Macs logic.csv.
+
+OLDER RESULTS
+  Sheet rows from before Nov 16 may have used other buffer or thread settings.
+  If a new run lands far from an old one on the same Mac, rerun the old Mac.

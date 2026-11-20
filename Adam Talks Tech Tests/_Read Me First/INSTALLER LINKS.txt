@@ -1,0 +1,103 @@
+ATT MAC TESTS - INSTALLER LINKS
+Download each installer ONCE and save it into "Apps & Installers" on the LaCie,
+so every Mac installs the same version. Updated Nov 16 2026.
+License keys: see "LICENSES - keep private.txt".
+==========================================================================
+
+A. APP STORE (can't be saved to the drive; install on each Mac,
+   same version everywhere, sign in with your Apple ID)
+--------------------------------------------------------------------------
+Xcode 27                     https://apps.apple.com/us/app/xcode/id497799835
+Final Cut Pro                https://apps.apple.com/us/app/final-cut-pro/id424389933
+Logic Pro                    https://apps.apple.com/us/app/logic-pro/id634148309
+Numbers (RAM stack test)     https://apps.apple.com/us/app/numbers/id409203825
+Draw Things (image gen)      https://apps.apple.com/us/app/draw-things-offline-ai-art/id6444050820
+Blackmagic Disk Speed Test   https://apps.apple.com/us/app/id425264550
+Blackmagic RAW Speed Test    https://apps.apple.com/us/app/id1466185689  (copy also in Apps & Installers)
+AJA System Test Lite         https://apps.apple.com/app/id1092006274
+Built in, nothing to get: Safari, Activity Monitor, Calculator, Chess,
+Dictionary, Font Book, TV, GarageBand (the responsiveness test apps).
+
+Tip for Xcode: the App Store download is 3GB+ per Mac. You can instead save
+the .xip once from https://developer.apple.com/download/all/ (sign in with
+your Apple ID, search "Xcode 27") into Apps & Installers and double-click it
+on each Mac. Same version everywhere either way.
+
+B. DIRECT DOWNLOADS -> save into Apps & Installers
+--------------------------------------------------------------------------
+[x] = already in Apps & Installers   [ ] = still to download
+
+[x] PugetBench for Creators 1.4.50 https://www.pugetsystems.com/pugetbench/creators/download/
+      After the first run on one Mac, copy its downloaded test assets to the
+      drive so other Macs skip that download (see "copying assets between
+      systems"): https://www.pugetsystems.com/pugetbench/creators/user-guide/
+[x] DaVinci Resolve Studio 21.2 https://www.blackmagicdesign.com/products/davinciresolve
+      (in Apps & Installers. The partial "DaVinci...-2.zip.download" at the top of
+       the LaCie is a duplicate download: cancel it in Chrome and delete it)
+[x] Cinebench 2026              https://www.maxon.net/en/downloads/cinebench-downloads
+      (the drive has Cinebench 2024; 2024 and 2026 scores can't be compared.
+       Delete Cinebench2024_macOS.dmg once 2026 is here, unless old rows need it)
+[x] Creative Cloud installer    https://creativecloud.adobe.com/apps/download/creative-cloud
+      (Lightroom Classic, Photoshop, Premiere Pro, After Effects install from it)
+[x] Steam                       https://store.steampowered.com/about/
+      (Cyberpunk 2077 is already in the Steam library at the top of the LaCie)
+[x] Minecraft Launcher          https://www.minecraft.net/en-us/download
+[x] HandBrake 1.11.2 + HandBrakeCLI 1.11.2 (CLI: https://handbrake.fr/downloads2.php)
+                                https://handbrake.fr/downloads.php
+[x] TG Pro 2.105 (14-day trial, paid after)  https://www.tunabellysoftware.com/tgpro/
+[x] LM Studio 0.4.28 build 2    https://lmstudio.ai/download
+      LOCKED for the test week: 0.4.28 build 2 (Nov 16). Old 0.4.8 and
+      Cinebench 2024 moved to Apps & Installers/_to_delete (delete when ready).
+[x] Blender 5.2.3               https://www.blender.org/download/
+[x] Geekbench 7                 https://www.geekbench.com/download/
+[x] Geekbench AI                https://www.geekbench.com/ai/download/mac
+[x] Diffusion Bee 2.5.1         https://diffusionbee.com/download
+[x] Stats (menu bar monitor)    https://github.com/exelban/stats/releases
+[ ] Homebrew (only on the Mac that builds Whisper / runs llama-bench)
+                                https://brew.sh   then:  brew install cmake llama.cpp
+
+B2. GAMES (buy once on your accounts; Steam games live in the Steam library
+    at the top of the LaCie, App Store games install on each Mac)
+--------------------------------------------------------------------------
+[x] Cyberpunk 2077               Steam (installed on the LaCie)
+[x] Minecraft Java               minecraft.net launcher (in Apps & Installers)
+[ ] Shadow of the Tomb Raider    Steam (check the Apple logo) or Mac App Store
+[$] Total War: Warhammer III     Steam (Feral) https://store.steampowered.com/app/1142710/  (~125GB)  BUY NOW ($9 on Nov 16)
+[ ] Assassin's Creed Shadows     Mac App Store ONLY (no Mac version on Steam)
+[ ] Civilization VI (optional)   Steam or Mac App Store
+[ ] 3DMark for macOS             UL press license (key pending)
+[ ] Assassin's Creed Mirage      Mac App Store (built-in benchmark; lighter AAA test). Wait for a sale.
+RULE (Nov 16): only games with a built-in benchmark button. No manual
+walkthroughs or hand-counted FPS - every test must be repeatable hands-off.
+Buying: Steam's big fall sale moved to Oct 1-8, so wishlist and wait for the
+Steam Winter Sale (Dec 17 - Jan 4) unless a video needs a game sooner.
+
+C. TEST FILES (download once, keep in the test folders)
+--------------------------------------------------------------------------
+[x] XcodeBenchmark project      https://github.com/devMEremenko/XcodeBenchmark/archive/refs/heads/master.zip
+[x] Blender demo scenes         https://www.blender.org/download/demo-files/
+      (Classroom, Barbershop, Red Autumn Forest = Blender 2.91 splash)
+[x] Tears of Steel 4K (in HandBrake Test as tearsofsteel_4k.mov)
+      https://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/tearsofsteel_4k.mov.zip
+      Unzip it into HandBrake Test (keep only that one video in the folder).
+
+D. AI MODELS -> AI Tests/LM Studio Models on the LaCie
+   (download in LM Studio once, then copy the model folders from
+    ~/.lmstudio/models into AI Tests/LM Studio Models)
+--------------------------------------------------------------------------
+[ ] Gemma 3 4B           search "Gemma 3 4B" in LM Studio Discover (same build on every Mac)
+[ ] Gemma 3 4B GGUF Q4_K_M (llama-bench only)  https://huggingface.co/lmstudio-community/gemma-3-4b-it-GGUF
+[ ] Qwen 3.5 9B MLX 4-bit   https://huggingface.co/lmstudio-community/Qwen3.5-9B-MLX-4bit
+[ ] Qwen3.8 27B MLX 4-bit   https://huggingface.co/lmstudio-community/Qwen3.8-27B-MLX-4bit
+[ ] Qwen3.8 27B 5 / 6 / 8-bit (RAM ladder): same model, search "Qwen3.8 27B" in LM Studio
+[ ] MoE 30B-A3B MLX 4-bit   https://huggingface.co/lmstudio-community/Qwen3-30B-A3B-MLX-4bit
+[ ] Whisper large-v3-turbo + Core ML encoder: whisper-coreml-setup.sh downloads
+    these itself and builds AI Tests/Whisper Test. Run it once on the Studio.
+
+UL BENCHMARKS (press licenses, keys in LICENSES - keep private.txt)  added Nov 20 2026
+3DMark for macOS (.pkg)      https://benchmarks.ul.com/downloads/3DMark-MacOS.pkg
+Procyon, all macOS tests     https://benchmarks.ul.com/direct-download/ul-procyon-all-tests-macos.zip
+  Per-test Mac guides (each has its own install steps):
+  AI Image Generation  https://support.benchmarks.ul.com/support/solutions/articles/44002645600-how-to-run-the-procyon-ai-image-generation-benchmark-on-macos
+  AI Text Generation   https://support.benchmarks.ul.com/en/support/solutions/articles/44002853769-how-to-run-the-procyon-ai-text-generation-benchmark-on-macos
+  AI Computer Vision 2 https://support.benchmarks.ul.com/support/solutions/articles/44002783361-how-to-run-ul-procyon-ai-computer-vision-benchmark-v2-0-on-macos

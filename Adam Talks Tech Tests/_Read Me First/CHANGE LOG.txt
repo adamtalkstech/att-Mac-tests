@@ -1,0 +1,110 @@
+ATT MAC TESTS - CHANGE LOG
+Newest first. Every script prints its version; match it to this list.
+==========================================================================
+
+NOV 16 2026 (night)
+- NEW Puget Test/att-puget.zsh v1: save / load Puget assets (assets +
+  benchmarks folders) between the LaCie and each Mac, apply the press
+  license from the LICENSES file, run benchmarks from Terminal with
+  results to Results/<Mac>/Puget. READ ME in the same folder.
+- Tools/att-copy-tests.zsh: "HandBrake Test" and "Puget Test" added to the
+  big blocks (HandBrake was missing from the list).
+
+NOV 16 2026 (decision)
+- Games: built-in benchmarks only (no manual walkthroughs / FPS counting).
+  Added AC Mirage to the list. Baldur's Gate 3 dropped. Buying Warhammer III
+  now at $9; Shadow of the Tomb Raider waits for the Winter Sale.
+
+NOV 16 2026 (late)
+- NEW HandBrake Test/handbrake-bench.zsh v1: x265 vs VideoToolbox H.265 on
+  Tears of Steel 4K, preset Fast 1080p30. Needs HandBrakeCLI in the folder.
+- NEW AI Tests/att-models.zsh v1: save / load / clean LM Studio models
+  between the LaCie and each Mac, keeping LM Studio's folder layout.
+- NEW Logic Test/LOGIC TEST - READ ME.txt + att-logic-log.zsh v1: locked
+  settings for NewLogicBenchmarkTest 2 (the Gearspace Sculpture test, from
+  MusicProd), plus a 32-buffer low-latency pass.
+- Tools/att-copy-tests.zsh: HandBrake Test is now a big block.
+- Installers: PugetBench 1.4.50, Cinebench 2026, HandBrake + CLI 1.11.2,
+  LM Studio 0.4.28 (LOCKED), Steam, Minecraft, Creative Cloud, TG Pro 2.105.
+  Old Cinebench 2024 + LM Studio 0.4.8 in Apps & Installers/_to_delete.
+- Decisions: Draw Things is core. Reference Mac for SSD tests = Mac Studio.
+- Sheet (New Tests): BO AC Shadows, BP Warhammer III, BQ Civ VI (optional),
+  BR Logic @32 buffer, BS Draw Things. HandBrake column notes updated.
+
+NOV 16 2026 (evening)
+THE RULE (all scripts): run from ~/Downloads/Adam Talks Tech Tests (same layout
+as the LaCie). Results go to Adam Talks Tech Tests/Results/<Mac name>/<test>/
+plus "All Macs ....csv" files in Results. Timed tests refuse to run from the
+LaCie so they time the Mac, not the drive. Mac name = the name set by
+Tools/att-name-this-mac.zsh.
+
+NEW
+- Tools/att-copy-tests.zsh v1: copies the folder onto a Mac in blocks (small
+  folders, then one big block at a time), removes a block when done, keeps
+  40GB free, logs free space, copies Results back to the LaCie.
+- Tools/att-name-this-mac.zsh v1: name wallpaper + renames the Mac.
+  16 wallpapers in Tools/Mac Name Wallpapers.
+- Tools/att-versions.zsh v1: version card (Mac, cores, macOS, every test app,
+  auto-update / power checks) + Results/All Macs versions.csv.
+- Tools/att-export-timer.zsh v1: times exports by watching a folder
+  (Return key start, last-file-change end). COUNT= for Lightroom, STABLE= for
+  Blender. Results/All Macs exports.csv.
+- Blender Test/sustained-test.sh v1.1 (was a loose .txt from Nov 12): Classroom
+  3x back to back with watts + heat pressure. Now lives next to the classroom
+  scene, results in the test folder, CSV row.
+- Memory Test/att-memlog.zsh v1.1 (from Nov 6): unchanged logging, CSVs now in
+  Results/<Mac>/Memory instead of Desktop > ATT Memory Logs.
+- WebKit Test/att-webkit.zsh v1.1 (from Nov 6): finds WebKit next to itself and
+  unpacks WebKit.tar on first run, refuses to build on the LaCie, logs free
+  disk before/after, results in Results/<Mac>/WebKit.
+- Blender Test/blender-bench.sh v1.1 (from today): Classroom GPU x3, Barbershop
+  GPU x3, Classroom CPU x1, plus "redautumn" mode (merged from the Nov 12
+  blender-tests.sh): frame-1 warm-up, then frames 1-25 at 128 samples.
+  Red Autumn adds up Blender's per-frame render times; the GUI method used
+  file timestamps, so do one side-by-side run before mixing the two.
+- _Read Me First: MASTER LIST, INSTALLER LINKS (App Store list + direct
+  downloads + models), LICENSES - keep private (Puget, Resolve, Adobe seats).
+- AI Tests: Gemma prompts file filled in (exact Roman wording), Apple prompt
+  file added (byte-for-byte), LM Studio Models folder created.
+
+CHANGED
+- Xcode Test/xcode-bench.sh v2.2: prints every core tier (M6 showed "2P + 4E"),
+  results in Results/<Mac>/Xcode instead of Desktop, refuses to build from the
+  LaCie, also finds the project at Xcode Test/XcodeBenchmark-master.
+- SSD Test/att-ssd-test.zsh v1.1: results in Results/<Mac>/SSD instead of
+  Desktop > ATT SSD Tests. Test logic unchanged.
+
+STILL TO BRING OVER (built in older chats, need the same Results/Downloads fix)
+- lmstudio-bench.sh v2 + whisper-coreml-setup.sh  (Nov 12 "LM Studio test automation" chat)
+- ATT-Image-Tests kit  (Nov 12 "Diffusion Bee test automation" chat). Built to run
+  from the SSD; the LaCie is APFS, so that works as designed.
+- att-tabtest.zsh + att-responsiveness.zsh  (Nov 5 "Mac benchmark testing log" chat,
+  or the copies in Downloads on the MacBook Air)
+- Qwen test A/B/C transcripts  (same Nov 5 chat)
+
+None of the scripts above have run on a real Mac yet except xcode-bench.sh
+(v2 ran on four laptops) and the memory scripts (MacBook Air, Nov 5).
+
+Nov 20 2026
+- 3DMark Professional Edition key added to LICENSES (from UL). Procyon key still pending.
+- LM Studio models copied to AI Tests/LM Studio Models (Gemma 3 4B MLX + GGUF, Gemma 3n E4B, Qwen 3.5 9B, Qwen3.8 27B 4/5/6/8-bit, Qwen3 30B-A3B MoE). Master list updated.
+- Procyon license file + keys added (AI Inference, Essentials, Photo/Video Editing, Office, Battery). Procyon macOS app not on drive yet.
+- Nov 20: 3DMark macOS 1.1.350 pkg + UL Procyon (all macOS tests) moved into Apps & Installers; stalled duplicate Procyon zip moved to _To Delete.
+- Nov 20: AI Tests/lmstudio-bench.sh v2.1 (v2 from the Nov 12 chat + results now go to Results/<Mac>/LM Studio and Results/All Macs lmstudio.csv, like the other scripts) and whisper-coreml-setup.sh (unchanged) added.
+- Nov 20: Image Gen Test folder added (ATT-Image-Tests kit from the Nov 12 chat). Run/Prep .command files now save results to Results/Image Tests (was results/ inside the kit). Prep This Drive still needs to run once on a Mac with internet.
+- Nov 20: Memory Test/att-tabtest.zsh, att-responsiveness.zsh, att-memtest.zsh v0.1 (Nov 5 chat) added. Results now go to Results/<Mac>/Memory instead of the Desktop. Test logic unchanged.
+- Nov 20: AI Tests/Qwen test A/B/C transcripts added (the originals from the Nov 5 chat, so results match earlier runs).
+- Nov 20: AI Tests/Whisper test audio.wav = first 10:00 of the Oct 27 Tech Talk Tuesday (same stream as the Qwen transcripts), 16 kHz mono 16-bit WAV, made with ffmpeg from the YouTube Studio download.
+- Nov 20: "00 START HERE - Run Order.txt" at the top of Adam Talks Tech Tests: the whole suite works by dragging the folder (or just the needed subfolders, same nesting) into ~/Downloads. att-copy-tests.zsh is optional now. Results come back by dragging only Results/<Mac name> to the drive.
+- Nov 20: AI Tests/att-models.zsh load now uses the "LM Studio Models" folder next to it when it has models (dragged into Downloads), else the drive copy.
+- Nov 20: _Read Me First/FOR CLAUDE - How to log results.txt: sheet column map + rules for logging a Mac's results.
+- Nov 20: Cyberpunk 2077 Steam library moved from the top of the drive into Gaming Test/Steam Library/steamapps (common + appmanifest), so it travels with the folder and runs from each Mac's internal drive. START HERE step 15 and att-versions.zsh updated.
+
+Nov 20: Run Order commands are now one line each (cd ... && zsh ...). Puget run passes the press license automatically. HandBrake pulls HandBrakeCLI out of the dmg itself. Blender bench v1.2: backup timer + saves FAILED logs.
+Nov 20 (later): Blender 5.2 no longer prints the Time line, so v1.2 times with render start/finish events (confirmed working on the 14" M5 Max). Export timer + Image tests now save into Results/<Mac name> so step 99 brings them back. Xcode test downloads the iOS platform if Xcode is missing it. Run Order: memory + export timer commands added.
+Nov 20: every test now ends with a "PHOTO THIS FOR CLAUDE" box (Tools/att-card.zsh) with test, Mac, chip, RAM, macOS, date and results. Puget prints its scores. Blender Red Autumn uses a per-frame timer on Blender 5.2. Whisper/Image Gen kits get un-quarantined automatically after copying.
+Nov 20 10:35: Blender GPU now uses the GPU only (v1.2 had CPU+GPU hybrid on, which can slow Apple Silicon renders; 14" M5 Max run at 10:19 used hybrid). Cooldown gate (Tools/att-card.zsh att_cooldown) before Blender, sustained, Xcode, HandBrake, each Puget app, LM Studio: waits for Nominal heat + 60s idle CPU; COOL=300 adds a fixed rest, NOCOOL=1 skips.
+Nov 20 10:40: tests now politely quit other apps + background helpers (Creative Cloud, Dropbox, Steam, Spotify, etc.) before the cooldown check. ATT_KEEP="App" keeps one open, NOQUIT=1 skips.
+Nov 20 10:50: Memory Test/att-stacker.zsh (closer vs stacker, Tier 1 free apps) added: logger in the background, auto step marks, Safari tabs, Final Cut, Numbers workbook, LM Studio Qwen 9B (+27B on 32GB+), 10 min settle, export timed. Sheet New Tests AE-AG.
+Nov 20 10:55: att-stacker.zsh now runs closer + stacker in one go (purge + settle instead of a restart; swap reported as added). War Thunder replaces Minecraft: Run Order step 16, sheet New Tests BT (V/W retired).
+Nov 20 11:00: games moved to their own top-level drive folder "Adam Talks Tech Games" (Steam Library inside). Drag it to ~/Downloads only for game tests. New Tools/att-install-apps.zsh installs every test app in one go.

@@ -1,0 +1,22 @@
+CORE TESTS - run on EVERY loaner before it ships back (decided Nov 16 2026)
+Suite is frozen until this round of loaners is back. One app at a time.
+==========================================================================
+[ ] Geekbench 7 (CPU + Metal) + Cinebench 2026
+[ ] Xcode            Xcode Test/xcode-bench.sh
+[ ] Blender          Blender Test/blender-bench.sh
+[ ] Throttling       Blender Test/sustained-test.sh   (laptops especially)
+[ ] HandBrake        HandBrake Test/handbrake-bench.zsh
+[ ] Puget Bench for Premiere Pro        Puget Test/att-puget.zsh run "Premiere Pro"
+[ ] Puget Bench for Lightroom Classic   Puget Test/att-puget.zsh run "Lightroom Classic"
+[ ] Puget Bench for DaVinci Resolve     Puget Test/att-puget.zsh run "DaVinci Resolve"
+      (Resolve Studio key: activate on this Mac, Help > Deactivate before it ships)
+[ ] Logic Pro      Logic Test (Gearspace project): max tracks at 256 + 32 buffer,
+                 log with Logic Test/att-logic-log.zsh
+[ ] LM Studio        Qwen 3.5 9B + Qwen3.8 27B (the RAM wall)
+[ ] Cyberpunk 2077   built-in benchmark
+
+ONLY WHEN A VIDEO NEEDS IT: other Puget apps, extra AI/image tests, Logic Big Session,
+other games, SSD, WebKit, memory/stack test.
+
+BEFORE IT SHIPS: results copied to the LaCie, Resolve deactivated, Adobe
+signed out, Steam signed out.

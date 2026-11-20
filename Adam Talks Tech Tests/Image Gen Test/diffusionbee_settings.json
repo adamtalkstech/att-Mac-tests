@@ -1,0 +1,8 @@
+{
+  "_note": "Diffusion Bee settings card. Fill these in from the app once on the Mac Studio, then keep them the same on every Mac. Seed is 42, 1 image, no negative prompt.",
+  "app_version": "FILL IN",
+  "model": "FILL IN",
+  "image_size": "FILL IN (e.g. 512x512)",
+  "steps": "FILL IN",
+  "guidance_scale": "FILL IN"
+}
