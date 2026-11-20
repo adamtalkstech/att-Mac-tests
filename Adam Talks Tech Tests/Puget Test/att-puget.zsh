@@ -1,7 +1,7 @@
 #!/bin/zsh
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; }
 # =============================================================================
-#  att-puget.zsh  -  Puget Bench for Creators helper (v1.1, Nov 20 2026)
+#  att-puget.zsh  -  Puget Bench for Creators helper (v1.2, Nov 20 2026)
 # =============================================================================
 #  Puget Bench keeps its test files in
 #     ~/Library/Application Support/com.puget.benchmark/  (assets + benchmarks)
@@ -130,7 +130,7 @@ case ${1:-} in
     [[ -x $APP ]] || { print "Install PugetBench for Creators first."; exit 1; }
     KEY=$(puget_key)
     [[ -n $KEY ]] || { print "Couldn't read the Puget key from the LICENSES file. Paste it in Puget > Settings > License instead."; exit 1; }
-    "$APP" --license "$KEY" && print "Puget press license applied on this Mac."
+    "$APP" --license "$KEY" && touch "$HOME/.att-puget-licensed" && print "Puget press license applied on this Mac."
     ;;
   run)
     [[ -x $APP ]] || { print "Install PugetBench for Creators first."; exit 1; }
@@ -139,15 +139,27 @@ case ${1:-} in
     if [[ ${1:-} == all ]]; then apps=("Lightroom Classic" "Photoshop" "Premiere Pro" "After Effects" "DaVinci Resolve")
     else apps=("$@"); fi
     (( ${#apps} )) || { print 'Which app? e.g. zsh att-puget.zsh run "Photoshop"  (or: run all)'; exit 1; }
-    KEY=$(puget_key)
-    [[ -n $KEY ]] || { print "Couldn't read the Puget key from _Read Me First/LICENSES - keep private.txt."; exit 1; }
+    # Puget: --license can't be combined with other arguments, so apply it once
+    # per Mac on its own (marker file), then run without it.
+    if [[ ! -e $HOME/.att-puget-licensed ]]; then
+      KEY=$(puget_key)
+      if [[ -n $KEY ]]; then
+        "$APP" --license "$KEY" >/dev/null 2>&1 && touch "$HOME/.att-puget-licensed"
+      fi
+    fi
     ensure_assets || exit 1
     OUT="$ROOT/Results/$MACNAME/Puget"; mkdir -p "$OUT"
+    LOGDIRS=("$LOCAL/logs" "$HOME/Library/Logs/com.puget.benchmark" "$LOCAL")
     for a in $apps; do
       f="$OUT/${a// /-}_${PRESET}_$(date +%Y-%m-%d_%H%M).csv"
       att_cooldown
       print "\n=== Puget Bench for $a ($PRESET) on $MACNAME ==="
-      "$APP" --license "$KEY" --app "$a" --preset "$PRESET" --copy_log "$f"
+      print "(First run of this app on this Mac? macOS may ask for your password. Type it.)"
+      touch "$TMPDIR/att-puget-start"
+      "$APP" --app "$a" --preset "$PRESET" --rerun_count 1 2>&1 | tee "$OUT/${f:t:r}_console.txt"
+      # newest CSV Puget wrote during this run
+      newest=$(find $LOGDIRS -maxdepth 3 -iname '*.csv' -newer "$TMPDIR/att-puget-start" 2>/dev/null | xargs ls -t 2>/dev/null | head -1)
+      [[ -n $newest ]] && cp -p "$newest" "$f"
       if [[ -s $f ]]; then
         save_assets
         att_card_start "Puget Bench for $a ($PRESET)"
@@ -155,7 +167,12 @@ case ${1:-} in
         print "File: ${f:t}"
         att_card_end
       else
-        print "!! No result file, so this run failed (see the message above)."
+        att_card_start "Puget Bench for $a: NO RESULT"
+        print "Puget didn't write a result. Last lines from Puget:"
+        tail -8 "$OUT/${f:t:r}_console.txt" | cut -c1-120
+        print "If it mentions a license: zsh att-puget.zsh license, then run again."
+        print "Otherwise run this app once from the Puget app, then use Terminal again."
+        att_card_end
       fi
     done
     print "\nSend Claude the result files (or just say they're done; they're in Results/$MACNAME/Puget)."
