@@ -52,6 +52,42 @@ att_quit_apps() {
   return 0
 }
 
+# ATT pause background: freezes macOS's Photos/Spotlight/Siri scanners during a test
+# (kill -STOP, no password) and wakes them again when the script ends (kill -CONT).
+# These run as your user and start scanning whenever the Mac looks idle, which
+# is exactly when a long render runs. Skip with NOPAUSE=1.
+# If a test is force-quit and they stay frozen: zsh Tools/att-resume-bg.zsh (or restart).
+ATT_BG_PROCS=(mediaanalysisd photoanalysisd photolibraryd cloudphotod corespotlightd mdworker_shared mdworker
+  textunderstandingd duetexpertd suggestd knowledgeconstructiond searchpartyd)
+ATT_BG_ROOT=(mds mds_stores)   # Spotlight's main indexer runs as root: paused only if sudo is already unlocked
+att_pause_bg() {
+  [[ $NOPAUSE == 1 ]] && return 0
+  [[ -n $ATT_BG_PAUSED ]] && return 0
+  local p pids; typeset -ga ATT_BG_PIDS; ATT_BG_PIDS=()
+  for p in $ATT_BG_PROCS; do
+    pids=($(pgrep -x -U $UID "$p" 2>/dev/null))
+    (( ${#pids} )) && kill -STOP $pids 2>/dev/null && ATT_BG_PIDS+=($pids)
+  done
+  ATT_BG_ROOT_PAUSED=""
+  if sudo -n true 2>/dev/null; then
+    for p in $ATT_BG_ROOT; do sudo -n pkill -STOP -x "$p" 2>/dev/null && ATT_BG_ROOT_PAUSED=1; done
+  fi
+  ATT_BG_PAUSED=1
+  (( ${#ATT_BG_PIDS} )) && print "Paused Photos/Spotlight/Siri scanning for the test${ATT_BG_ROOT_PAUSED:+ (Spotlight indexer too)} (wakes back up when it ends)."
+}
+att_resume_bg() {
+  [[ -z $ATT_BG_PAUSED ]] && return 0
+  local p
+  (( ${#ATT_BG_PIDS} )) && kill -CONT $ATT_BG_PIDS 2>/dev/null
+  for p in $ATT_BG_PROCS; do pkill -CONT -x -U $UID "$p" 2>/dev/null; done
+  [[ -n $ATT_BG_ROOT_PAUSED ]] && for p in $ATT_BG_ROOT; do sudo -n pkill -CONT -x "$p" 2>/dev/null; done
+  ATT_BG_PAUSED=""
+}
+# zsh runs an EXIT trap set inside a function as soon as that function returns,
+# so the wake-up trap is set here, when the test script loads this file.
+trap 'att_resume_bg' EXIT
+trap 'att_resume_bg; exit 130' INT TERM HUP
+
 # Every cooldown is also saved to Results/<Mac>/cooldowns.csv (date, time, test, waited s, result)
 att_cool_log() {   # $1 waited seconds, $2 result
   local r=${ROOT:-$HOME/Downloads/Adam Talks Tech Tests}
@@ -70,6 +106,7 @@ att_cool_log() {   # $1 waited seconds, $2 result
 att_cooldown() {
   local again=0; [[ $1 == --again ]] && again=1
   (( again )) || att_quit_apps
+  att_pause_bg
   [[ $NOCOOL == 1 ]] && { print "Cooldown check skipped (NOCOOL=1)."; return 0; }
   local rest=${COOL:-0} need=${QUIET:-60} quiet=0 waited=0 lvl load name
   (( again )) && rest=0

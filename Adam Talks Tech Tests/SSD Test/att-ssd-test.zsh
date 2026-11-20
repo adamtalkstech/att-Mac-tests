@@ -261,7 +261,7 @@ cleanup() {
   [[ -n "$SUDO_KEEPALIVE" ]] && kill $SUDO_KEEPALIVE 2>/dev/null
 }
 trap 'print; warn "Stopped. Cleaning up test files..."; cleanup; exit 130' INT TERM
-trap cleanup EXIT
+trap 'cleanup; att_resume_bg 2>/dev/null' EXIT
 
 {
   echo "ATT SSD Test Suite v$SUITE_VERSION"
