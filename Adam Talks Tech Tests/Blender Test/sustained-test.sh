@@ -83,7 +83,7 @@ echo ""
 echo "Enter your password for powermetrics:"
 sudo -v || exit 1
 # keep sudo alive during the test
-( while true; do sudo -n true; sleep 50; done ) 2>/dev/null &
+( while true; do sudo -n -v 2>/dev/null || sudo -n true; sleep 30; done ) 2>/dev/null &
 KEEPALIVE=$!
 
 LOG_DIR="$ROOT/Results/$MACNAME/Sustained"
@@ -114,7 +114,9 @@ for i in {1..$RUNS}; do
   PM_LOG="$RUN_DIR/powermetrics-run$i.txt"
   BL_LOG="$RUN_DIR/blender-run$i.log"
 
-  sudo powermetrics --samplers thermal,cpu_power,gpu_power -i $SAMPLE_MS > "$PM_LOG" 2>/dev/null &
+  # -n: never stop to ask for the password mid-test (an unattended run would sit on it)
+  sudo -n true 2>/dev/null || echo "  (password timed out, so this run has no power/heat readings; the time still counts)"
+  sudo -n powermetrics --samplers thermal,cpu_power,gpu_power -i $SAMPLE_MS > "$PM_LOG" 2>/dev/null &
   PM_PID=$!
   sleep 1
 

@@ -1,1 +1,1 @@
-2026-11-20 14:30 Nov 20 2026 - Tests pause Photos/Spotlight/Siri scanning while they run
+2026-11-20 14:35 Nov 20 2026 - Sustained never stops for a password mid-test
