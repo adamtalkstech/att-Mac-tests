@@ -76,3 +76,33 @@ att_cooldown() {
   print "\n!! Still not cool/idle after 10 min (heat: $name, CPU load ${load}%). Starting anyway; note it in the results."
   ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING not cool after 10 min (heat $name, load ${load}%)"
 }
+
+# ATT background watch: while a test runs, every 10s note any OTHER process
+# using more than ~20% of one core. Afterwards att_watch_report says what (if
+# anything) competed with the test, so a weird run explains itself.
+#   att_watch_start <logfile> "<test process names, regex>"   e.g. "Blender|blender"
+#   ... run the test ...
+#   att_watch_stop;  att_watch_report <logfile>   (prints one line)
+att_watch_start() {
+  local log=$1 skip=${2:-NONE}
+  : > "$log"
+  (
+    while true; do
+      ps -A -o %cpu=,comm= 2>/dev/null | awk -v t="$(date +%H:%M:%S)" -v skip="$skip" '
+        { pct=$1; $1=""; sub(/^ +/,""); n=$0; sub(/.*\//,"",n) }
+        pct+0 >= 20 && n !~ skip && n !~ /^(ps|awk|zsh|bash|sleep|powermetrics|kernel_task|WindowServer|Terminal|sudo)$/ {
+          printf "%s %.0f %s\n", t, pct, n }' >> "$log"
+      sleep 10
+    done
+  ) &!
+  ATT_WATCH_PID=$!
+}
+att_watch_stop() { [[ -n $ATT_WATCH_PID ]] && kill $ATT_WATCH_PID 2>/dev/null; ATT_WATCH_PID=""; }
+att_watch_report() {   # one line: top 3 background processes by CPU over the run
+  local log=$1
+  [[ -s $log ]] || { print "Background CPU: none (nothing else over 20% of a core)"; return; }
+  print -n "Background CPU: "
+  awk '{ n=$3; for(i=4;i<=NF;i++) n=n" "$i; sum[n]+=$2; cnt[n]++ }
+       END { for (n in sum) printf "%d\t%s ~%d%% for ~%ds\n", sum[n], n, sum[n]/cnt[n], cnt[n]*10 }' "$log" |
+    sort -rn | head -3 | cut -f2 | paste -sd ';' - | sed 's/;/; /g'
+}

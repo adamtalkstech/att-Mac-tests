@@ -126,8 +126,11 @@ run_encoder() {   # $1 = encoder id, $2 = label
   for (( r = 1; r <= RUNS; r++ )); do
     out="$TMPD/out_${enc}_$r.mp4"
     t0=$EPOCHREALTIME
+    att_watch_start "$TMPD/bg_${enc}_$r.txt" "HandBrake" 2>/dev/null
     "$HB" -i "$SRC" -o "$out" --preset "$PRESET" -e "$enc" > "$TMPD/hb_${enc}_$r.log" 2>&1
     local rc=$?
+    att_watch_stop 2>/dev/null
+    [[ -s "$TMPD/bg_${enc}_$r.txt" ]] && print "  !! $(att_watch_report "$TMPD/bg_${enc}_$r.txt")  <- may have slowed this run" | tee -a "$LOG"
     secs=$(( EPOCHREALTIME - t0 ))
     fps=$(grep -Eo 'average encoding speed for job is [0-9.]+' "$TMPD/hb_${enc}_$r.log" | grep -Eo '[0-9.]+$' | tail -1)
     if (( rc != 0 )) || [[ ! -s $out ]]; then

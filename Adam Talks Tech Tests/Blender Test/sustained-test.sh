@@ -66,7 +66,7 @@ POWER=$(pmset -g batt | head -1 | sed "s/.*'\(.*\)'.*/\1/")
 LOWPOWER=$(pmset -g | awk '/lowpowermode/ {print $2}')
 BVER=$("$BLENDER" -v 2>/dev/null | head -1)
 
-echo "============ ATT Sustained Load Test v1.1 ============"
+echo "============ ATT Sustained Load Test v1.2 ============"
 echo "Mac:      $MACNAME  |  $MODEL  |  $CHIP  |  ${RAM_GB}GB"
 echo "macOS:    $MACOS"
 echo "Blender:  $BVER"
@@ -118,6 +118,7 @@ for i in {1..$RUNS}; do
   PM_PID=$!
   sleep 1
 
+  att_watch_start "$RUN_DIR/background-run$i.txt" "[Bb]lender" 2>/dev/null
   echo "Run $i of $RUNS ($DEVICE)..."
   START=$(perl -MTime::HiRes=time -e 'printf "%.3f", time')
   "$BLENDER" -b "$BLEND" -E CYCLES -o "$RUN_DIR/frame-run${i}_####" -f 1 -- --cycles-device $CYCLES_DEV > "$BL_LOG" 2>&1
@@ -125,6 +126,8 @@ for i in {1..$RUNS}; do
   END=$(perl -MTime::HiRes=time -e 'printf "%.3f", time')
 
   sudo kill $PM_PID 2>/dev/null; wait $PM_PID 2>/dev/null
+  att_watch_stop 2>/dev/null
+  BG=$(att_watch_report "$RUN_DIR/background-run$i.txt" 2>/dev/null)
 
   if (( STATUS != 0 )); then
     echo "Run $i FAILED. Last lines of the Blender log:"; tail -15 "$BL_LOG"
@@ -137,7 +140,9 @@ for i in {1..$RUNS}; do
   M=$(( ${SECS%.*} / 60 )); S=$(printf "%05.2f" $(( SECS - M*60 )))
   echo "  Run $i: ${M}:${S}  |  CPU avg ${A_CPU}W (first 30s ${F_CPU}W, last 30s ${L_CPU}W)  |  GPU avg ${A_GPU}W"
   echo "         heat pressure samples: Nominal $NOM, Moderate $MOD, Heavy $HEV, other $OTH"
+  echo "         $BG"
   echo "Run $i: ${SECS}s | CPU avg ${A_CPU}W, first30 ${F_CPU}W, last30 ${L_CPU}W | GPU avg ${A_GPU}W | Nominal $NOM Moderate $MOD Heavy $HEV Other $OTH" >> "$RUN_DIR/runs.txt"
+  echo "   $BG" >> "$RUN_DIR/runs.txt"
 done
 
 kill $KEEPALIVE 2>/dev/null
@@ -146,7 +151,7 @@ kill $KEEPALIVE 2>/dev/null
 DROP=$(printf "%.1f" $(( (${TIMES[-1]} - ${TIMES[1]}) / ${TIMES[1]} * 100 )))
 att_card_start "Sustained load (heat), Classroom $DEVICE x$RUNS back to back"
 {
-  echo "ATT Sustained Load Test v1.1  -  $(date)"
+  echo "ATT Sustained Load Test v1.2  -  $(date)"
   echo "Mac: $MACNAME | $MODEL | $CHIP | ${RAM_GB}GB | macOS $MACOS | $BVER"
   echo "Classroom, $DEVICE, $RUNS runs back to back, no cooldown, Power: $POWER"
   echo ""

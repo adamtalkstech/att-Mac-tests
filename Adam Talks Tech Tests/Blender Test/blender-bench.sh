@@ -96,8 +96,12 @@ pyset() {
 render_once() {
   local file="$1" dev="$2" tag="$3"
   local raw="$TMPR/$tag.log"
+  att_watch_start "$TMPR/$tag.bg" "[Bb]lender" 2>/dev/null
   "$BLENDER" -b "$file" --python-expr "$(pyset $dev)" -o "$TMPR/${tag}_####" -F PNG -f 1 > "$raw" 2>&1
   local rc=$?
+  att_watch_stop 2>/dev/null
+  # only mention background CPU when something actually competed
+  [[ -s "$TMPR/$tag.bg" ]] && echo "  !! $(att_watch_report "$TMPR/$tag.bg")  <- may have slowed this run" >&2
   # Blender prints a line like "Time: 00:18.47 (Saving: 00:00.05)" when the frame is done
   local t=$(grep -E "^ *Time: ?[0-9]" "$raw" | tail -n 1 | sed -E 's/^ *Time: ?([0-9:.]+).*/\1/')
   if [[ -n "$t" ]]; then
