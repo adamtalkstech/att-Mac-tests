@@ -1,1 +1,1 @@
-2026-11-20 11:48 Nov 20 2026 - Blender v1.3 (crash retry), HandBrake CLI fix, sustained COOL=600, Run Order 9b (Red Autumn)
+2026-11-20 12:18 Nov 20 2026 - sustained test rests 10 min by default (COOL=600 built in)
