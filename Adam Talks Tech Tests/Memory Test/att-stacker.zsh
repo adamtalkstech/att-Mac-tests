@@ -114,7 +114,7 @@ step "done"; sleep 10
 kill -TERM $LOGPID 2>/dev/null; wait $LOGPID 2>/dev/null
 CSV=$(ls -t "$OUT"/*.csv 2>/dev/null | grep -v '/ATT-' | head -1)
 val() { awk -F, -v k="$1" '$1==k{print $2}' "$CSV" 2>/dev/null | tail -1; }
-EXP=$(tail -1 "$ROOT/Results/$MACNAME/Exports/exports.csv" 2>/dev/null | awk -F, '{print $5}')
+EXP=$(tail -1 "$ROOT/Results/$MACNAME/Exports/exports.csv" 2>/dev/null | sed -E 's/"[^"]*"//g' | awk -F, '{print $5}')   # drop quoted fields first (the test name has a comma)
 [[ $MODE == stacker ]] && "$LMS" unload --all >/dev/null 2>&1
 
 att_card_start "RAM: $MODE run (Safari, Final Cut, Numbers, LM Studio)"
