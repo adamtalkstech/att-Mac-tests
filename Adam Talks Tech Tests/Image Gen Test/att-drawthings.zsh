@@ -103,6 +103,8 @@ if [[ -z $(print -l "$DT_MODELS"/${~MATCH}(N)) ]]; then
 fi
 
 # 3. App open + API server on + right model
+# App Nap can put Draw Things to sleep in the background, which drops the API server.
+defaults write com.liuliu.draw-things NSAppSleepDisabled -bool YES 2>/dev/null
 open -a "$APP"; sleep 5
 api_ok() { curl -sf -m 5 "$URL/" >/dev/null 2>&1; }
 until api_ok; do
