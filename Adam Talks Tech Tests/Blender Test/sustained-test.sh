@@ -111,7 +111,7 @@ parse_pm() {
 
 # build the fan reader now (first time on a Mac) so it doesn't happen mid-test
 if att_fans_bin >/dev/null 2>&1; then echo "Fans: will be logged every 5 s."
-else echo "Fans: can't be logged on this Mac (needs Xcode Command Line Tools). The test still runs."; fi
+else echo "Fans: can't be logged on this Mac (no fan reader yet, see Tools/att-fans.zsh). The test still runs."; fi
 
 att_cooldown
 typeset -a TIMES FAN_AVGS FAN_MAXS

@@ -185,7 +185,8 @@ att_watch_report() {   # one line: top 3 background processes by CPU over the ru
 
 # ---------- fan speeds (v1, Nov 20 2026) ----------
 # Fan RPM comes from the Mac's fan controller (SMC) through Tools/att-fans.c.
-# It gets built once per Mac into ~/.att/att-fans (needs Xcode or the Command Line Tools).
+# Uses Tools/att-fans-bin if it's there (no Xcode needed). Otherwise builds it once into
+# ~/.att/att-fans (needs Xcode or the Command Line Tools) and leaves a copy in Tools + on the drives.
 #   att_fans_start <log>   logs "unix-time rpm rpm..." every 5 s in the background
 #   att_fans_stop
 #   att_fans_report <log>  -> "Fans: avg 2,140 / max 3,880 RPM (2 fans, spec max 5,700)"
@@ -193,11 +194,22 @@ ATT_FANS_BIN=$HOME/.att/att-fans
 ATT_TOOLS_DIR=${${(%):-%x}:A:h}   # set while this file is being sourced
 att_fans_bin() {
   [[ -x $ATT_FANS_BIN ]] && { print $ATT_FANS_BIN; return 0; }
+  mkdir -p ${ATT_FANS_BIN:h}
+  # 1) a ready-made copy in Tools (no Xcode needed): built once on any Mac with Xcode
+  local pre="$ATT_TOOLS_DIR/att-fans-bin"
+  if [[ -f $pre ]]; then
+    cp "$pre" $ATT_FANS_BIN && chmod +x $ATT_FANS_BIN && xattr -c $ATT_FANS_BIN 2>/dev/null
+    $ATT_FANS_BIN >/dev/null 2>&1 && { print $ATT_FANS_BIN; return 0; }
+    rm -f $ATT_FANS_BIN
+  fi
+  # 2) build it (needs Xcode or the Command Line Tools)
   local src="$ATT_TOOLS_DIR/att-fans.c"
   [[ -f $src ]] || return 1
   xcode-select -p >/dev/null 2>&1 || return 1      # no compiler: don't trigger the install pop-up
-  mkdir -p ${ATT_FANS_BIN:h}
   cc -O2 -framework IOKit "$src" -o $ATT_FANS_BIN 2>/dev/null || return 1
+  # leave a ready-made copy in Tools and on any plugged-in test drive, so Macs without Xcode can use it
+  cp $ATT_FANS_BIN "$pre" 2>/dev/null
+  local d; for d in /Volumes/*/"Adam Talks Tech Tests"/Tools(N/); do cp $ATT_FANS_BIN "$d/att-fans-bin" 2>/dev/null; done
   print $ATT_FANS_BIN
 }
 att_fans_start() {
@@ -213,7 +225,7 @@ att_fans_stop() { [[ -n $ATT_FANS_PID ]] && { kill $ATT_FANS_PID 2>/dev/null; wa
 att_fans_report() {   # one line for the card; FANS_AVG / FANS_MAX left set for the CSV
   local log=$1 st; FANS_AVG=""; FANS_MAX=""
   st=$(<"$log.status" 2>/dev/null)
-  [[ $st == nobin* || -z $st ]] && { print "Fans: not logged (install Xcode Command Line Tools: xcode-select --install)"; return; }
+  [[ $st == nobin* || -z $st ]] && { print "Fans: not logged (no fan reader on this Mac yet, see Tools/att-fans.zsh)"; return; }
   [[ $st == fans=0* ]] && { print "Fans: none (fanless Mac)"; FANS_AVG=0; FANS_MAX=0; return; }
   [[ -s $log ]] || { print "Fans: no readings"; return; }
   local out=$(awk '{ for(i=2;i<=NF;i++){ if($i<0) continue; s+=$i; c++; if($i>m)m=$i } if(NF>1) t++ }
