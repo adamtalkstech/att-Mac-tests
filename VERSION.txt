@@ -1,3 +1,4 @@
+2026-11-20 22:35 Nov 20 2026 - Whisper: Core ML build forced onto the Neural Engine; 0 W runs flagged NOT ANE
 2026-11-20 22:40 Nov 20 2026 - Stacker/closer hands-off: script times Numbers, waits for Final Cut, clicks Share itself (Accessibility once)
 2026-11-20 22:20 Nov 20 2026 - Run Order audit: stacker step 17 + Draw Things step 18 in core (one command each), extras lettered E1-E6; stacker finds Final Cut by ID and copies the library from the drive; Draw Things locked to Z-Image Turbo
 2026-11-20 21:55 Nov 20 2026 - Stacker card shows the export time correctly

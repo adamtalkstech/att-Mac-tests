@@ -54,6 +54,13 @@ cmake --build "$OUT/src/build-metal" -j $JOBS --config Release --target whisper-
 cp "$OUT/src/build-metal/bin/whisper-cli" "$OUT/bin/whisper-cli-metal"
 
 step "Building Core ML (Neural Engine) version"
+# whisper.cpp ships with computeUnits = MLComputeUnitsAll, which lets Core ML put the
+# encoder on the GPU (Nov 20 2026: M5 Pro showed 0.00 W on the Neural Engine, same
+# speed as Metal). Force CPU + Neural Engine so this build really tests the ANE.
+ENC=$(grep -rl "computeUnits" "$OUT/src" --include="*.mm" | head -1)
+[[ -n $ENC ]] || die "Couldn't find the Core ML encoder source to set the Neural Engine."
+perl -pi -e 's{^(\s*)config\.computeUnits\s*=\s*MLComputeUnits\w+;}{$1config.computeUnits = MLComputeUnitsCPUAndNeuralEngine;}' "$ENC"
+grep -qE "^[[:space:]]*config\.computeUnits = MLComputeUnitsCPUAndNeuralEngine;" "$ENC" || die "Couldn't set the Neural Engine in $ENC."
 cmake -S "$OUT/src" -B "$OUT/src/build-coreml" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DWHISPER_COREML=1 >/dev/null
 cmake --build "$OUT/src/build-coreml" -j $JOBS --config Release --target whisper-cli >/dev/null
 cp "$OUT/src/build-coreml/bin/whisper-cli" "$OUT/bin/whisper-cli-coreml"
@@ -85,7 +92,7 @@ whisper.cpp $TAG (commit $COMMIT)
 Built $(date '+%b %d, %Y') on $(scutil --get ComputerName) ($(sw_vers -productVersion)), $(xcodebuild -version 2>/dev/null | head -1 || echo 'Xcode CLT')
 Model: $MODEL.bin + $MODEL-encoder.mlmodelc (from huggingface.co/ggerganov/whisper.cpp)
 bin/whisper-cli-metal  = GPU (Metal) build
-bin/whisper-cli-coreml = Core ML build (encoder on the Neural Engine)
+bin/whisper-cli-coreml = Core ML build, forced to CPU + Neural Engine (MLComputeUnitsCPUAndNeuralEngine)
 EOF
 
 rm -rf "$OUT/src/build-metal" "$OUT/src/build-coreml"

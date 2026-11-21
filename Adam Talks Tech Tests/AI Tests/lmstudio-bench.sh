@@ -721,6 +721,11 @@ whisper_mode() {
   [[ -n $mw ]] && mw=$(printf "%.1f" $mw); [[ -n $ma ]] && ma=$(printf "%.2f" $ma)
   rt=""; [[ -n $dur ]] && rt=$(awk -v d=$dur -v w=$m 'BEGIN{printf "%.1fx", d/w}')
   RES_STATUS[$k]=OK; RES_TOTAL[$k]=$m; RES_W[$k]=$mw; RES_TPS[$k]=$rt; RES_IN[$k]=$ma
+  if [[ $6 == coreml && -n $ma ]] && (( ma < 0.05 )); then
+    warn "Neural Engine stayed at ~0 W: Core ML ran the encoder on the GPU, not the Neural Engine. NOT a valid Neural Engine result."
+    warn "Fix: rebuild the kit with the newest whisper-coreml-setup.sh (it forces the Neural Engine), then rerun."
+    RES_STATUS[$k]="NOT ANE"
+  fi
   say "      MEDIAN: $(printf %.1f $m)s  ${rt:+$rt realtime}${mw:+  ${mw} W}${ma:+  (Neural Engine $ma W)}"
   sleep $COOLDOWN
 }
@@ -748,7 +753,7 @@ test_whisper() {
   fi
   local t=$'\t' cm cc
   cm=$( [[ ${RES_STATUS[whisper:metal]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:metal]})s / ${RES_TPS[whisper:metal]}" || print -n "-")
-  cc=$( [[ ${RES_STATUS[whisper:coreml]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:coreml]})s / ${RES_TPS[whisper:coreml]} / ANE ${RES_IN[whisper:coreml]:-?} W" || print -n "-")
+  cc=$( [[ ${RES_STATUS[whisper:coreml]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:coreml]})s / ${RES_TPS[whisper:coreml]} / ANE ${RES_IN[whisper:coreml]:-?} W" || print -n "${RES_STATUS[whisper:coreml]:--} (don't log)")
   SHEET_LINES+=("New Tests  BJ-BK (Whisper GPU, Whisper Neural Engine):${t}${cm}${t}${cc}")
 }
 
