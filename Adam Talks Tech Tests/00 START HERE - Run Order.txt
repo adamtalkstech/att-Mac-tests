@@ -164,7 +164,7 @@ EXTRAS (only when a video needs it)
     (double-click Prep This Drive.command once first, with internet).
 [ ] More local AI: cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe | coding | agents | whisper
     (whisper needs whisper-coreml-setup.sh run once first)
-[ ] RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
+[ ] 17. RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
       Needs: LM Studio opened once (Qwen 9B is copied over by itself, drive plugged in),
       the "Final Cut Test" folder (small Macs: Tools/att-get.zsh), Final Cut + Numbers installed.
       Restart, then the closer:
