@@ -33,6 +33,7 @@ KIND=$(att_mac_kind 2>/dev/null)
 STAMP=$(date +%Y-%m-%d_%H-%M)
 QDIR="$ROOT/Results/$MAC/Queue"; mkdir -p "$QDIR"
 LOG="$QDIR/queue_${STAMP}.log"; SUMMARY="$QDIR/queue_${STAMP}.txt"
+typeset -A QSTEP; QSTEP=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4)   # Run Order steps
 
 typeset -A DIR CMD MINS
 DIR=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrake "HandBrake Test" sustained "Blender Test"
@@ -100,7 +101,7 @@ print "\n>>> All set. You can unplug the drive and walk away. Don't use this Mac
 
 typeset -A RC TOOK
 for t in $RUN; do
-  print "\n\n======== [$(date +%H:%M)] QUEUE: $t ($(( ${RUN[(i)$t]} )) of ${#RUN}) ========" | tee -a "$LOG"
+  print "\n\n======== [$(date +%H:%M)] QUEUE: $t (Run Order step ${QSTEP[$t]:-?}) ($(( ${RUN[(i)$t]} )) of ${#RUN}) ========" | tee -a "$LOG"
   t0=$EPOCHSECONDS
   ( cd "$ROOT/${DIR[$t]}" && ATT_NOSYNC=1 zsh ${(z)CMD[$t]} ) 2>&1 | tee -a "$LOG"
   RC[$t]=${pipestatus[1]}; TOOK[$t]=$(( (EPOCHSECONDS - t0) / 60 ))
@@ -112,13 +113,13 @@ done
   print "Order: ${(j:, :)RUN}"
   (( ${#NOTES} )) && print -l "Skipped:" ${NOTES/#/  }
   print ""
-  for t in $RUN; do print "  $t: $( (( RC[$t] == 0 )) && print done || print "ended with error ${RC[$t]}") (${TOOK[$t]} min)"; done
+  for t in $RUN; do print "  ${QSTEP[$t]:-?} $t: $( (( RC[$t] == 0 )) && print done || print "ended with error ${RC[$t]}") (${TOOK[$t]} min)"; done
   print "\n==================== EVERY CARD ===================="
   awk 'index($0,"PHOTO THIS FOR CLAUDE"){p=1} p{print} p && $0 ~ /^#+$/ {p=0; print ""}' "$LOG"
 } > "$SUMMARY"
 
 att_card_start "Test queue (${#RUN} tests)"
-for t in $RUN; do print "  $t: $( (( RC[$t] == 0 )) && print done || print "ERROR ${RC[$t]}") (${TOOK[$t]} min)"; done
+for t in $RUN; do print "  ${QSTEP[$t]:-?} $t: $( (( RC[$t] == 0 )) && print done || print "ERROR ${RC[$t]}") (${TOOK[$t]} min)"; done
 (( ${#NOTES} )) && print -l "Skipped:" ${NOTES/#/  }
 print "Every card from the run: Results/$MAC/Queue/${SUMMARY:t}"
 print "Plug in a test drive and the results copy over by themselves."

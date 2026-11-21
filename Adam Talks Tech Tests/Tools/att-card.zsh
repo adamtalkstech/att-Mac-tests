@@ -19,6 +19,31 @@ att_mac_kind() {
   mkdir -p ${f:h}; print -r -- "$line" > $f
   print -r -- "$line"
 }
+# Run Order step for this test (rule, Adam Nov 21 2026: every test says its Run Order number).
+# $1 = script file name, $2 = the test's first argument
+att_step_for() {
+  local s=${1:t} a=${(L)2}
+  case $s in
+    xcode-bench.sh) print 8 ;;
+    blender-bench.sh) [[ $a == redautumn ]] && print 9b || print 9 ;;
+    sustained-test.sh) print 10 ;;
+    handbrake-bench.zsh) print 11 ;;
+    att-puget.zsh) print 12 ;;
+    att-logic-log.zsh) print 13 ;;
+    lmstudio-bench.sh) case $a in qwen9b) print 14a;; qwen27b) print 14b;; gemma) print 14c;; ladder) print 14d;; *) print E4;; esac ;;
+    att-stacker.zsh) print 17 ;;
+    att-drawthings.zsh) print 18 ;;
+    att-tabtest.zsh) print E5 ;;
+    att-export-timer.zsh) print E6 ;;
+    att-versions.zsh) print 4 ;;
+    att-name-this-mac.zsh) print 3 ;;
+    att-install-apps.zsh) print 3b ;;
+    att-queue.zsh) print "B (queue)" ;;
+    att-ready.zsh) case $a in *geekbench*) print 6;; *cinebench*) print 7;; *logic*) print 13;; *cyberpunk*) print 15;; *thunder*) print 16;; *) print "C (hands-on)";; esac ;;
+    *) print "" ;;
+  esac
+}
+ATT_STEP=$(att_step_for "$ZSH_ARGZERO" "$1")
 att_card_start() {
   local mac=$(scutil --get ComputerName 2>/dev/null)
   local chip=$(sysctl -n machdep.cpu.brand_string 2>/dev/null)
@@ -27,6 +52,7 @@ att_card_start() {
   print ""
   print "#################### PHOTO THIS FOR CLAUDE ####################"
   print "TEST:  $*"
+  [[ -n $ATT_STEP ]] && print "STEP:  Run Order step $ATT_STEP"
   print "MAC:   $mac"
   print "       $(att_mac_kind)"
   print "       $chip | ${ram}GB | macOS $os"
