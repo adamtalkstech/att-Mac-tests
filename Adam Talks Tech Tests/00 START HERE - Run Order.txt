@@ -95,7 +95,7 @@ The scripted tests do this on their own.
           c. Test files (24GB): plug in a test SSD, quit Puget, then
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh load
              (no drive has them? open Puget, click each app, let its assets download,
-              quit, then cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zshsave )
+              quit, then cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh save )
           d. FIRST run of each app on a Mac: macOS asks for your password (Puget
              installs its plugin). Terminal can't show that box, so the run fails with
              "No result file". Do that first run from the Puget app (Standard preset,
