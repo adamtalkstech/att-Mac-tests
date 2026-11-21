@@ -108,3 +108,4 @@ Nov 20 10:40: tests now politely quit other apps + background helpers (Creative 
 Nov 20 10:50: Memory Test/att-stacker.zsh (closer vs stacker, Tier 1 free apps) added: logger in the background, auto step marks, Safari tabs, Final Cut, Numbers workbook, LM Studio Qwen 9B (+27B on 32GB+), 10 min settle, export timed. Sheet New Tests AE-AG.
 Nov 20 10:55: att-stacker.zsh now runs closer + stacker in one go (purge + settle instead of a restart; swap reported as added). War Thunder replaces Minecraft: Run Order step 16, sheet New Tests BT (V/W retired).
 Nov 20 11:00: games moved to their own top-level drive folder "Adam Talks Tech Games" (Steam Library inside). Drag it to ~/Downloads only for game tests. New Tools/att-install-apps.zsh installs every test app in one go.
+- Nov 20 21:25: lmstudio-bench.sh and att-stacker.zsh now copy the model they need from the kit/drive onto the Mac first (new att-models.zsh get). No separate load step. Run Order step 14 simplified.

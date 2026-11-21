@@ -47,9 +47,16 @@ LMS=$(command -v lms 2>/dev/null); [[ -z $LMS ]] && LMS="$HOME/.lmstudio/bin/lms
 [[ -x $LMS ]] || { print "Can't find LM Studio's lms tool. Open LM Studio once, then rerun."; exit 1; }
 key_for() { "$LMS" ls --json 2>/dev/null | jq -r --arg p "$1" '(if type=="array" then . else (.models // .llms // []) end)
   | [ .[] | select((((.path // "") + " " + (.modelKey // .key // "")) | test($p; "i"))) ][0] | (.modelKey // .key) // empty' 2>/dev/null; }
+# Copy Qwen onto this Mac first if it's missing (from the kit / test drive). No separate load step.
+_GET="${0:A:h:h}/AI Tests/att-models.zsh"
+if [[ -f $_GET ]] && (( ! ${NOFETCH:-0} )); then
+  print "Checking the models are on this Mac..."
+  _w=(Qwen3.5-9B-MLX-4bit); (( BIG )) && _w+=(Qwen3.8-27B-MLX-4bit)
+  zsh "$_GET" get $_w
+fi
 Q9=$(key_for 'qwen3\.5-9b-mlx-4bit'); [[ -z $Q9 ]] && Q9=$(key_for 'qwen3\.5-9b')
 Q27=$(key_for 'qwen3\.8-27b-mlx-4bit')
-[[ -n $Q9 ]] || { print "Qwen 3.5 9B isn't in LM Studio on this Mac. Load it first: AI Tests > att-models.zsh load"; exit 1; }
+[[ -n $Q9 ]] || { print "Qwen 3.5 9B isn't in LM Studio on this Mac. Plug in the test drive and rerun (it copies the model over by itself)."; exit 1; }
 (( BIG )) && [[ -z $Q27 ]] && { print "Note: Qwen3.8 27B isn't on this Mac, so the stacker stops at the 9B."; BIG=0; }
 
 step()  { print -r -- "$1" > /tmp/att-step; print "\n[$(date +%H:%M:%S)] STEP: $1"; print -r -- "$(date +%H:%M:%S)  $1" >> "$RES.steps"; }

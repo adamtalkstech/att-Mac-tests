@@ -27,6 +27,14 @@
 #     Lists the models in this Mac's LM Studio and deletes the ones you pick
 #     (asks first). Never touches the LaCie.
 #
+#  4) GET   (automatic - the test scripts call this for you)
+#     zsh att-models.zsh get gemma-3-4b-it-GGUF Qwen3.5-9B-MLX-4bit ...
+#     For each model folder named: if this Mac already has it, does nothing.
+#     If not, finds it on the kit / any plugged-in drive and copies it in,
+#     then restarts LM Studio so it sees it. No questions asked.
+#     lmstudio-bench.sh and att-stacker.zsh run this first, so you never
+#     have to remember a separate load step.
+#
 #  Quit LM Studio before load/clean so it rescans when it opens again.
 # =============================================================================
 
@@ -86,7 +94,54 @@ copy_models() {   # $1 from root, $2 to root, rest = relative model paths
   done
 }
 
+# Every place a kit/drive copy of the models could be (kit folder next to this script first)
+all_sources() {
+  local d
+  for d in "$_HERE/LM Studio Models"(N/) \
+           /Volumes/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/) \
+           /Volumes/*/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/) \
+           /Volumes/*/*/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/); do
+    print -r -- "$d"
+  done
+}
+
+# Find publisher/model for a model folder name (case-insensitive) under a root
+find_rel() {   # $1 root  $2 name
+  local m
+  for m in "$1"/*/*(N/); do [[ ${(L)m:t} == ${(L)2} ]] && { print -r -- "${m:h:t}/${m:t}"; return 0; }; done
+  return 1
+}
+
+restart_lmstudio() {
+  pgrep -xq "LM Studio" || return 0
+  print "  Restarting LM Studio so it sees the new model(s)..."
+  osascript -e 'quit app "LM Studio"' >/dev/null 2>&1
+  local i; for i in {1..30}; do pgrep -xq "LM Studio" || break; sleep 1; done
+  open -ga "LM Studio"; sleep 12
+}
+
 case ${1:-} in
+  get)
+    shift
+    mkdir -p "$LOCAL"
+    copied=0; missing=0
+    for want in "$@"; do
+      if rel=$(find_rel "$LOCAL" "$want"); then print "  Model ready on this Mac: $rel"; continue; fi
+      src=""
+      for s in "${(@f)$(all_sources)}"; do [[ -n $s ]] && rel=$(find_rel "$s" "$want") && { src=$s; break; }; done
+      if [[ -z $src ]]; then
+        print "  !! $want isn't on this Mac or any plugged-in drive. Plug in the test drive and rerun."; missing=1; continue
+      fi
+      print "  $want isn't on this Mac yet. Copying it from ${src%%/$NAME/*} (one time)..."
+      HEADROOM_GB=${GET_HEADROOM_GB:-5} copy_models "$src" "$LOCAL" "$rel"
+      [[ -d "$LOCAL/$rel" ]] && copied=1 || { missing=1
+        print "     Free space with: zsh att-models.zsh clean (or att-get.zsh free), then rerun."; }
+    done
+    (( copied )) && restart_lmstudio
+    (( missing )) && exit 1
+    (( copied )) && exit 10
+    exit 0
+    ;;
   save)
     [[ -n $LACIE ]] || { print "Plug in the LaCie (can't find $NAME/AI Tests/LM Studio Models)."; exit 1; }
     [[ -d $LOCAL ]] || { print "No LM Studio models on this Mac ($LOCAL)."; exit 1; }
@@ -120,5 +175,5 @@ case ${1:-} in
     print "Free now: $(( $(free_kb "$HOME") / 1048576 )) GB"
     ;;
   *)
-    print "Usage: zsh att-models.zsh save | load | clean   (see the top of this file)"; exit 1 ;;
+    print "Usage: zsh att-models.zsh save | load | clean | get <model folder>...   (see the top of this file)"; exit 1 ;;
 esac

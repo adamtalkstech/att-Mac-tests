@@ -11,7 +11,7 @@
 #    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh          pick what to copy
 #    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh free     pick what to delete
 #
-#  AI models are separate: AI Tests/att-models.zsh load / clean.
+#  AI models are separate: the AI tests copy their own model over (att-models.zsh get); free with att-models.zsh clean.
 #  It never touches Results, the scripts, or anything on the drive.
 # =============================================================================
 

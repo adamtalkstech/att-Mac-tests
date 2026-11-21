@@ -20,8 +20,8 @@ HOW IT WORKS
      zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh          (copy from the drive)
      zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh free     (delete from this Mac)
   It copies onto the Mac's own SSD, so results stay fair. Results are never touched.
-  Tip for AI Tests: drag it WITHOUT the "LM Studio Models" folder and run
-  att-models.zsh load with the drive plugged in (copies only the models you pick).
+  AI models: nothing to do. Keep the drive plugged in and the AI test / stacker
+  copies the model it needs onto the Mac by itself (only that one, only once).
 
   GAMES live in their own folder at the top of the drive: "Adam Talks Tech Games"
   (Steam Library inside: Cyberpunk, War Thunder). Drag it into ~/Downloads only
@@ -127,20 +127,18 @@ The scripted tests do this on their own.
         unmute tracks until overload (Logic Test/LOGIC TEST - READ ME.txt).
         Log each with:
          cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-[ ] 14. Local AI (Qwen 9B + 27B + Gemma, ladder on 32GB+):
-        a. Load the models into LM Studio (quit LM Studio first):
-             cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh att-models.zsh load
-           Uses "LM Studio Models" in this folder if you dragged it, else the
-           drive. Pick Qwen 3.5 9B + Qwen3.8 27B 4-bit + gemma-3-4b-it-GGUF.
-        b. Open LM Studio once, then:
-             cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen9b
-             cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
-             cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
-           (Gemma = Gemma 3 4B, Main Results AI-AO. Load it in 14a too: pick gemma-3-4b-it-GGUF,
-            the same build on every Mac. The script warns if a different Gemma ran.)
-           LM Studio guardrails: Relaxed. If a model still won't load, Off for that run only.
-        c. Ladder (27B at 4/5/6/8-bit, Macs with 32GB+; load those 4 in 14a first):
+[ ] 14. Local AI (Qwen 9B + 27B + Gemma, ladder on 32GB+). Drive plugged in.
+        Each command copies its model onto this Mac first if it's missing (no
+        separate load step), then runs. Do them in this order:
+          a. cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen9b
+          b. cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
+          c. cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
+          d. 32GB+ only, ladder (27B at 4/5/6/8-bit):
              cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
+        (Gemma = Gemma 3 4B, Main Results AI-AO. Always the gemma-3-4b-it-GGUF build;
+         the script fetches it and warns if a different Gemma ran.)
+        LM Studio guardrails: Relaxed. If a model still won't load, Off for that run only.
+        Done with the Mac / need space: zsh att-models.zsh clean
 [ ] 15. Cyberpunk 2077 (drag the drive's "Adam Talks Tech Games" folder into ~/Downloads first):
         a. Steam > Settings > Storage > Add Drive > choose
            ~/Downloads/Adam Talks Tech Games/Steam Library
@@ -167,7 +165,7 @@ EXTRAS (only when a video needs it)
 [ ] More local AI: cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe | coding | agents | whisper
     (whisper needs whisper-coreml-setup.sh run once first)
 [ ] RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
-      Needs: Qwen 3.5 9B loaded into LM Studio (step 14a), LM Studio opened once,
+      Needs: LM Studio opened once (Qwen 9B is copied over by itself, drive plugged in),
       the "Final Cut Test" folder (small Macs: Tools/att-get.zsh), Final Cut + Numbers installed.
       Restart, then the closer:
         cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer

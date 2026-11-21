@@ -490,7 +490,7 @@ test_gemma() {
   if [[ -z $key ]]; then
     key=$(resolve_model "" 'gemma-3-4b')
     [[ -z $key ]] && { warn "Gemma 3 4B isn't downloaded on this Mac. Skipping."; return; }
-    warn "The standard Gemma build (gemma-3-4b-it-GGUF, Q4_K_M) isn't loaded, so this ran a different Gemma build: NOT comparable. Load gemma-3-4b-it-GGUF with att-models.zsh load and rerun."
+    warn "The standard Gemma build (gemma-3-4b-it-GGUF, Q4_K_M) isn't loaded, so this ran a different Gemma build: NOT comparable. Plug in the test drive (the script copies gemma-3-4b-it-GGUF over itself) and rerun."
   fi
   test_card "Gemma 3 4B" "$key" "Roman 50-paragraph essay + Apple environment summary, context $GEMMA_CTX, max $GEMMA_MAX tokens"
   run_prompt gemma Roman "$key" $GEMMA_CTX /dev/null "$ROMAN50" "" $GEMMA_MAX
@@ -810,6 +810,25 @@ if [[ $CMD == info ]]; then
   say ""; say "Saved: $REPORT"
   rm -f "$CSV"; cleanup; exit 0
 fi
+
+# Copy the right model builds onto this Mac first if they're missing (from the kit / test drive).
+# Same builds on every Mac, no separate load step. NOFETCH=1 to skip.
+fetch_models() {
+  local -a want
+  case $CMD in
+    gemma)               want=(gemma-3-4b-it-GGUF) ;;
+    qwen9b|coding|agents) want=(Qwen3.5-9B-MLX-4bit) ;;
+    qwen27b)             want=(Qwen3.8-27B-MLX-4bit) ;;
+    ladder)              want=(Qwen3.8-27B-MLX-4bit Qwen3.8-27B-MLX-5bit Qwen3.8-27B-MLX-6bit Qwen3.8-27B-MLX-8bit) ;;
+    core|all)            want=(gemma-3-4b-it-GGUF Qwen3.5-9B-MLX-4bit Qwen3.8-27B-MLX-4bit) ;;
+    *) return 0 ;;
+  esac
+  [[ $CMD == gemma && -n $GEMMA_MODEL ]] && return 0
+  say ""; say "Checking the test models are on this Mac..."
+  zsh "$SCRIPT_DIR/att-models.zsh" get $want 2>&1 | tee -a "$REPORT"
+  return 0
+}
+(( ${NOFETCH:-0} )) || fetch_models
 
 [[ $CMD != (whisper|llamabench) ]] && ensure_server
 preflight
