@@ -1,1 +1,1 @@
-2026-11-20 18:50 Nov 20 2026 - LM Studio: Qwen thinking OFF for real (raw no-think prompt via /api/v0/completions)
+2026-11-20 19:35 Nov 20 2026 - Charger warning matches the chip (60W base, 70W Pro, 96W Max)

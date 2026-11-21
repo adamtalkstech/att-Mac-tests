@@ -54,7 +54,8 @@ att_quit_apps() {
 
 # ATT power check (laptops): what's actually powering the Mac. A dock or a small
 # USB-C charger can cap the power an M5 Pro/Max needs under load, which looks
-# like throttling. Logged on the photo card; warns under 96W. Desktops skip it.
+# like throttling. Logged on the photo card; warns under 60W (base chips), 70W (Pro)
+# or 96W (Max/Ultra), about what Apple ships with each. Desktops skip it.
 att_power_check() {
   [[ -n $ATT_POWER_CHECKED ]] && return 0; ATT_POWER_CHECKED=1
   sysctl -n hw.model 2>/dev/null | grep -qi book || [[ -n $(pmset -g batt 2>/dev/null | grep -i InternalBattery) ]] || return 0
@@ -65,11 +66,16 @@ att_power_check() {
     print "!! On battery. Plug in Apple's charger straight into the Mac (not a dock) and start again."
     ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING on battery"; return 0
   fi
+  # minimum = roughly the charger Apple ships with that class of chip
+  local chip=$(sysctl -n machdep.cpu.brand_string 2>/dev/null) min=60
+  [[ $chip == *Pro* ]] && min=70
+  [[ $chip == *Max* ]] && min=96
+  [[ $chip == *Ultra* ]] && min=96
   print "Power: charger ${w:-?}W"
   ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }charger ${w:-?}W"
-  if [[ -n $w ]] && (( w < 96 )); then
-    print "!! Only ${w}W reaching the Mac (a dock or small charger?). Use Apple's charger straight into the Mac for fair results."
-    ATT_COOL_NOTE="${ATT_COOL_NOTE}; WARNING under 96W"
+  if [[ -n $w ]] && (( w < min )); then
+    print "!! Only ${w}W reaching the Mac (a dock or small charger?). This chip should have ${min}W or more: use its own Apple charger straight into the Mac."
+    ATT_COOL_NOTE="${ATT_COOL_NOTE}; WARNING under ${min}W"
   fi
 }
 
