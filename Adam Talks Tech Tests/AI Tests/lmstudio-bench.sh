@@ -490,7 +490,13 @@ test_gemma() {
   if [[ -z $key ]]; then
     key=$(resolve_model "" 'gemma-3-4b')
     [[ -z $key ]] && { warn "Gemma 3 4B isn't downloaded on this Mac. Skipping."; return; }
-    warn "The standard Gemma build (gemma-3-4b-it-GGUF, Q4_K_M) isn't loaded, so this ran a different Gemma build: NOT comparable. Plug in the test drive (the script copies gemma-3-4b-it-GGUF over itself) and rerun."
+  fi
+  # Check the build LM Studio will actually load (it can list MLX and GGUF under one name)
+  local meta=$(model_meta "$key")
+  if [[ ${(L)meta} == *mlx* && -z $GEMMA_MODEL ]]; then
+    warn "LM Studio would load a different Gemma build ($meta), not gemma-3-4b-it-GGUF: NOT comparable, so the test was skipped."
+    warn "Plug in the test drive and rerun (the script fetches the GGUF and sets other Gemma builds aside). Run ALLOW_OTHER_GEMMA=1 to run it anyway."
+    (( ${ALLOW_OTHER_GEMMA:-0} )) || return
   fi
   test_card "Gemma 3 4B" "$key" "Roman 50-paragraph essay + Apple environment summary, context $GEMMA_CTX, max $GEMMA_MAX tokens"
   run_prompt gemma Roman "$key" $GEMMA_CTX /dev/null "$ROMAN50" "" $GEMMA_MAX
@@ -826,6 +832,11 @@ fetch_models() {
   [[ $CMD == gemma && -n $GEMMA_MODEL ]] && return 0
   say ""; say "Checking the test models are on this Mac..."
   zsh "$SCRIPT_DIR/att-models.zsh" get $want 2>&1 | tee -a "$REPORT"
+  # Gemma: LM Studio groups the MLX and GGUF builds under one name (google/gemma-3-4b) and
+  # loads the MLX one. Set the other Gemma 3 4B builds aside so only the GGUF is left.
+  if (( ${want[(I)gemma-3-4b-it-GGUF]} )) && [[ -z $GEMMA_MODEL ]]; then
+    zsh "$SCRIPT_DIR/att-models.zsh" park gemma-3-4b-it-GGUF '*gemma-3-4b*' 2>&1 | tee -a "$REPORT"
+  fi
   return 0
 }
 (( ${NOFETCH:-0} )) || fetch_models

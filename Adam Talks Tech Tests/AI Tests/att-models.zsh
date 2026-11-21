@@ -121,6 +121,25 @@ restart_lmstudio() {
 }
 
 case ${1:-} in
+  park)
+    # park <keep-folder> <name-glob>: move every other model folder matching the glob out of
+    # LM Studio's folder (to ~/.lmstudio/parked-models, nothing deleted) so LM Studio can only
+    # pick the build we want. Used for Gemma: LM Studio lists the MLX and GGUF builds under
+    # one name and loads the MLX one. Put them back with: att-models.zsh unpark
+    keep=$2; glob=$3; PARK="$HOME/.lmstudio/parked-models"; moved=0
+    for m in "$LOCAL"/*/*(N/); do
+      [[ ${(L)m:t} == ${(L)~glob} && ${(L)m:t} != ${(L)keep} ]] || continue
+      mkdir -p "$PARK/${m:h:t}"
+      mv "$m" "$PARK/${m:h:t}/" && { print "  Set aside (not deleted): ${m:h:t}/${m:t} -> ~/.lmstudio/parked-models"; moved=1; }
+    done
+    (( moved )) && { restart_lmstudio; exit 10; }
+    exit 0
+    ;;
+  unpark)
+    PARK="$HOME/.lmstudio/parked-models"
+    for m in "$PARK"/*/*(N/); do mkdir -p "$LOCAL/${m:h:t}"; mv "$m" "$LOCAL/${m:h:t}/" && print "  Put back: ${m:h:t}/${m:t}"; done
+    restart_lmstudio; exit 0
+    ;;
   get)
     shift
     mkdir -p "$LOCAL"

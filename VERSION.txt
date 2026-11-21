@@ -1,3 +1,4 @@
+2026-11-20 21:35 Nov 20 2026 - Gemma: other Gemma builds set aside automatically; test refuses to run the MLX build
 2026-11-20 21:25 Nov 20 2026 - AI tests and stacker copy their own models over (no separate load step)
 2026-11-20 21:10 Nov 20 2026 - Sustained v1.4: untimed Blender warm-up so first-launch checks don't slow run 1
 2026-11-20 21:05 Nov 20 2026 - Run Order: stacker is two runs (closer, stacker), NOPAUSE note for sustained
