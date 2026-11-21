@@ -45,7 +45,9 @@ if [[ ${1:-} == check ]]; then
   APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.liuliu.draw-things'" 2>/dev/null | grep '\.app$' | head -1)
   [[ -z $APP && -d "/Applications/Draw Things.app" ]] && APP="/Applications/Draw Things.app"
   [[ -n $APP ]] && ok "App installed: $(defaults read "$APP/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null)" || bad "Draw Things isn't installed (free, Mac App Store)"
-  if [[ -n $(print -l "$DT_MODELS"/${~MATCH}(N)) ]]; then ok "Z-Image Turbo files on this Mac: $(print -l "$DT_MODELS"/${~MATCH}(N) | sed 's|.*/||' | tr '\n' ' ')"
+  if [[ -d ${DT_MODELS:h} ]] && ! ls "${DT_MODELS:h}" >/dev/null 2>&1; then
+    bad "Terminal isn't allowed to see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > turn ON Terminal, then quit and reopen Terminal"
+  elif [[ -n $(print -l "$DT_MODELS"/${~MATCH}(N)) ]]; then ok "Z-Image Turbo files on this Mac: $(print -l "$DT_MODELS"/${~MATCH}(N) | sed 's|.*/||' | tr '\n' ' ')"
   else src=$(drive_dirs | head -1)
     [[ -n $src && -n $(print -l "$src"/${~MATCH}(N)) ]] && ok "Z-Image Turbo not on this Mac yet, but the drive has it (the test copies it in)" \
       || bad "Z-Image Turbo isn't on this Mac or a drive: in Draw Things tap the model name > search Z-Image Turbo > download"
@@ -80,6 +82,11 @@ export ATT_DT_VERSION=$DTV
 print "Draw Things $DTV"
 
 # 2. Model (Terminal may ask to access another app's data: click Allow)
+if [[ -d ${DT_MODELS:h} ]] && ! ls "${DT_MODELS:h}" >/dev/null 2>&1; then
+  print "Terminal isn't allowed to see Draw Things' files."
+  print "System Settings > Privacy & Security > Full Disk Access > turn ON Terminal, quit and reopen Terminal, then rerun."
+  open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"; exit 1
+fi
 if [[ -z $(print -l "$DT_MODELS"/${~MATCH}(N)) ]]; then
   src=$(drive_dirs | head -1)
   if [[ -n $src && -n $(print -l "$src"/${~MATCH}(N)) ]]; then
