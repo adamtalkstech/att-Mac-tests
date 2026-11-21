@@ -10,11 +10,14 @@
  *     from:  zsh Tools/att-upload.zsh newkey
  *  3. Run the function  setup  once (Run button). Approve the permissions.
  *     It makes the "Raw Results" tab and the Drive folder "ATT Test Results".
+ *     Then run  importPugetFolder  once: it reads every Puget CSV already in the
+ *     Drive folder "Puget Results" into a "Puget Detail" tab (every single test).
  *  4. Deploy > New deployment > Web app. Execute as: Me. Who has access: Anyone.
  *     ("Anyone" only means it can be reached; every request must carry a valid
  *      signature made with ATT_KEY or it's thrown away.) Copy the /exec URL.
  *
- * WHAT IT CAN DO: add a row to Raw Results and save a zip in ATT Test Results.
+ * WHAT IT CAN DO: add a row to Raw Results, save a zip in ATT Test Results, copy any
+ * Puget CSV in that zip into Puget Results/<Mac>, and add its tests to Puget Detail.
  * It never sends anything back except "ok" or "denied".
  */
 
@@ -36,6 +39,11 @@ function setup() {
     props.setProperty('ATT_FOLDER_ID', folder.getId());
   }
   props.setProperty('ATT_SHEET_ID', ss.getId());
+  if (!props.getProperty('ATT_PUGET_FOLDER_ID')) {
+    var pf = DriveApp.getFoldersByName('Puget Results');
+    props.setProperty('ATT_PUGET_FOLDER_ID', pf.hasNext() ? pf.next().getId() : DriveApp.createFolder('Puget Results').getId());
+  }
+  pugetSheet_(ss);
   if (!/^[0-9a-f]{64}$/.test(props.getProperty('ATT_KEY') || '')) {
     throw new Error('Add ATT_KEY (64 hex characters) in Project Settings > Script Properties, then run setup again.');
   }
@@ -75,6 +83,7 @@ function doPost(e) {
         var fname = name_(d.test || 'test') + ' - ' + Utilities.formatDate(new Date(), 'America/Chicago', 'yyyy-MM-dd HH-mm-ss') + '.zip';
         var blob = Utilities.newBlob(Utilities.base64Decode(d.zip_b64), 'application/zip', fname);
         link = macFolder.createFile(blob).getUrl();
+        try { pugetFromZip_(blob, d, props); } catch (pe) { console.error(pe); }
       }
       var summary = '';
       if (d.summary_b64) summary = Utilities.newBlob(Utilities.base64Decode(d.summary_b64)).getDataAsString('UTF-8').slice(0, 45000);
@@ -97,6 +106,7 @@ function safeEqual_(a, b) {
 }
 // Text going into a cell can't start a formula (=, +, -, @) and is length-capped
 function cell_(v) {
+  if (typeof v === 'number' || v instanceof Date) return v;
   var s = (v === undefined || v === null) ? '' : String(v).slice(0, 45000);
   return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
 }
@@ -105,3 +115,83 @@ function sub_(parent, n) {
   var it = parent.getFoldersByName(n);
   return it.hasNext() ? it.next() : parent.createFolder(n);
 }
+
+// ---------------- Puget Bench CSVs -> "Puget Detail" (one row per individual test) ----------------
+var PUGET_TAB = 'Puget Detail';
+var PUGET_COLS = ['Key', 'Imported', 'Mac', 'Mac ID', 'Run date', 'Benchmark', 'Bench version', 'App', 'App version',
+  'Model ID', 'CPU', 'CPU cores', 'GPU cores', 'RAM (GB)', 'macOS', 'Power source', 'Puget upload ID',
+  'Test', 'Group', 'Units', 'Run 1', 'Run 2', 'Run 3', 'CSV file'];
+
+function pugetSheet_(ss) {
+  var sh = ss.getSheetByName(PUGET_TAB) || ss.insertSheet(PUGET_TAB);
+  if (sh.getLastRow() === 0) { sh.appendRow(PUGET_COLS); sh.setFrozenRows(1); }
+  return sh;
+}
+
+// Run once by hand: imports every Puget CSV in the "Puget Results" folder (and its subfolders).
+function importPugetFolder() {
+  var props = PropertiesService.getScriptProperties();
+  var root = DriveApp.getFolderById(props.getProperty('ATT_PUGET_FOLDER_ID'));
+  var n = 0, stack = [root];
+  while (stack.length) {
+    var f = stack.pop(), files = f.getFiles(), subs = f.getFolders();
+    while (subs.hasNext()) stack.push(subs.next());
+    while (files.hasNext()) {
+      var file = files.next();
+      if (!/\.csv$/i.test(file.getName())) continue;
+      n += importPugetText_(file.getBlob().getDataAsString('UTF-8'), file.getName(), '', '', file.getUrl());
+    }
+  }
+  Logger.log('Added ' + n + ' Puget test rows.');
+}
+
+function pugetFromZip_(zipBlob, d, props) {
+  var parts = Utilities.unzip(zipBlob), dest = null;
+  for (var i = 0; i < parts.length; i++) {
+    var b = parts[i], nm = String(b.getName()).split('/').pop();
+    if (!/puget.*\.csv$/i.test(nm)) continue;
+    var text = b.getDataAsString('UTF-8');
+    if (!/^Benchmark Name,Puget Bench/m.test(text)) continue;
+    if (!dest) dest = sub_(DriveApp.getFolderById(props.getProperty('ATT_PUGET_FOLDER_ID')),
+                           (name_(d.mac) || 'Unknown Mac') + (/^[0-9a-f]{8}$/.test(d.macid || '') ? ' [' + d.macid + ']' : ''));
+    var url = dest.getFilesByName(nm).hasNext() ? dest.getFilesByName(nm).next().getUrl()
+                                                 : dest.createFile(Utilities.newBlob(text, 'text/csv', nm)).getUrl();
+    importPugetText_(text, nm, name_(d.mac), /^[0-9a-f]{8}$/.test(d.macid || '') ? d.macid : '', url);
+  }
+}
+
+// Parses one Puget CSV and appends its tests. Skips a run that's already in the tab. Returns rows added.
+function importPugetText_(text, fileName, mac, macid, url) {
+  var rows = Utilities.parseCsv(text), kv = {}, sys = {}, tests = [], inResults = false;
+  rows.forEach(function (r) {
+    r = r.map(function (c) { return String(c).trim(); });
+    if (!r[0]) return;
+    if (r[0] === 'Test' && r[1] === 'Setting') { inResults = true; return; }
+    if (inResults) { tests.push(r); return; }
+    if (['System', 'OS', 'CPU', 'Motherboard', 'Memory', 'GPU', 'Power'].indexOf(r[0]) >= 0) {
+      if (r[0] === 'Power') sys['Power ' + r[1]] = r[2]; else sys[r[0]] = r;
+    } else kv[r[0]] = r[1];
+  });
+  if (!tests.length || !kv['Benchmark Name']) return 0;
+  var m = String(fileName).match(/(\d{4}-\d{2}-\d{2})_(\d{2})-(\d{2})-(\d{2})/);
+  var runDate = m ? m[1] + ' ' + m[2] + ':' + m[3] + ':' + m[4] : '';
+  var model = sys.Motherboard ? sys.Motherboard[2] : '';
+  var key = [kv['Benchmark Name'], kv['Application Version'], runDate, model, kv['Upload ID'] || '', tests.length].join('|');
+  var ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('ATT_SHEET_ID'));
+  var sh = pugetSheet_(ss);
+  var last = sh.getLastRow();
+  if (last > 1) {
+    var keys = sh.getRange(2, 1, last - 1, 1).getValues();
+    for (var i = 0; i < keys.length; i++) if (keys[i][0] === key) return 0;
+  }
+  var base = [key, new Date(), mac || '', macid || '', runDate, kv['Benchmark Name'], kv['Benchmark Version'],
+    kv['Application Name'], kv['Application Version'], model,
+    sys.CPU ? sys.CPU[2] : '', sys.CPU ? sys.CPU[3] : '', sys.GPU ? sys.GPU[3] : '',
+    sys.Memory ? sys.Memory[2] : '', sys.OS ? sys.OS.slice(2).join(' ') : '', sys['Power Power Source'] || '', kv['Upload ID'] || ''];
+  var out = tests.map(function (t) {
+    return base.concat([t[0], t[1] || '', t[2] || '', num_(t[3]), num_(t[4]), num_(t[5]), url || fileName]).map(cell_);
+  });
+  sh.getRange(sh.getLastRow() + 1, 1, out.length, PUGET_COLS.length).setValues(out);
+  return out.length;
+}
+function num_(v) { if (v === undefined || v === '') return ''; var n = Number(v); return isNaN(n) ? v : n; }
