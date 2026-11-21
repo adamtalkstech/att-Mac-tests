@@ -41,7 +41,21 @@ LIB="$ROOT/Final Cut Test/Test Library rev.fcpbundle"
 WB=""; for f in "$HERE/ATT Stack Test Workbook v1.1.numbers" "$HERE/ATT Stack Test Workbook v1.numbers"; do [[ -e $f ]] && { WB=$f; break; }; done
 SITES=("${(@f)$(sed -n "/^SITES=(/,/^)/p" "$HERE/att-tabtest.zsh" | grep -o "https://[^']*")}")
 LMS=$(command -v lms 2>/dev/null); [[ -z $LMS ]] && LMS="$HOME/.lmstudio/bin/lms"
-[[ -e $LIB ]] || { print "Missing the Final Cut library: $LIB"; exit 1; }
+# Final Cut Pro app (found by its ID, whatever the app is called)
+FCP_APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut'" 2>/dev/null | grep '\.app$' | grep -v '^/Volumes' | head -1)
+[[ -z $FCP_APP && -d "/Applications/Final Cut Pro.app" ]] && FCP_APP="/Applications/Final Cut Pro.app"
+[[ -n $FCP_APP ]] || { print "Final Cut Pro isn't installed on this Mac. Install it from the App Store, open it once, then rerun."; exit 1; }
+FCP_NAME=${${FCP_APP:t}%.app}
+# Test library: copy it from the plugged-in drive if this Mac doesn't have it (one time, ~45GB)
+if [[ ! -e $LIB ]]; then
+  SRC=""; for d in /Volumes/*/"Adam Talks Tech Tests"/"Final Cut Test"(N/) /Volumes/*/*/"Adam Talks Tech Tests"/"Final Cut Test"(N/) /Volumes/*/*/"Final Cut Test"(N/); do
+    [[ -e "$d/${LIB:t}" ]] && { SRC=$d; break; }; done
+  [[ -n $SRC ]] || { print "The Final Cut Test library isn't on this Mac or a plugged-in drive.\nPlug in a test drive and rerun (it copies it over by itself)."; exit 1; }
+  NEED=$(du -sk "$SRC" | awk '{print $1}'); HAVE=$(df -k "$HOME" | awk 'NR==2{print $4}')
+  (( HAVE - NEED > 15 * 1048576 )) || { print "Not enough space for the Final Cut Test folder ($(( NEED / 1048576 ))GB + 15GB spare). Free some with Tools/att-get.zsh free."; exit 1; }
+  print "Copying the Final Cut Test folder from ${SRC%%/Adam Talks Tech Tests*} ($(( NEED / 1048576 ))GB, one time)..."
+  ditto "$SRC" "$ROOT/Final Cut Test" || { print "Copy failed."; exit 1; }
+fi
 [[ -n $WB ]]  || { print "Missing the stack test workbook in Memory Test."; exit 1; }
 (( ${#SITES} >= 80 )) || { print "Couldn't read the 80 test sites from att-tabtest.zsh."; exit 1; }
 [[ -x $LMS ]] || { print "Can't find LM Studio's lms tool. Open LM Studio once, then rerun."; exit 1; }
@@ -91,14 +105,14 @@ if [[ $MODE == closer ]]; then
   step "numbers quit"; quit_app Numbers
   step "qwen 9b loaded"; lms_load "$Q9"; sleep 30
   step "qwen unloaded"; "$LMS" unload --all >/dev/null 2>&1
-  step "final cut open"; open -a "Final Cut Pro" "$LIB"; ask "When Final Cut has the Test Library open:"
+  step "final cut open"; open -a "$FCP_APP" "$LIB"; ask "When Final Cut has the Test Library open:"
   step "final cut export"; clear_export
   print "  In Final Cut: Share the 3-min 4K project to Adam Talks Tech Tests/Export (Apple Devices 4K)."
   zsh "$ROOT/Tools/att-export-timer.zsh" "" "FCP 3-min 4K, closer ($MACNAME)"
-  step "final cut quit"; quit_app "Final Cut Pro"
+  step "final cut quit"; quit_app "$FCP_NAME"
 else
   step "safari 80 tabs"; open_tabs 80; sleep 30
-  step "final cut open"; open -a "Final Cut Pro" "$LIB"; ask "When Final Cut has the Test Library open (stacked 6K timeline showing):"
+  step "final cut open"; open -a "$FCP_APP" "$LIB"; ask "When Final Cut has the Test Library open (stacked 6K timeline showing):"
   step "numbers open"; open -a Numbers "$WB"; NUM_S=$(timed "When the Numbers Dashboard has filled in:")
   step "qwen 9b loaded"; lms_load "$Q9"
   if (( BIG )); then sleep 60; step "qwen 27b loaded"; "$LMS" unload --all >/dev/null 2>&1; lms_load "$Q27"; fi

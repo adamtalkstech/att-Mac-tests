@@ -1,11 +1,20 @@
 {
-  "_note": "Draw Things settings card. Fill in model and app_version after running 'Draw Things: show current settings' from the menu on the Mac Studio. Keep these the same on every Mac.",
-  "app_version": "FILL IN",
+  "_note": "Draw Things settings card (locked Nov 20 2026). Model: Z-Image Turbo (same model as the mflux test). att-drawthings.zsh checks the selected model contains model_match and fills in the app version itself. Keep these the same on every Mac.",
+  "app_version": "(read from the app)",
   "model": "",
   "quantize_note": "",
   "tests": {
-    "standard": {"width": 1024, "height": 1024, "steps": 8},
-    "stress": {"width": 2048, "height": 2048, "steps": 8}
+    "standard": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 8
+    },
+    "stress": {
+      "width": 2048,
+      "height": 2048,
+      "steps": 8
+    }
   },
-  "extra": {}
+  "extra": {},
+  "model_match": "z_image_turbo"
 }

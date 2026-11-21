@@ -93,12 +93,20 @@ def main():
 
     loaded_model = str(cfg_now.get("model", "unknown"))
     want = settings.get("model", "")
-    if want and want != loaded_model:
-        sys.exit(f"Draw Things has '{loaded_model}' selected, the settings card says "
-                 f"'{want}'. Pick the right model in the app and run again.")
+    match = settings.get("model_match", "")
+    if (want and want != loaded_model) or (match and match.lower() not in loaded_model.lower()):
+        sys.exit(f"Draw Things has '{loaded_model}' selected, the settings card wants "
+                 f"'{want or match}'. Pick Z-Image Turbo in the app and run again.")
+    # Save the app's full settings with every run so every Mac can be checked later
+    cfg_out = c.RESULTS_DIR / f"drawthings_config_{c.safe_name(a.mac_name or c.machine_info().get('mac_name', 'mac'))}_{dt.datetime.now():%Y%m%d-%H%M}.json"
+    cfg_out.parent.mkdir(parents=True, exist_ok=True)
+    cfg_out.write_text(json.dumps(cfg_now, indent=2))
+    keys = ("model", "sampler", "guidance_scale", "steps", "shift", "seed_mode", "width", "height")
+    print("Draw Things settings: " + "  ".join(f"{k}={cfg_now.get(k)}" for k in keys if k in cfg_now))
 
     c.keep_awake()
-    app_version = f"Draw Things {settings.get('app_version', '?')} / {loaded_model}"
+    import os
+    app_version = f"Draw Things {os.environ.get('ATT_DT_VERSION') or settings.get('app_version', '?')} / {loaded_model}"
     c.print_header(f"ATT Image Gen Test - Draw Things ({BENCH_VERSION})", mac, info, app_version)
     stamp = dt.datetime.now()
     (c.RESULTS_DIR / "images").mkdir(parents=True, exist_ok=True)

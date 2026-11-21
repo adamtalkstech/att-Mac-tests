@@ -154,19 +154,9 @@ The scripted tests do this on their own.
         Built-in benchmark from the game menu. Settings in the sheet (New Tests
         BT, row 3). One throwaway run, log the 2nd. Photo the result + game version.
 
-------------------------------------------------------------------
-EXTRAS (only when a video needs it)
-------------------------------------------------------------------
-[ ] Procyon AI Image Generation (Apps & Installers > UL Procyon; key = AI
-    Inference Pro in LICENSES). Screenshot / export the result.
-[ ] 3DMark Steel Nomad + Steel Nomad Light (Apps & Installers). Screenshot.
-[ ] Draw Things / mflux: Image Gen Test > Run Image Tests.command   (small Macs: get Image Gen Test with Tools/att-get.zsh)
-    (double-click Prep This Drive.command once first, with internet).
-[ ] More local AI: cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe | coding | agents | whisper
-    (whisper needs whisper-coreml-setup.sh run once first)
 [ ] 17. RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
-      Needs: LM Studio opened once (Qwen 9B is copied over by itself, drive plugged in),
-      the "Final Cut Test" folder (small Macs: Tools/att-get.zsh), Final Cut + Numbers installed.
+      Needs: Final Cut Pro + Numbers installed, LM Studio opened once, a drive plugged in.
+      It copies Qwen 9B and the Final Cut Test library (45GB) onto the Mac by itself if missing.
       CLOSER = one app at a time, quit each when done (the best-case baseline).
       STACKER = everything open at once (real life). Compare the two export times.
       FIRST TIME on a Mac (Safari/Numbers/Final Cut/LM Studio never opened there):
@@ -178,11 +168,31 @@ EXTRAS (only when a video needs it)
         cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
       You press Return when Final Cut / Numbers have loaded and click Share in Final Cut.
       Photo the box from each run. If it hangs, put NOPAUSE=1 in front and rerun.
-[ ] Memory:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-tabtest.zsh
-[ ] SSD, WebKit, Logic Big Session, Final Cut / Lightroom exports
-    Export timer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
+[ ] 18. Draw Things image gen (Z-Image Turbo, same model on every Mac). Drive plugged in:
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+        It checks the app, copies the model in from the drive if missing, opens Draw Things
+        and tells you the 2 clicks it needs (Settings > API Server ON, port 7860; pick
+        Z-Image Turbo). Then it cools down, runs 1024 + 2048, and prints the card.
+        Terminal may ask to access Draw Things' data: click Allow.
+        FIRST MAC ONLY (no drive has the model yet): download Z-Image Turbo inside Draw
+        Things, run the test, then with a drive plugged in:  zsh att-drawthings.zsh save
+
+------------------------------------------------------------------
+EXTRAS (only when a video needs it)
+------------------------------------------------------------------
+[ ] E1. mflux image gen (fully automatic, same model as step 18):
+          double-click Image Gen Test > Run Image Tests.command, pick 1
+        (needs the Image Gen Test folder with its hidden .tools inside: small Macs use Tools/att-get.zsh)
+[ ] E2. Procyon AI Image Generation (Apps & Installers > UL Procyon; key = AI
+        Inference Pro in LICENSES). Screenshot / export the result.
+[ ] E3. 3DMark Steel Nomad + Steel Nomad Light (Apps & Installers). Screenshot.
+[ ] E4. More local AI: cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe | coding | agents | whisper
+        (whisper needs whisper-coreml-setup.sh run once first)
+[ ] E5. Memory:
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-tabtest.zsh
+[ ] E6. SSD, WebKit, Logic Big Session, Final Cut / Lightroom exports
+        Export timer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
 
 ------------------------------------------------------------------
 FINISH (every Mac)

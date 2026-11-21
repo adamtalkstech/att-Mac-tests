@@ -1,3 +1,4 @@
+2026-11-20 22:20 Nov 20 2026 - Run Order audit: stacker step 17 + Draw Things step 18 in core (one command each), extras lettered E1-E6; stacker finds Final Cut by ID and copies the library from the drive; Draw Things locked to Z-Image Turbo
 2026-11-20 21:55 Nov 20 2026 - Stacker card shows the export time correctly
 2026-11-20 21:50 Nov 20 2026 - Run Order step 17: closer warm-up on a Mac's first time
 2026-11-20 21:45 Nov 20 2026 - Run Order: stacker is now step 17
