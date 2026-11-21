@@ -277,17 +277,47 @@ load_model() { # $1=key $2=context -> LOAD_S, INSTANCE, LOAD_ERR
   return 1
 }
 
+# THINKING OFF FOR QWEN (Nov 20 2026): LM Studio's API ignores every "thinking off"
+# switch for Qwen 3.5 / 3.8 (LM Studio bug tracker #1990). So for Qwen models the
+# prompt goes to LM Studio's raw text endpoint (/api/v0/completions, same stats:
+# tokens/s and time to first token) already written in Qwen's own chat format,
+# ending with the empty think block that Qwen's template uses for thinking off:
+#   <|im_start|>user ... <|im_end|> <|im_start|>assistant <think></think>
+# Same words, same model, no thinking. QWEN_THINK=1 puts it back to the old way.
+QWEN_THINK=${QWEN_THINK:-0}
+is_qwen() { [[ ${(L)1} == *qwen* ]] && (( ! QWEN_THINK )); }
+
 make_payload() { # out model file question reasoning maxtokens
+  if is_qwen "$2"; then
+    jq -n --arg m "$2" --rawfile f "$3" --arg q "$4" --argjson mx "$6" --argjson t "$TEMP" '
+      (if $f == "" then $q elif $q == "" then $f else ($f | rtrimstr("\n")) + "\n" + $q end) as $in
+      | { model: $m,
+          prompt: ("<|im_start|>user\n" + $in + "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"),
+          max_tokens: $mx, temperature: $t, stream: false,
+          stop: ["<|im_end|>", "<|endoftext|>"] }' > "$1"
+    return
+  fi
   jq -n --arg m "$2" --rawfile f "$3" --arg q "$4" --arg r "$5" --argjson mx "$6" --argjson t "$TEMP" '
     { model: $m,
       input: (if $f == "" then $q elif $q == "" then $f else ($f | rtrimstr("\n")) + "\n" + $q end),
       store: false, temperature: $t, max_output_tokens: $mx }
     + (if $r == "" then {} else {reasoning: $r} end)' > "$1"
 }
+endpoint_for() { jq -e 'has("prompt")' "$1" >/dev/null 2>&1 && print "$API/api/v0/completions" || print "$API/api/v1/chat"; }
 
 parse_resp() { # $1=response file $2=curl rc $3=timeout -> R_* vars
   R_TTFT=""; R_TPS=""; R_IN=""; R_OUT=""; R_REASON_TOK=""; R_ERR=""
   if (( $2 == 28 )); then R_STATUS=TIMEOUT; R_ERR="still running after ${3}s"; return 1; fi
+  if jq -e '.stats.time_to_first_token' "$1" >/dev/null 2>&1; then   # /api/v0/completions (Qwen, thinking off)
+    R_STATUS=OK
+    R_TTFT=$(jq -r '.stats.time_to_first_token // empty' "$1")
+    R_TPS=$(jq -r '.stats.tokens_per_second // empty' "$1")
+    R_IN=$(jq -r '.usage.prompt_tokens // empty' "$1")
+    R_OUT=$(jq -r '.usage.completion_tokens // empty' "$1")
+    # if the model still wrote a think block, count it as thinking (flagged on the card)
+    R_REASON_TOK=$(jq -r '.choices[0].text // "" | if test("</think>") then "yes" else "0" end' "$1")
+    return 0
+  fi
   if jq -e '.stats' "$1" >/dev/null 2>&1; then
     R_STATUS=OK
     R_TTFT=$(jq -r '.stats.time_to_first_token_seconds // empty' "$1")
@@ -309,7 +339,7 @@ chat() { # $1=payload $2=timeout $3=quiet
     { trap - INT TERM; local n=0; while sleep 1; do (( ++n % 15 == 0 )) && printf "\r        running... %ds " $n; done } &
     tick=$!
   fi
-  curl -s -m $2 "${AUTH[@]}" -H 'Content-Type: application/json' -d @"$1" "$API/api/v1/chat" -o "$TMP/resp.json"
+  curl -s -m $2 "${AUTH[@]}" -H 'Content-Type: application/json' -d @"$1" "$(endpoint_for "$1")" -o "$TMP/resp.json"
   rc=$?
   [[ -n $tick ]] && { kill $tick 2>/dev/null; wait $tick 2>/dev/null; printf "\r\033[K"; }
   parse_resp "$TMP/resp.json" $rc $2
@@ -341,7 +371,7 @@ run_once() { # key ctx file question reasoning maxtok -> R_*, RUN_ST, RUN_NOTE, 
         *)       RUN_ST=ERROR; RUN_NOTE=$R_ERR ;;
       esac
       [[ -n $R_OUT && $R_OUT == $mx ]] && RUN_NOTE="${RUN_NOTE:+$RUN_NOTE; }hit ${mx}-token cap"
-      [[ -n $R_REASON_TOK && $R_REASON_TOK != 0 ]] && RUN_NOTE="${RUN_NOTE:+$RUN_NOTE; }note: thinking on (${R_REASON_TOK} reasoning tokens; standard for Qwen 3.5, same on every Mac)"
+      [[ -n $R_REASON_TOK && $R_REASON_TOK != 0 ]] && RUN_NOTE="${RUN_NOTE:+$RUN_NOTE; }WARNING thinking was on (${R_REASON_TOK} reasoning tokens)"
     fi
   fi
   "$LMS" unload --all >/dev/null 2>&1
@@ -473,7 +503,7 @@ test_gemma() {
 qwen_suite() { # $1 test id  $2 key
   local test=$1 key=$2 reason="off" fa fb fc first=1
   if ! reasoning_off_ok "$key"; then
-    warn "LM Studio can't turn thinking off for this model over its API (known LM Studio bug with Qwen 3.5). Running with thinking on, the same on every Mac."
+    is_qwen "$key" || warn "LM Studio doesn't list a thinking OFF option for this model. Running its default and flagging thinking tokens."
     reason=""
   fi
   fa=$(need_file "$TRANSCRIPT_A"); fb=$(need_file "$TRANSCRIPT_B"); fc=$(need_file "$TRANSCRIPT_C")
@@ -494,7 +524,7 @@ qwen_suite() { # $1 test id  $2 key
   return 0
 }
 
-QWEN_CARD="Thinking ON (LM Studio can't turn it off for Qwen 3.5), max 4,096 tokens. Transcript A/B at 8K context, C at 32K. Prompt: \"$SUMMARY_Q\" Plus Roman 10 paragraphs at 8K."
+QWEN_CARD="Thinking OFF (Qwen's own no-think format, sent raw to LM Studio). Transcript A/B at 8K context, C at 32K. Prompt: \"$SUMMARY_Q\" Plus Roman 10 paragraphs at 8K."
 
 test_qwen9b() {
   say ""; say "=== TEST 2: Qwen 3.5 9B (MLX 4-bit) ==="
@@ -611,7 +641,7 @@ test_agents() {
     start_power
     t0=$EPOCHREALTIME; pids=()
     for (( a = 1; a <= AGENTS; a++ )); do
-      curl -s -m $GEN_TIMEOUT "${AUTH[@]}" -H 'Content-Type: application/json' -d @"$TMP/agent.json" "$API/api/v1/chat" -o "$TMP/agent$a.json" &
+      curl -s -m $GEN_TIMEOUT "${AUTH[@]}" -H 'Content-Type: application/json' -d @"$TMP/agent.json" "$(endpoint_for "$TMP/agent.json")" -o "$TMP/agent$a.json" &
       pids+=($!)
     done
     wait $pids
@@ -620,7 +650,7 @@ test_agents() {
     "$LMS" unload --all >/dev/null 2>&1
     tot=0; tps_list=()
     for (( a = 1; a <= AGENTS; a++ )); do
-      n=$(jq -r '.stats.total_output_tokens // 0' "$TMP/agent$a.json" 2>/dev/null); tot=$(( tot + ${n:-0} ))
+      n=$(jq -r '.stats.total_output_tokens // .usage.completion_tokens // 0' "$TMP/agent$a.json" 2>/dev/null); tot=$(( tot + ${n:-0} ))
       tps_list+=($(jq -r '.stats.tokens_per_second // empty' "$TMP/agent$a.json" 2>/dev/null))
     done
     agg=$(awk -v t=$tot -v w=$wall 'BEGIN{printf "%.2f", t/w}'); per=$(median $tps_list)

@@ -1,1 +1,1 @@
-2026-11-20 18:35 Nov 20 2026 - LM Studio: Qwen 3.5 runs thinking-on as the standard (no scary warning)
+2026-11-20 18:50 Nov 20 2026 - LM Studio: Qwen thinking OFF for real (raw no-think prompt via /api/v0/completions)
