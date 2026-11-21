@@ -135,8 +135,22 @@ att_resume_bg() {
 }
 # zsh runs an EXIT trap set inside a function as soon as that function returns,
 # so the wake-up trap is set here, when the test script loads this file.
-trap 'att_resume_bg' EXIT
-trap 'att_resume_bg; exit 130' INT TERM HUP
+# Copy this Mac's results onto any plugged-in test drive (Results/<Mac name>), so
+# Claude can read them on the Mac Studio without photos. Runs when a test ends.
+att_sync_results() {
+  [[ -n $ATT_NOSYNC ]] && return 0
+  [[ -n $ATT_BG_PARENT && $ATT_BG_PARENT != $$ ]] && kill -0 $ATT_BG_PARENT 2>/dev/null && return 0   # the outer test syncs
+  local root=${ATT_TOOLS_DIR:h} mac d n=0
+  [[ $root == /Volumes/* ]] && return 0
+  mac=$(scutil --get ComputerName 2>/dev/null); [[ -d "$root/Results/$mac" ]] || return 0
+  for d in /Volumes/*/"Adam Talks Tech Tests"/Results(N/); do
+    mkdir -p "$d/$mac" && rsync -a "$root/Results/$mac/" "$d/$mac/" 2>/dev/null && (( n++ ))
+  done
+  (( n )) && print "Results copied to the plugged-in drive(s): Results/$mac"
+  return 0
+}
+trap 'att_resume_bg; att_sync_results' EXIT
+trap 'att_resume_bg; att_sync_results; exit 130' INT TERM HUP
 
 # Every cooldown is also saved to Results/<Mac>/cooldowns.csv (date, time, test, waited s, result)
 att_cool_log() {   # $1 waited seconds, $2 result
