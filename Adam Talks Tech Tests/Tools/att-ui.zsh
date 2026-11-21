@@ -1,0 +1,130 @@
+# att-ui.zsh - hands-off helpers for tests that drive apps (sourced, Nov 20 2026)
+# Numbers: knows when a document has opened (Numbers is scriptable).
+# Final Cut: knows when the library is open, clicks "Update" on an old library,
+# and clicks File > Share > Apple Devices 4K > Next > Save into a folder.
+# Needs Terminal allowed in System Settings > Privacy & Security > Accessibility
+# (att_ui_setup asks once, at the START of a test, never in the middle).
+zmodload zsh/datetime
+
+att_say() { print "  ** $*"; say -v Samantha "$*" >/dev/null 2>&1 & }
+
+att_ui_setup() {   # call before the timed part. Returns 0 when UI control works.
+  local ok
+  ok=$(osascript -e 'tell application "System Events" to get UI elements enabled' 2>/dev/null)
+  if [[ $ok != true ]]; then
+    print "\nONE-TIME SETUP: let Terminal click buttons for you (so you don't have to mid-test)."
+    print "  System Settings > Privacy & Security > Accessibility > turn ON Terminal"
+    print "  (if Terminal isn't listed, click + and add Applications/Utilities/Terminal)."
+    open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+    print -n "  Press Return when it's on. "; read -r
+    ok=$(osascript -e 'tell application "System Events" to get UI elements enabled' 2>/dev/null)
+    [[ $ok == true ]] || { print "  Still off. The test will ask you to click Share yourself."; return 1; }
+  fi
+  # Trigger the "Terminal wants to control Numbers" prompt now instead of mid-test
+  osascript -e 'tell application "Numbers" to launch' >/dev/null 2>&1
+  osascript -e 'tell application "Numbers" to count documents' >/dev/null 2>&1
+  osascript -e 'tell application "Numbers" to quit saving no' >/dev/null 2>&1; sleep 2
+  return 0
+}
+
+# Seconds from now until Numbers has a document open and readable (max $1 s, default 600)
+att_numbers_wait() {
+  local t0=$EPOCHREALTIME max=${1:-600} r
+  while (( EPOCHREALTIME - t0 < max )); do
+    r=$(osascript -e 'tell application "Numbers"
+      if (count of documents) is 0 then return "no"
+      try
+        tell sheet 1 of document 1 to set n to count of tables
+        return "yes"
+      on error
+        return "no"
+      end try
+    end tell' 2>/dev/null)
+    [[ $r == yes ]] && { printf "%.1f" $(( EPOCHREALTIME - t0 )); return 0; }
+    sleep 0.5
+  done
+  return 1
+}
+
+# Wait until Final Cut has the library open and has settled. $1 app name, $2 library path
+att_fcp_wait() {
+  local app=$1 lib=$2 t0=$EPOCHSECONDS quiet=0 cpu pid
+  while (( EPOCHSECONDS - t0 < 600 )); do
+    osascript -e "tell application \"System Events\" to tell process \"$app\"
+      repeat with w in windows
+        try
+          if exists button \"Update\" of w then click button \"Update\" of w
+        end try
+        try
+          repeat with s in sheets of w
+            if exists button \"Update\" of s then click button \"Update\" of s
+          end repeat
+        end try
+      end repeat
+    end tell" >/dev/null 2>&1
+    if lsof -c "Final Cut" 2>/dev/null | grep -q "${lib:t}"; then
+      pid=$(pgrep -x "$app" | head -1)
+      cpu=$(ps -o %cpu= -p $pid 2>/dev/null | awk '{printf "%d", $1}')
+      if (( ${cpu:-100} < 40 )); then (( quiet++ )); else quiet=0; fi
+      (( quiet >= 5 )) && { print "  Final Cut has the library open (settled after $(( EPOCHSECONDS - t0 ))s)."; return 0; }
+    fi
+    sleep 1
+  done
+  print "  Final Cut didn't settle in 10 min, carrying on."; return 1
+}
+
+# Share the timeline with Apple Devices 4K into folder $2. Sets SHARE_START (epoch) on success.
+att_fcp_share() {
+  local app=$1 dir=$2 r i
+  SHARE_START=""
+  open -a "$app"; sleep 2
+  r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
+    set frontmost to true
+    delay 1
+    keystroke \"2\" using command down
+    delay 1
+    set target to missing value
+    repeat with mi in menu items of menu 1 of menu item \"Share\" of menu \"File\" of menu bar 1
+      try
+        if (name of mi) starts with \"Apple Devices 4K\" then set target to contents of mi
+      end try
+    end repeat
+    if target is missing value then return \"NODEST\"
+    if not (enabled of target) then return \"DISABLED\"
+    click target
+    return \"OK\"
+  end tell" 2>&1)
+  [[ $r == OK ]] || { print "  Share menu: $r"; return 1; }
+  # Share window: click Next
+  for i in {1..40}; do
+    r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
+      repeat with w in windows
+        try
+          set bs to (buttons of w whose name starts with \"Next\")
+          if (count of bs) > 0 then
+            click item 1 of bs
+            return \"OK\"
+          end if
+        end try
+      end repeat
+      return \"no\"
+    end tell" 2>/dev/null)
+    [[ $r == OK ]] && break; sleep 0.5
+  done
+  [[ $r == OK ]] || { print "  Couldn't find the Next button."; return 1; }
+  sleep 2
+  # Save sheet: go to the folder, then Save
+  osascript -e "tell application \"System Events\" to tell process \"$app\"
+    keystroke \"g\" using {command down, shift down}
+    delay 1
+    keystroke \"$dir\"
+    delay 0.7
+    keystroke return
+    delay 1.5
+  end tell" >/dev/null 2>&1 || return 1
+  SHARE_START=$EPOCHREALTIME
+  osascript -e "tell application \"System Events\" to tell process \"$app\" to keystroke return" >/dev/null 2>&1 || return 1
+  # Confirm it really started: a file shows up in the folder within 90 s
+  for i in {1..90}; do [[ -n $(print -l "$dir"/*(N.)) ]] && return 0; sleep 1; done
+  print "  Nothing showed up in the Export folder."; SHARE_START=""; return 1
+}

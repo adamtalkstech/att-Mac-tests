@@ -14,8 +14,10 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.
 #    cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 #  Options in front:  SETTLE=600 (seconds everything sits open, default 10 min)
 #                     BIG=1 / BIG=0 (also load Qwen3.8 27B on top; default: only on 32GB+)
-#  You do 3 things by hand: say when Final Cut has the library open, say when the
-#  Numbers Dashboard has filled in, and click Share in Final Cut for the export.
+#  Hands-off (Nov 20 v2): the script times Numbers itself, waits for Final Cut to
+#  open the library (clicks Update if asked), and clicks File > Share > Apple
+#  Devices 4K > Next > Save into the Export folder. One-time: allow Terminal in
+#  Accessibility (it asks at the start). MANUAL=1 in front = the old press-Return way.
 #
 #  Results: Results/<Mac>/Memory (logger CSV + stacker_<mode>_<date>.txt) and the
 #  export time in Results/<Mac>/Exports/exports.csv.
@@ -81,11 +83,39 @@ quit_app()  { osascript -e "tell application \"$1\" to quit saving no" >/dev/nul
 clear_export() { local e="$ROOT/Export"; mkdir -p "$e"; [[ -n $(ls -A "$e" 2>/dev/null) ]] || return 0
   local d="$ROOT/_To Delete/old exports $(date +%H%M%S)"; mkdir -p "$d"; mv "$e"/* "$d"/ 2>/dev/null; print "  (moved old files out of Export into ${d:t})"; }
 lms_load()  { "$LMS" load "$1" --yes --context-length 8192 >/dev/null 2>&1 && print "  loaded ${1:t}" || print "  !! couldn't load $1"; }
+numbers_ready() {
+  if (( UIOK )) && NUM_S=$(att_numbers_wait 600); then print "  Numbers open: ${NUM_S}s (timed by the script)"
+  else NUM_S=$(timed "When the Numbers Dashboard has filled in:"); fi
+}
+fcp_ready() { if (( UIOK )); then att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; else ask "$1"; fi; }
+fcp_export() {   # $1 label for the export log
+  if (( UIOK )) && att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
+    print "  Script clicked Share > Apple Devices 4K > Save. Timing it."
+    zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" START=$SHARE_START
+  else
+    att_say "Final Cut needs you. Share the 3 minute 4K project, Apple Devices 4K, to the Export folder."
+    print "  In Final Cut: Share the 3-min 4K project to Adam Talks Tech Tests/Export (Apple Devices 4K)."
+    print "  No need to press anything in Terminal: the clock starts when the file appears."
+    zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" AUTO=1
+  fi
+  # Right project? The 3-min test project is "universal control on mac 3 min"
+  local f=$(ls "$ROOT/Export" 2>/dev/null | grep -v '^\.' | head -1)
+  if [[ -n $f && ${(L)f} != *"3 min"* ]]; then
+    EXPORT_NOTE="WRONG PROJECT exported ($f): open 'universal control on mac 3 min' in the timeline, quit Final Cut, rerun"
+    att_say "Wrong project exported. Check the card."
+  else EXPORT_NOTE="file: ${f:-none}"; fi
+}
 
 print "================ ATT Closer vs Stacker: $MODE ================"
 print "Mac: $MACNAME | $(sysctl -n machdep.cpu.brand_string) | ${RAM_GB}GB"
 print "Workbook: ${WB:t}   Settle: ${SETTLE}s   27B on top: $([[ $BIG == 1 ]] && print yes || print no)"
 print "================================================================"
+
+# Hands-off: Terminal clicks Final Cut / reads Numbers itself (asks for permission once, now)
+source "$ROOT/Tools/att-ui.zsh"; UIOK=0
+(( ${MANUAL:-0} )) || { att_ui_setup && UIOK=1; }
+(( UIOK )) && print "Hands-off mode: you don't need to touch anything until the card prints." \
+           || print "Manual mode: you'll press Return for Numbers / Final Cut and click Share."
 
 att_cooldown
 "$LMS" unload --all >/dev/null 2>&1
@@ -101,26 +131,24 @@ NUM_S=""; EXPORT_NOTE=""
 if [[ $MODE == closer ]]; then
   step "safari 20 tabs"; open_tabs 20; sleep 30
   step "safari quit"; quit_app Safari
-  step "numbers open"; open -a Numbers "$WB"; NUM_S=$(timed "When the Numbers Dashboard has filled in:")
+  step "numbers open"; open -a Numbers "$WB"; numbers_ready
   step "numbers quit"; quit_app Numbers
   step "qwen 9b loaded"; lms_load "$Q9"; sleep 30
   step "qwen unloaded"; "$LMS" unload --all >/dev/null 2>&1
-  step "final cut open"; open -a "$FCP_APP" "$LIB"; ask "When Final Cut has the Test Library open:"
+  step "final cut open"; open -a "$FCP_APP" "$LIB"; fcp_ready "When Final Cut has the Test Library open:"
   step "final cut export"; clear_export
-  print "  In Final Cut: Share the 3-min 4K project to Adam Talks Tech Tests/Export (Apple Devices 4K)."
-  zsh "$ROOT/Tools/att-export-timer.zsh" "" "FCP 3-min 4K, closer ($MACNAME)"
+  fcp_export "FCP 3-min 4K, closer ($MACNAME)"
   step "final cut quit"; quit_app "$FCP_NAME"
 else
   step "safari 80 tabs"; open_tabs 80; sleep 30
-  step "final cut open"; open -a "$FCP_APP" "$LIB"; ask "When Final Cut has the Test Library open (stacked 6K timeline showing):"
-  step "numbers open"; open -a Numbers "$WB"; NUM_S=$(timed "When the Numbers Dashboard has filled in:")
+  step "final cut open"; open -a "$FCP_APP" "$LIB"; fcp_ready "When Final Cut has the Test Library open (stacked 6K timeline showing):"
+  step "numbers open"; open -a Numbers "$WB"; numbers_ready
   step "qwen 9b loaded"; lms_load "$Q9"
   if (( BIG )); then sleep 60; step "qwen 27b loaded"; "$LMS" unload --all >/dev/null 2>&1; lms_load "$Q27"; fi
   step "everything open, settling"
   for (( s = SETTLE; s > 0; s -= 60 )); do print "  everything stays open: $(( s / 60 )) min left"; sleep $(( s < 60 ? s : 60 )); done
   step "final cut export under load"; clear_export
-  print "  In Final Cut: Share the 3-min 4K project to Adam Talks Tech Tests/Export (Apple Devices 4K)."
-  zsh "$ROOT/Tools/att-export-timer.zsh" "" "FCP 3-min 4K, stacker ($MACNAME)"
+  fcp_export "FCP 3-min 4K, stacker ($MACNAME)"
 fi
 step "done"; sleep 10
 
@@ -135,6 +163,7 @@ att_card_start "RAM: $MODE run (Safari, Final Cut, Numbers, LM Studio)"
 {
 print "Mode:                 $MODE   (${RAM_GB}GB, settle ${SETTLE}s, 27B on top: $BIG)"
 print "Final Cut 3-min export: ${EXP:-?} s $([[ $MODE == stacker ]] && print '(with everything open)')"
+print "Export check:         $EXPORT_NOTE"
 print "Numbers open to Dashboard: ${NUM_S:-?} s"
 print "Peak swap:            $(val 'Peak swap GB') GB   (start $(val 'Swap at start GB') GB)"
 print "Peak compressed:      $(val 'Peak compressed GB') GB"

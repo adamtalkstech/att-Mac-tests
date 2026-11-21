@@ -51,13 +51,14 @@ MACNAME=$(scutil --get ComputerName 2>/dev/null); MACNAME=${MACNAME:-$(hostname 
 LABEL="${1:-$MACNAME}"
 TEST="${2:-Export}"
 shift 2 2>/dev/null
-FOLDER="$ROOT/Export"; STABLE=30; COUNT=0; AUTO=0
+FOLDER="$ROOT/Export"; STABLE=30; COUNT=0; AUTO=0; START_AT=""
 for a in "$@"; do
   case $a in
     FOLDER=*) FOLDER="${a#FOLDER=}"; FOLDER="${~FOLDER}" ;;
     STABLE=*) STABLE="${a#STABLE=}" ;;
     COUNT=*)  COUNT="${a#COUNT=}" ;;
     AUTO=*)   AUTO="${a#AUTO=}" ;;
+    START=*)  START_AT="${a#START=}" ;;   # clock start given by a script that clicked Share itself
     *) print "Unknown option: $a"; exit 1 ;;
   esac
 done
@@ -85,7 +86,7 @@ snapshot() {
 }
 
 snapshot
-if (( SNAP_N > 0 )); then
+if (( SNAP_N > 0 )) && [[ -z $START_AT ]]; then
   print "The folder isn't empty: $FOLDER"
   print "It has $SNAP_N file(s). Empty it (or pick another folder with FOLDER=...) so"
   print "old files can't count toward this export, then run the script again."
@@ -102,7 +103,11 @@ print "=================================================="
 print "Set this folder as the export location in the app."
 [[ $FOLDER == /Volumes/* ]] && print "!! This folder is on an external drive. The export would time the drive, not the Mac.\n   Copy the test folder to ~/Downloads (att-copy-tests.zsh) and run it from there."
 
-if (( AUTO )); then
+if [[ -n $START_AT ]]; then
+  START=$START_AT
+  print "Clock started by the script when it clicked Save ($(strftime '%I:%M:%S %p' ${START_AT%.*})). Hands off."
+  AUTO=2
+elif (( AUTO )); then
   print "AUTO mode: the clock starts when the first file appears."
   START=""
 else

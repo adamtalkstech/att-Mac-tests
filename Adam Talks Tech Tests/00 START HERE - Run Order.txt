@@ -166,7 +166,15 @@ The scripted tests do this on their own.
         cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
       Restart again, then the stacker:
         cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-      You press Return when Final Cut / Numbers have loaded and click Share in Final Cut.
+      HANDS-OFF: start it and walk away. The script times Numbers itself, waits for
+      Final Cut, and clicks Share > Apple Devices 4K > Save into the Export folder.
+      One-time per Mac, at the START: it asks you to turn on Terminal in Privacy &
+      Security > Accessibility, and macOS asks "Terminal wants to control..." (OK).
+      It exports whatever project is in Final Cut's timeline, so in the WARM-UP leave
+      "universal control on mac 3 min" open in the timeline when Final Cut quits.
+      The card says WRONG PROJECT if anything else got exported.
+      If a click fails it SAYS "Final Cut needs you" out loud: click Share yourself,
+      no need to touch Terminal. MANUAL=1 in front = old press-Return way.
       Photo the box from each run. If it hangs, put NOPAUSE=1 in front and rerun.
 [ ] 18. Draw Things image gen (Z-Image Turbo, same model on every Mac). Drive plugged in:
           cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
