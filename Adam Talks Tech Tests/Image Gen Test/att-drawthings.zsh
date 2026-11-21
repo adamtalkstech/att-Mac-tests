@@ -12,8 +12,11 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || { att_card_start() { print
 #    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 #    ... zsh att-drawthings.zsh save    (once, on the Mac that downloaded Z-Image
 #        Turbo in Draw Things: puts the model files on the plugged-in drive)
+#    ... zsh att-drawthings.zsh check   (setup check: app, model, API server, one
+#        small test image. Nothing timed or logged.)
 #  Options in front: TESTS=standard (skip the 2048 stress run)
 # =============================================================================
+zmodload zsh/datetime
 KIT=${0:A:h}
 NAME="Adam Talks Tech Tests"
 DT_MODELS="$HOME/Library/Containers/com.liuliu.draw-things/Data/Documents/Models"
@@ -33,6 +36,34 @@ if [[ ${1:-} == save ]]; then
   [[ $yn == [yY]* ]] || exit 0
   ditto "$DT_MODELS" "$dest" && print "Saved. Other Macs copy it in by themselves."
   exit 0
+fi
+
+if [[ ${1:-} == check ]]; then
+  # Quick setup check: no timing, nothing logged. Tells you what's missing.
+  ok() { print "  OK    $*"; }; bad() { print "  FIX   $*"; FAIL=1; }; FAIL=0
+  print "Draw Things setup check"
+  APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.liuliu.draw-things'" 2>/dev/null | grep '\.app$' | head -1)
+  [[ -z $APP && -d "/Applications/Draw Things.app" ]] && APP="/Applications/Draw Things.app"
+  [[ -n $APP ]] && ok "App installed: $(defaults read "$APP/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null)" || bad "Draw Things isn't installed (free, Mac App Store)"
+  if [[ -n $(print -l "$DT_MODELS"/${~MATCH}(N)) ]]; then ok "Z-Image Turbo files on this Mac: $(print -l "$DT_MODELS"/${~MATCH}(N) | sed 's|.*/||' | tr '\n' ' ')"
+  else src=$(drive_dirs | head -1)
+    [[ -n $src && -n $(print -l "$src"/${~MATCH}(N)) ]] && ok "Z-Image Turbo not on this Mac yet, but the drive has it (the test copies it in)" \
+      || bad "Z-Image Turbo isn't on this Mac or a drive: in Draw Things tap the model name > search Z-Image Turbo > download"
+  fi
+  if curl -sf -m 5 "$URL/" >/dev/null 2>&1; then ok "API server answering on port 7860"
+    m=$(curl -sf -m 10 "$URL/" | grep -o '"model" *: *"[^"]*"' | head -1 | sed -E 's/.*: *"([^"]*)"/\1/')
+    [[ ${(L)m} == *z_image* ]] && ok "Selected model: $m" || bad "Selected model is \"$m\": pick Z-Image Turbo"
+    if [[ ${(L)m} == *z_image* ]]; then
+      print "  ...   making one small test image (512x512, 4 steps)"
+      t0=$EPOCHREALTIME
+      r=$(curl -sf -m 600 -H 'Content-Type: application/json' -X POST "$URL/sdapi/v1/txt2img" \
+          --data '{"prompt":"a cat working on a laptop with nachos on the side","seed":42,"width":512,"height":512,"steps":4,"batch_size":1,"batch_count":1}')
+      if [[ $r == *'"images"'* && ${#r} -gt 1000 ]]; then ok "Test image made in $(printf %.1f $(( EPOCHREALTIME - t0 )))s"
+      else bad "The API answered but didn't return an image: ${r[1,150]}"; fi
+    fi
+  else bad "API server is off: Draw Things > Settings > API Server ON, HTTP, port 7860 (leave Draw Things open)"; fi
+  (( FAIL )) && print "\nNot ready yet: fix the FIX lines and run the check again." || print "\nREADY. Run the test:  zsh att-drawthings.zsh   (first Mac: then  zsh att-drawthings.zsh save  with a drive plugged in)"
+  exit $FAIL
 fi
 
 [[ $KIT == /Volumes/* ]] && { print "This is on an external drive. Run it from ~/Downloads/$NAME/Image Gen Test."; exit 1; }

@@ -1,3 +1,4 @@
+2026-11-21 06:25 Nov 21 2026 - Draw Things: zsh att-drawthings.zsh check (setup check + one small test image)
 2026-11-20 23:30 Nov 20 2026 - New Tools/att-queue.zsh (every scripted test unattended) + results copy to a plugged-in drive automatically
 2026-11-20 23:05 Nov 20 2026 - Every test pauses Photos/Spotlight/Siri scanning (SSD, WebKit, memory, export timer, mflux added; att-ready holds the pause until Return)
 2026-11-20 22:55 Nov 20 2026 - Cooldown check names the busiest apps every minute it waits
