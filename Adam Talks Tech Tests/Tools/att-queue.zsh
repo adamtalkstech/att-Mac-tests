@@ -89,6 +89,12 @@ if (( ${#want} )); then
   zsh "$ROOT/AI Tests/att-models.zsh" get ${(u)want}
   (( ${RUN[(I)gemma]} )) && zsh "$ROOT/AI Tests/att-models.zsh" park gemma-3-4b-it-GGUF '*gemma-3-4b*'
 fi
+# Copying models restarts LM Studio; close it again so it can't sit there during
+# the Blender/HandBrake tests (the AI tests open it themselves when they need it).
+if pgrep -xq "LM Studio"; then
+  osascript -e 'quit app "LM Studio"' >/dev/null 2>&1; sleep 5
+  pgrep -xq "LM Studio" && pkill -x "LM Studio" 2>/dev/null
+fi
 afplay /System/Library/Sounds/Glass.aiff 2>/dev/null
 print "\n>>> All set. You can unplug the drive and walk away. Don't use this Mac until it's done. <<<\n"
 

@@ -1,3 +1,4 @@
+2026-11-21 06:55 Nov 21 2026 - Queue closes LM Studio after copying models
 2026-11-21 06:50 Nov 21 2026 - Draw Things: App Nap off for the app
 2026-11-21 06:40 Nov 21 2026 - Draw Things: cooldown no longer quits the app (process is DrawThings); reopens it if closed
 2026-11-21 06:35 Nov 21 2026 - Draw Things check spots the Full Disk Access block
