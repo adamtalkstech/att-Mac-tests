@@ -193,7 +193,9 @@ case $1 in
   setup) cmd_setup ;;
   test) cmd_test ;;
   now) cmd_auto "manual upload" ;;
-  all) ATT_UPLOAD_ALL=1 cmd_auto "full backfill" ;;
+  all)   # first gather the Puget CSVs that app runs left in Puget's own folder
+    [[ -f "$ROOT/Puget Test/att-puget.zsh" ]] && ( cd "$ROOT/Puget Test" && NOUPLOAD=1 zsh att-puget.zsh collect >/dev/null 2>&1 ) && say "Gathered the Puget CSVs into Results first."
+    ATT_UPLOAD_ALL=1 cmd_auto "full backfill" ;;
   save-to-drive) cmd_save_to_drive ;;
   forget) cmd_forget ;;
   auto) cmd_auto "${2:-test}" ;;

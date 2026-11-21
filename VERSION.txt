@@ -1,3 +1,4 @@
+2026-11-21 08:45 Nov 21 2026 - att-upload.zsh all gathers Puget app-run CSVs first (att-puget.zsh collect)
 2026-11-21 08:40 Nov 21 2026 - Uploads tagged with a per-Mac hardware ID (same-named Macs never mix); "all" sends every Results folder separately
 2026-11-21 08:30 Nov 21 2026 - att-upload.zsh all: send every result file a Mac has saved, once
 2026-11-21 08:25 Nov 21 2026 - Results upload to the Mac Tests sheet (Raw Results) + Drive, signed with a secret key (Tools/att-upload.zsh)
