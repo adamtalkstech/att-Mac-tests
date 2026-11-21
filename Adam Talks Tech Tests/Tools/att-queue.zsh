@@ -54,7 +54,7 @@ RUN=(); NOTES=()
 for t in $LIST; do
   [[ -n ${CMD[$t]} ]] || { NOTES+=("$t: unknown test name, skipped"); continue; }
   local_dir="$ROOT/${DIR[$t]}"
-  [[ -f "$local_dir/${${(z)CMD[$t]}[1]}" ]] || { NOTES+=("$t: ${DIR[$t]} folder isn't on this Mac (Tools/att-get.zsh), skipped"); continue; }
+  [[ -f "$local_dir/${CMD[$t]%% *}" ]] || { NOTES+=("$t: ${DIR[$t]} folder isn't on this Mac (Tools/att-get.zsh), skipped"); continue; }
   RUN+=($t)
 done
 (( ${#RUN} )) || { print "Nothing to run."; print -l $NOTES; exit 1; }
