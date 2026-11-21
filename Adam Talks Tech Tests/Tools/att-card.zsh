@@ -166,9 +166,15 @@ att_cooldown() {
     if [[ ${lvl:-0} == 0 ]] && (( load < 150 )); then (( quiet += 5 )); else quiet=0; fi
     (( quiet >= need )) && { print "\nCool and idle. Starting (waited ${waited}s)."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }cooldown ok after ${waited}s"; att_cool_log $waited ok; return 0; }
     print -n "."; sleep 5; (( waited += 5 ))
+    # Every minute it's still waiting, say what's busy so it's not a mystery
+    if (( waited % 60 == 0 )); then
+      print -n "\n  still waiting ($(( waited / 60 )) min): CPU load ${load}%, busiest: $(ps -A -o %cpu=,comm= | sort -rn | head -3 | awk '{n=$NF; sub(".*/","",n); printf "%s %d%%  ", n, $1}')"
+      print -n "\n  "
+    fi
   done
   case ${lvl:-0} in 0) name=Nominal;; 1) name=Moderate;; 2) name=Heavy;; *) name="level $lvl";; esac
   print "\n!! Still not cool/idle after 10 min (heat: $name, CPU load ${load}%). Starting anyway; note it in the results."
+  print "   Busiest right now: $(ps -A -o %cpu=,comm= | sort -rn | head -5 | awk '{n=$NF; sub(".*/","",n); printf "%s %d%%  ", n, $1}')"
   ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING not cool after 10 min (heat $name, load ${load}%)"
   att_cool_log $waited "gave up (heat $name, load ${load}%)"
 }
