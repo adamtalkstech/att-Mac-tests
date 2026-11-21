@@ -8,6 +8,9 @@ zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh setup
 Send a test ping:
 zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh test
 
+Send EVERY result this Mac has ever saved (do this once per Mac after setup):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all
+
 Upload anything not sent yet:
 zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh now
 

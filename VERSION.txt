@@ -1,3 +1,4 @@
+2026-11-21 08:30 Nov 21 2026 - att-upload.zsh all: send every result file a Mac has saved, once
 2026-11-21 08:25 Nov 21 2026 - Results upload to the Mac Tests sheet (Raw Results) + Drive, signed with a secret key (Tools/att-upload.zsh)
 2026-11-21 08:10 Nov 21 2026 - Commands folder (one copy-paste file per step); sustained password can't time out during the 10-min rest anymore
 2026-11-21 07:15 Nov 21 2026 - Name wallpapers now come with Update Scripts; new M6 MINI 24GB 256GB and 512GB cards

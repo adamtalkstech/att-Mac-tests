@@ -23,6 +23,7 @@
 #   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh setup       (each Mac)
 #   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh test        (sends a test ping)
 #   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh now         (upload anything not sent yet)
+#   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all         (send EVERY result file on this Mac, once)
 #   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh save-to-drive   (copy this Mac's setup to plugged-in drives)
 #   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh forget      (remove the key from this Mac)
 #  Turn it off for one run: NOUPLOAD=1 in front of any test.
@@ -136,7 +137,9 @@ cmd_auto() {
   local dir="$ROOT/Results/$mac"
   [[ -d $dir ]] || return 0
   local -a files
-  if [[ -f $MARK ]]; then
+  if [[ -n $ATT_UPLOAD_ALL ]]; then   # att-upload.zsh all: every text result file on this Mac
+    files=("${(@f)$(cd "$dir" && find . -type f \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) 2>/dev/null)}")
+  elif [[ -f $MARK ]]; then
     files=("${(@f)$(cd "$dir" && find . -type f \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) -newer "$MARK" 2>/dev/null)}")
   else   # first upload on this Mac: last 2 days only
     files=("${(@f)$(cd "$dir" && find . -type f \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) -mtime -2 2>/dev/null)}")
@@ -165,6 +168,7 @@ case $1 in
   setup) cmd_setup ;;
   test) cmd_test ;;
   now) cmd_auto "manual upload" ;;
+  all) ATT_UPLOAD_ALL=1 cmd_auto "full backfill" ;;
   save-to-drive) cmd_save_to_drive ;;
   forget) cmd_forget ;;
   auto) cmd_auto "${2:-test}" ;;
