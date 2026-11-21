@@ -20,6 +20,7 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.
 # v1.1: moved into Blender Test (uses the same classroom scene), results in the
 #       test folder instead of the Desktop, CSV row for the sheet, refuses to run
 #       from the LaCie, no more renaming from .txt.
+# v1.4: untimed Blender warm-up before the rest, so first-launch checks don't slow run 1.
 # v1.3: logs fan RPM every 5 s (Tools/att-fans.c), avg/max per run on the card + CSV.
 
 DEVICE="${1:-CPU}"            # CPU or GPU
@@ -67,7 +68,7 @@ POWER=$(pmset -g batt | head -1 | sed "s/.*'\(.*\)'.*/\1/")
 LOWPOWER=$(pmset -g | awk '/lowpowermode/ {print $2}')
 BVER=$("$BLENDER" -v 2>/dev/null | head -1)
 
-echo "============ ATT Sustained Load Test v1.3 ============"
+echo "============ ATT Sustained Load Test v1.4 ============"
 echo "Mac:      $MACNAME  |  $MODEL  |  $CHIP  |  ${RAM_GB}GB"
 echo "macOS:    $MACOS"
 echo "Blender:  $BVER"
@@ -112,6 +113,12 @@ parse_pm() {
 # build the fan reader now (first time on a Mac) so it doesn't happen mid-test
 if att_fans_bin >/dev/null 2>&1; then echo "Fans: will be logged every 5 s."
 else echo "Fans: can't be logged on this Mac (no fan reader yet, see Tools/att-fans.zsh). The test still runs."; fi
+
+# Untimed warm-up: open Blender and load the scene once, so macOS's first-launch checks
+# (kernelmanager_helper etc.) and the cold scene load don't land inside run 1.
+# Added Nov 20 2026 after the PROLED's run 1 started at ~20W for 30s on two runs in a row.
+echo "Warm-up: opening Blender + the scene once (not timed)..."
+"$BLENDER" -b "$BLEND" --python-expr "import bpy" > "$RUN_DIR/warmup.log" 2>&1
 
 att_cooldown
 typeset -a TIMES FAN_AVGS FAN_MAXS
@@ -166,7 +173,7 @@ kill $KEEPALIVE 2>/dev/null
 DROP=$(printf "%.1f" $(( (${TIMES[-1]} - ${TIMES[1]}) / ${TIMES[1]} * 100 )))
 att_card_start "Sustained load (heat), Classroom $DEVICE x$RUNS back to back"
 {
-  echo "ATT Sustained Load Test v1.3  -  $(date)"
+  echo "ATT Sustained Load Test v1.4  -  $(date)"
   echo "Mac: $MACNAME | $MODEL | $CHIP | ${RAM_GB}GB | macOS $MACOS | $BVER"
   echo "Classroom, $DEVICE, $RUNS runs back to back, no cooldown, Power: $POWER"
   echo ""
