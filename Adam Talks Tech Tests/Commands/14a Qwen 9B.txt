@@ -1,0 +1,1 @@
+cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen9b

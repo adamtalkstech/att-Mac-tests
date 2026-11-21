@@ -1,0 +1,2 @@
+Gearspace project, buffer 256 then 32, unmute until overload. Then log it:
+cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"

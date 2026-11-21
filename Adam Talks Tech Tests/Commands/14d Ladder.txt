@@ -1,0 +1,3 @@
+cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
+
+32GB+ only. Load all four 27B versions first (AI Models load).

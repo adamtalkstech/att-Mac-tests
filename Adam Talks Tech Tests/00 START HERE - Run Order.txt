@@ -56,6 +56,7 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
 
 ==================================================================
 D. ONE AT A TIME  (same tests as the queue, if you'd rather run just one)
+   Every command also has its own file in the Commands folder (one per step, easy to copy).
 ==================================================================
   8   Xcode        cd ~/Downloads/"Adam Talks Tech Tests"/"Xcode Test" && zsh xcode-bench.sh
   9   Blender      cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh

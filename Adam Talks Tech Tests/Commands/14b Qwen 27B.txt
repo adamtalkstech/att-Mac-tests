@@ -1,0 +1,3 @@
+cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
+
+LM Studio guardrails Relaxed. 24GB Macs usually need Off for this one (set it back after).

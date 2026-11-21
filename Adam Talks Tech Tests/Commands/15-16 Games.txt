@@ -1,0 +1,5 @@
+Run this first and leave its window open (quits apps, pauses scanning, waits till cool):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Cinebench 2026"
+
+15 Cyberpunk: drag "Adam Talks Tech Games" into Downloads, Steam > Storage > Add Drive > that Steam Library. Built-in benchmark, 4 passes, screenshot each.
+16 War Thunder: same Steam library. Built-in benchmark, throwaway run, log the 2nd.

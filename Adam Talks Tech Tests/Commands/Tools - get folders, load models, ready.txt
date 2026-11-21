@@ -1,0 +1,11 @@
+Pull a missing test folder onto a small Mac (Mini Kit / Air Kit):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh
+
+Load the AI models onto this Mac:
+cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh att-models.zsh load
+
+Get ready for a hands-on test (Geekbench, Cinebench, Logic, games):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Cinebench 2026"
+
+Version card (each test day):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-versions.zsh

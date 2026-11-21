@@ -1,0 +1,8 @@
+Restart, then the closer:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+
+Restart again, then the stacker:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+
+Hands-off. First time on a Mac: allow Terminal in Privacy & Security > Accessibility, and the first closer is a warm-up (don't log it).
+Final Cut timeline must have "universal control on mac 3 min" open. If it hangs: NOPAUSE=1 in front of zsh.

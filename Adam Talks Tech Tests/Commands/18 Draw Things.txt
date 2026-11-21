@@ -1,0 +1,9 @@
+Draw Things open, Settings > API Server ON (HTTP, 7860).
+Check it's ready:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
+
+Run it:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+
+First Mac only, after downloading Z-Image Turbo (drive plugged in):
+cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh save

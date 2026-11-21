@@ -1,0 +1,1 @@
+cd ~/Downloads/"Adam Talks Tech Tests"/"Xcode Test" && zsh xcode-bench.sh

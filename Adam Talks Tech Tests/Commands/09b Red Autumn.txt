@@ -1,0 +1,1 @@
+cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh redautumn

@@ -1,0 +1,10 @@
+Resolve:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
+
+The other four:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro" "Photoshop" "Lightroom Classic" "After Effects"
+
+One app (swap the name):
+cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "After Effects"
+
+First run of each app on a new Mac: run it from the Puget app (see PUGET TEST - READ ME). After Effects: run twice, log run 2.

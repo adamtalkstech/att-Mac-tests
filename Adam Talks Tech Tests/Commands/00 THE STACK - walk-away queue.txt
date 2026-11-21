@@ -1,0 +1,15 @@
+THE STACK: every scripted test back to back (Run Order section B)
+Password once, keep-alive built in. Drive plugged in for the first 1-2 min (copies AI models).
+Laptops on Apple's charger, no dock. Don't use the Mac while it runs.
+
+Everything (Xcode, Blender, Red Autumn, HandBrake, sustained, Qwen 9B, 27B, Gemma, + ladder on 32GB+):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+
+Only some (edit the list):
+QUEUE="sustained handbrake qwen9b qwen27b gemma ladder" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+
+Leave some out (edit the list):
+SKIP="xcode blender redautumn" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+
+Names you can use: xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper
+Every card lands in Results/<Mac>/Queue/.

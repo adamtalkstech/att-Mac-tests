@@ -175,14 +175,18 @@ att_cooldown() {
   [[ $NOCOOL == 1 ]] && { print "Cooldown check skipped (NOCOOL=1)."; return 0; }
   local rest=${COOL:-0} need=${QUIET:-60} quiet=0 waited=0 lvl load name
   (( again )) && rest=0
-  if (( rest > 0 )); then print "Resting ${rest}s before the test (COOL=$rest)..."; sleep $rest; fi
+  # Refresh the password from THIS shell during the rest and the wait (Nov 21 fix): a keep-alive
+  # running in a background subshell doesn't always count on macOS, so the password expired
+  # during the 10-min rest and sustained asked again mid-test.
+  if (( rest > 0 )); then print "Resting ${rest}s before the test (COOL=$rest)..."
+    local slept=0; while (( slept < rest )); do sleep 30; (( slept += 30 )); sudo -n -v 2>/dev/null; done; fi
   print -n "Cooldown check: waiting for Nominal heat + ${need}s of idle CPU"
   while (( waited < 600 )); do
     lvl=$(notifyutil -g com.apple.system.thermalpressurelevel 2>/dev/null | awk '{print $NF}')
     load=$(ps -A -o %cpu= | awk '{s+=$1} END {printf "%d", s}')
     if [[ ${lvl:-0} == 0 ]] && (( load < 150 )); then (( quiet += 5 )); else quiet=0; fi
     (( quiet >= need )) && { print "\nCool and idle. Starting (waited ${waited}s)."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }cooldown ok after ${waited}s"; att_cool_log $waited ok; return 0; }
-    print -n "."; sleep 5; (( waited += 5 ))
+    print -n "."; sleep 5; (( waited += 5 )); (( waited % 30 == 0 )) && sudo -n -v 2>/dev/null
     # Every minute it's still waiting, say what's busy so it's not a mystery
     if (( waited % 60 == 0 )); then
       print -n "\n  still waiting ($(( waited / 60 )) min): CPU load ${load}%, busiest: $(ps -A -o %cpu=,comm= | sort -rn | head -3 | awk '{n=$NF; sub(".*/","",n); printf "%s %d%%  ", n, $1}')"

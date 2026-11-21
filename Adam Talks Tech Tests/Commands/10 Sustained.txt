@@ -1,0 +1,6 @@
+cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh sustained-test.sh
+
+If the card shows Background CPU that slowed a run:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && NOPAUSE=1 zsh sustained-test.sh
+
+Laptops on Apple's charger, no dock. Type the password once, walk away (~30 min).

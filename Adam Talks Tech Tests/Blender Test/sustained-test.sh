@@ -140,7 +140,7 @@ for i in {1..$RUNS}; do
   STATUS=$?
   END=$(perl -MTime::HiRes=time -e 'printf "%.3f", time')
 
-  sudo kill $PM_PID 2>/dev/null; wait $PM_PID 2>/dev/null
+  sudo -n kill $PM_PID 2>/dev/null || kill $PM_PID 2>/dev/null; wait $PM_PID 2>/dev/null; sudo -n -v 2>/dev/null
   att_watch_stop 2>/dev/null
   att_fans_stop 2>/dev/null
   BG=$(att_watch_report "$RUN_DIR/background-run$i.txt" 2>/dev/null)
