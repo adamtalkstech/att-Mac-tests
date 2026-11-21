@@ -110,3 +110,4 @@ Nov 20 10:55: att-stacker.zsh now runs closer + stacker in one go (purge + settl
 Nov 20 11:00: games moved to their own top-level drive folder "Adam Talks Tech Games" (Steam Library inside). Drag it to ~/Downloads only for game tests. New Tools/att-install-apps.zsh installs every test app in one go.
 - Nov 20 21:25: lmstudio-bench.sh and att-stacker.zsh now copy the model they need from the kit/drive onto the Mac first (new att-models.zsh get). No separate load step. Run Order step 14 simplified.
 - Nov 20 21:35: lmstudio-bench.sh gemma sets other Gemma 3 4B builds aside (att-models.zsh park, nothing deleted; unpark puts them back) because LM Studio lists MLX and GGUF under one name and loaded the MLX one. It now skips the test instead of running a non-GGUF build.
+- Nov 20 21:40: att_quit_apps no longer keeps TextEdit open (it was showing up as an open app in results).
