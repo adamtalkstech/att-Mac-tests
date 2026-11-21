@@ -131,7 +131,18 @@ MACNAME=$(scutil --get ComputerName)
 export ATT_RESULTS_DIR="${KIT:h}/Results/$MACNAME/Image Tests"
 
 # 5. Cool down, run
-ATT_KEEP="Draw Things${ATT_KEEP:+,$ATT_KEEP}" att_cooldown
+# The app's process is called "DrawThings" (no space): keep both so the cooldown doesn't quit it
+ATT_KEEP="Draw Things,DrawThings${ATT_KEEP:+,$ATT_KEEP}" att_cooldown
+# Safety net: if it got closed anyway, reopen it and wait for the API to come back
+if ! api_ok; then
+  print "Draw Things isn't answering. Reopening it..."
+  open -a "$APP"
+  for i in {1..24}; do api_ok && break; sleep 5; done
+  until api_ok; do
+    print -n "Turn the API Server back on in Draw Things (HTTP, 7860), then press Return. "; read -r
+  done
+  until [[ ${(L)$(cur_model)} == *z_image* ]]; do print -n "Pick Z-Image Turbo as the model, then press Return. "; read -r; done
+fi
 LOG="$ATT_RESULTS_DIR/.drawthings_$(date +%Y%m%d-%H%M%S).out"; mkdir -p "$ATT_RESULTS_DIR"
 cd "$KIT" && "${PY[@]}" att_drawthings_bench.py --tests "${TESTS:-standard,stress}" 2>&1 | tee "$LOG"
 

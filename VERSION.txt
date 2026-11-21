@@ -1,3 +1,4 @@
+2026-11-21 06:40 Nov 21 2026 - Draw Things: cooldown no longer quits the app (process is DrawThings); reopens it if closed
 2026-11-21 06:35 Nov 21 2026 - Draw Things check spots the Full Disk Access block
 2026-11-21 06:30 Nov 21 2026 - Queue no longer runs Draw Things (step 18 by hand)
 2026-11-21 06:25 Nov 21 2026 - Draw Things: zsh att-drawthings.zsh check (setup check + one small test image)

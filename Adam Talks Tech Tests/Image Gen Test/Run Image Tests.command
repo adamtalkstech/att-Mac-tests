@@ -40,7 +40,7 @@ read -r -p "Pick a number: " CHOICE
 read -r -p "Condition (e.g. cool, after Blender) or Return to skip: " COND
 
 # Pause Photos/Spotlight/Siri scanning + cool down like every other ATT test (zsh helper)
-cool_run() { zsh -c 'source "$1" && ATT_KEEP="Terminal,Draw Things,DiffusionBee" att_cooldown; shift; "$@"' _ "$ROOT/Tools/att-card.zsh" "$@"; }
+cool_run() { zsh -c 'source "$1" && ATT_KEEP="Terminal,Draw Things,DrawThings,DiffusionBee,Diffusion Bee" att_cooldown; shift; "$@"' _ "$ROOT/Tools/att-card.zsh" "$@"; }
 [ -f "$ROOT/Tools/att-card.zsh" ] || cool_run() { "$@"; }
 
 ARGS=()
