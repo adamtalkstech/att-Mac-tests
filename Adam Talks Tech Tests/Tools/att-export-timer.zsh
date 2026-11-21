@@ -160,7 +160,7 @@ att_card_end
 
 [[ -f $CSV ]] || print "Date,Time,Mac,Test,Export seconds,First file to last (s),Files,MB,Start mode,Folder,macOS" > "$CSV"
 printf '%s,%s,"%s","%s",%.2f,%.2f,%d,%.1f,%s,"%s",%s\n' "$(strftime %F $EPOCHSECONDS)" "$(strftime %H:%M $EPOCHSECONDS)" \
-  "$LABEL" "$TEST" $TOTAL $FROM_FIRST $SNAP_N $(( SNAP_BYTES / 1048576.0 )) "$( (( AUTO )) && print first-file || print return-key)" \
+  "$LABEL" "$TEST" $TOTAL $FROM_FIRST $SNAP_N $(( SNAP_BYTES / 1048576.0 )) "$( (( AUTO == 2 )) && print script-click || { (( AUTO )) && print first-file || print return-key; })" \
   "$FOLDER" "$(sw_vers -productVersion 2>/dev/null)" >> "$CSV"
 # Same row in this Mac's own Results folder (that's the folder step 99 brings back)
 MCSV="$OUTDIR/$MACNAME/Exports/exports.csv"; mkdir -p "${MCSV:h}"

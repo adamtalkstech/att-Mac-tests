@@ -71,7 +71,8 @@ until api_ok; do
   print "\nTurn on Draw Things' API server: Settings > API Server: ON, HTTP, port 7860."
   print -n "Press Return when it's on (Ctrl-C to stop). "; read -r
 done
-cur_model() { curl -sf -m 10 "$URL/" | /usr/bin/python3 -c 'import json,sys; print(json.load(sys.stdin).get("model",""))' 2>/dev/null || curl -sf -m 10 "$URL/" | grep -o '"model" *: *"[^"]*"' | head -1; }
+# grep only: calling /usr/bin/python3 on a Mac without developer tools pops an install box mid-test
+cur_model() { curl -sf -m 10 "$URL/" | grep -o '"model" *: *"[^"]*"' | head -1 | sed -E 's/.*: *"([^"]*)"/\1/'; }
 until [[ ${(L)$(cur_model)} == *z_image* ]]; do
   print "\nDraw Things has \"$(cur_model)\" selected. Pick Z-Image Turbo as the model."
   print -n "Press Return when it's selected. "; read -r
@@ -83,7 +84,7 @@ PY=()
 if [[ -x "$KIT/.tools/uv/uv" ]]; then
   export UV_CACHE_DIR="$KIT/.tools/uv-cache" UV_PYTHON_INSTALL_DIR="$KIT/.tools/python" UV_OFFLINE=1
   PY=("$KIT/.tools/uv/uv" run --script)
-elif /usr/bin/python3 -c 'import sys' >/dev/null 2>&1 && xcode-select -p >/dev/null 2>&1; then
+elif xcode-select -p >/dev/null 2>&1 && /usr/bin/python3 -c 'import sys' >/dev/null 2>&1; then
   PY=(/usr/bin/python3)
 else
   print "Needs Python: run  xcode-select --install  once, then rerun."; exit 1
