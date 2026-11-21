@@ -1,9 +1,9 @@
 #!/bin/zsh
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; }
-# ATT sustained load test (heat / throttling)  -  v1.1, Nov 16 2026
+# ATT sustained load test (heat / throttling)  -  v1.3, Nov 20 2026
 #
 # Renders Blender's Classroom scene 3 times BACK TO BACK (no cooldown) and logs
-# heat pressure + CPU/GPU watts the whole time, so you can see if a Mac slows
+# heat pressure, CPU/GPU watts and fan speed the whole time, so you can see if a Mac slows
 # down as it heats up.
 #
 # Lives in: Adam Talks Tech Tests/Blender Test (next to the classroom folder)
@@ -20,6 +20,7 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.
 # v1.1: moved into Blender Test (uses the same classroom scene), results in the
 #       test folder instead of the Desktop, CSV row for the sheet, refuses to run
 #       from the LaCie, no more renaming from .txt.
+# v1.3: logs fan RPM every 5 s (Tools/att-fans.c), avg/max per run on the card + CSV.
 
 DEVICE="${1:-CPU}"            # CPU or GPU
 RUNS="${2:-3}"
@@ -66,7 +67,7 @@ POWER=$(pmset -g batt | head -1 | sed "s/.*'\(.*\)'.*/\1/")
 LOWPOWER=$(pmset -g | awk '/lowpowermode/ {print $2}')
 BVER=$("$BLENDER" -v 2>/dev/null | head -1)
 
-echo "============ ATT Sustained Load Test v1.2 ============"
+echo "============ ATT Sustained Load Test v1.3 ============"
 echo "Mac:      $MACNAME  |  $MODEL  |  $CHIP  |  ${RAM_GB}GB"
 echo "macOS:    $MACOS"
 echo "Blender:  $BVER"
@@ -108,8 +109,12 @@ parse_pm() {
     }' "$1"
 }
 
+# build the fan reader now (first time on a Mac) so it doesn't happen mid-test
+if att_fans_bin >/dev/null 2>&1; then echo "Fans: will be logged every 5 s."
+else echo "Fans: can't be logged on this Mac (needs Xcode Command Line Tools). The test still runs."; fi
+
 att_cooldown
-typeset -a TIMES
+typeset -a TIMES FAN_AVGS FAN_MAXS
 for i in {1..$RUNS}; do
   PM_LOG="$RUN_DIR/powermetrics-run$i.txt"
   BL_LOG="$RUN_DIR/blender-run$i.log"
@@ -121,6 +126,7 @@ for i in {1..$RUNS}; do
   sleep 1
 
   att_watch_start "$RUN_DIR/background-run$i.txt" "[Bb]lender" 2>/dev/null
+  att_fans_start "$RUN_DIR/fans-run$i.txt" 2>/dev/null
   echo "Run $i of $RUNS ($DEVICE)..."
   START=$(perl -MTime::HiRes=time -e 'printf "%.3f", time')
   "$BLENDER" -b "$BLEND" -E CYCLES -o "$RUN_DIR/frame-run${i}_####" -f 1 -- --cycles-device $CYCLES_DEV > "$BL_LOG" 2>&1
@@ -129,7 +135,12 @@ for i in {1..$RUNS}; do
 
   sudo kill $PM_PID 2>/dev/null; wait $PM_PID 2>/dev/null
   att_watch_stop 2>/dev/null
+  att_fans_stop 2>/dev/null
   BG=$(att_watch_report "$RUN_DIR/background-run$i.txt" 2>/dev/null)
+  att_fans_report "$RUN_DIR/fans-run$i.txt" > "$RUN_DIR/.fans" 2>/dev/null
+  FANS=$(<"$RUN_DIR/.fans"); FANS=${FANS:-"Fans: not logged"}
+  FAN_AVGS+=${FANS_AVG:--}; FAN_MAXS+=${FANS_MAX:--}
+  rm -f "$RUN_DIR/.fans"
 
   if (( STATUS != 0 )); then
     echo "Run $i FAILED. Last lines of the Blender log:"; tail -15 "$BL_LOG"
@@ -142,8 +153,10 @@ for i in {1..$RUNS}; do
   M=$(( ${SECS%.*} / 60 )); S=$(printf "%05.2f" $(( SECS - M*60 )))
   echo "  Run $i: ${M}:${S}  |  CPU avg ${A_CPU}W (first 30s ${F_CPU}W, last 30s ${L_CPU}W)  |  GPU avg ${A_GPU}W"
   echo "         heat pressure samples: Nominal $NOM, Moderate $MOD, Heavy $HEV, other $OTH"
+  echo "         $FANS"
   echo "         $BG"
   echo "Run $i: ${SECS}s | CPU avg ${A_CPU}W, first30 ${F_CPU}W, last30 ${L_CPU}W | GPU avg ${A_GPU}W | Nominal $NOM Moderate $MOD Heavy $HEV Other $OTH" >> "$RUN_DIR/runs.txt"
+  echo "   $FANS" >> "$RUN_DIR/runs.txt"
   echo "   $BG" >> "$RUN_DIR/runs.txt"
 done
 
@@ -153,7 +166,7 @@ kill $KEEPALIVE 2>/dev/null
 DROP=$(printf "%.1f" $(( (${TIMES[-1]} - ${TIMES[1]}) / ${TIMES[1]} * 100 )))
 att_card_start "Sustained load (heat), Classroom $DEVICE x$RUNS back to back"
 {
-  echo "ATT Sustained Load Test v1.2  -  $(date)"
+  echo "ATT Sustained Load Test v1.3  -  $(date)"
   echo "Mac: $MACNAME | $MODEL | $CHIP | ${RAM_GB}GB | macOS $MACOS | $BVER"
   echo "Classroom, $DEVICE, $RUNS runs back to back, no cooldown, Power: $POWER"
   echo ""
@@ -163,8 +176,9 @@ att_card_start "Sustained load (heat), Classroom $DEVICE x$RUNS back to back"
 } | tee "$SUMMARY"
 att_card_end
 
-[[ -f $CSV ]] || echo "Date,Mac,Model,Chip,RAM GB,macOS,Blender,Device,Runs (s),Run 1 vs last %" > "$CSV"
-echo "$(date +%F),\"$MACNAME\",$MODEL,\"$CHIP\",$RAM_GB,\"$MACOS\",\"$BVER\",$DEVICE,\"${(j: / :)TIMES}\",$DROP" >> "$CSV"
+[[ -f $CSV ]] || echo "Date,Mac,Model,Chip,RAM GB,macOS,Blender,Device,Runs (s),Run 1 vs last %,Fan avg RPM per run,Fan max RPM per run" > "$CSV"
+grep -q "Fan avg" "$CSV" || sed -i '' '1s/$/,Fan avg RPM per run,Fan max RPM per run/' "$CSV"
+echo "$(date +%F),\"$MACNAME\",$MODEL,\"$CHIP\",$RAM_GB,\"$MACOS\",\"$BVER\",$DEVICE,\"${(j: / :)TIMES}\",$DROP,\"${(j: / :)FAN_AVGS}\",\"${(j: / :)FAN_MAXS}\"" >> "$CSV"
 
 echo ""
 echo "Saved to: $RUN_DIR"

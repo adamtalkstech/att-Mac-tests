@@ -182,3 +182,46 @@ att_watch_report() {   # one line: top 3 background processes by CPU over the ru
        END { for (n in sum) printf "%d\t%s ~%d%% for ~%ds\n", sum[n], n, sum[n]/cnt[n], cnt[n]*10 }' "$log" |
     sort -rn | head -3 | cut -f2 | paste -sd ';' - | sed 's/;/; /g'
 }
+
+# ---------- fan speeds (v1, Nov 20 2026) ----------
+# Fan RPM comes from the Mac's fan controller (SMC) through Tools/att-fans.c.
+# It gets built once per Mac into ~/.att/att-fans (needs Xcode or the Command Line Tools).
+#   att_fans_start <log>   logs "unix-time rpm rpm..." every 5 s in the background
+#   att_fans_stop
+#   att_fans_report <log>  -> "Fans: avg 2,140 / max 3,880 RPM (2 fans, spec max 5,700)"
+ATT_FANS_BIN=$HOME/.att/att-fans
+ATT_TOOLS_DIR=${${(%):-%x}:A:h}   # set while this file is being sourced
+att_fans_bin() {
+  [[ -x $ATT_FANS_BIN ]] && { print $ATT_FANS_BIN; return 0; }
+  local src="$ATT_TOOLS_DIR/att-fans.c"
+  [[ -f $src ]] || return 1
+  xcode-select -p >/dev/null 2>&1 || return 1      # no compiler: don't trigger the install pop-up
+  mkdir -p ${ATT_FANS_BIN:h}
+  cc -O2 -framework IOKit "$src" -o $ATT_FANS_BIN 2>/dev/null || return 1
+  print $ATT_FANS_BIN
+}
+att_fans_start() {
+  ATT_FANS_LOG=$1; ATT_FANS_PID=""
+  local bin; bin=$(att_fans_bin) || { : > "$ATT_FANS_LOG"; print "nobin" > "$ATT_FANS_LOG.status"; return 1; }
+  local n=$("$bin" | awk '{print $1}')
+  print "fans=${n:-0} spec=$("$bin" -m | cut -d' ' -f2-)" > "$ATT_FANS_LOG.status"
+  (( ${n:-0} > 0 )) || { : > "$ATT_FANS_LOG"; return 0; }
+  "$bin" -i 5 > "$ATT_FANS_LOG" 2>/dev/null &
+  ATT_FANS_PID=$!
+}
+att_fans_stop() { [[ -n $ATT_FANS_PID ]] && { kill $ATT_FANS_PID 2>/dev/null; wait $ATT_FANS_PID 2>/dev/null; }; ATT_FANS_PID=""; }
+att_fans_report() {   # one line for the card; FANS_AVG / FANS_MAX left set for the CSV
+  local log=$1 st; FANS_AVG=""; FANS_MAX=""
+  st=$(<"$log.status" 2>/dev/null)
+  [[ $st == nobin* || -z $st ]] && { print "Fans: not logged (install Xcode Command Line Tools: xcode-select --install)"; return; }
+  [[ $st == fans=0* ]] && { print "Fans: none (fanless Mac)"; FANS_AVG=0; FANS_MAX=0; return; }
+  [[ -s $log ]] || { print "Fans: no readings"; return; }
+  local out=$(awk '{ for(i=2;i<=NF;i++){ if($i<0) continue; s+=$i; c++; if($i>m)m=$i } if(NF>1) t++ }
+       END { if(c) printf "%d %d %d", s/c, m, t*5 }' "$log")
+  local a mx secs; read a mx secs <<< "$out"
+  [[ -z $a ]] && { print "Fans: no readings"; return; }
+  FANS_AVG=$a; FANS_MAX=$mx
+  local nf=${${st#fans=}%% *} spec=${st#*spec=}
+  local top=$(print -l ${(s: :)spec} | cut -d- -f2 | sort -n | tail -1)
+  print "Fans: avg $(printf "%'d" $a) / max $(printf "%'d" $mx) RPM ($nf fan$([[ $nf != 1 ]] && print s), spec max $(printf "%'d" ${top:-0}))"
+}
