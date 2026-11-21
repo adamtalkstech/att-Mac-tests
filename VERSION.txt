@@ -1,3 +1,4 @@
+2026-11-21 07:10 Nov 21 2026 - Run Order rewritten short (A setup, B queue, C hands-on, D one at a time); old long one is _Read Me First/Run Order - full details.txt
 2026-11-21 07:00 Nov 21 2026 - Queue bug fix: one-word tests (sustained, xcode, blender, handbrake) were being skipped
 2026-11-21 06:55 Nov 21 2026 - Queue closes LM Studio after copying models
 2026-11-21 06:50 Nov 21 2026 - Draw Things: App Nap off for the app

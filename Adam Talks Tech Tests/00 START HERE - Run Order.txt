@@ -1,234 +1,96 @@
-ATT MAC TESTS - START HERE (one Mac at a time, one test at a time)
-Made Nov 20 2026. Core list = CORE TESTS - every loaner.txt. Details per test
-are in each folder's READ ME. Tick the boxes as you go (copy this file per Mac
-if you like).
+ATT MAC TESTS - RUN ORDER  (Nov 21 2026)
+Short version. Every step is ONE command: copy the whole line, paste in Terminal.
+Long version with every setting and fix: _Read Me First/Run Order - full details.txt
+Step numbers are the same as before, so "step 14c" still means Gemma.
 
-HOW IT WORKS
-  Drag the whole "Adam Talks Tech Tests" folder into ~/Downloads on the test Mac.
-  Keep the folder names and nesting exactly as they are. Every script finds
-  everything from where it sits, so nothing needs a drive plugged in, and the
-  timed tests run off the Mac's own SSD (they refuse to run from a drive).
+==================================================================
+A. SET UP THE MAC  (first time on a Mac, then just step 2b each day)
+==================================================================
+[ ] 1.  Plugged in (laptops: Apple's charger straight into the Mac, no dock),
+        Low Power Mode off, auto updates off.
+[ ] 2.  Drag "Adam Talks Tech Tests" (or a kit's copy) into Downloads.
+[ ] 2b. Double-click "Update Scripts.command" in that folder. EVERY time you sit down.
+[ ] 3.  Name the Mac:
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-name-this-mac.zsh
+[ ] 3b. Install the apps (opens App Store / Adobe pages for the ones you click):
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-install-apps.zsh
+[ ] 4.  Version card (each test day):
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-versions.zsh
 
-  Not enough space? (whole folder is about 220GB) Make the same nesting, i.e.
-  ~/Downloads/Adam Talks Tech Tests/, and drag in only what you're testing.
-  Always bring: _Read Me First, Tools, Results, and the folder for the test.
-  Big folders: AI Tests 115GB (the models), Logic Test - Big Session 63GB,
-  Final Cut Test 45GB, Apps & Installers 25GB, Lightroom Test 16GB,
-  WebKit Test 7GB, HandBrake Test 6GB. On a 512GB Mac do one big one at a time.
-  SMALL MACS (Air Kit / Mini Kit on the drives): the kit has the scripts but not every
-  big test folder. Copy just the one you need next, test, then free it again:
-     zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh          (copy from the drive)
-     zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh free     (delete from this Mac)
-  It copies onto the Mac's own SSD, so results stay fair. Results are never touched.
-  AI models: nothing to do. Keep the drive plugged in and the AI test / stacker
-  copies the model it needs onto the Mac by itself (only that one, only once).
+==================================================================
+B. WALK-AWAY TESTS  (one command runs them all, ~2.5-3 hours)
+==================================================================
+[ ] QUEUE: 8 Xcode, 9 Blender, 9b Red Autumn, 10 sustained, 11 HandBrake,
+           14a Qwen 9B, 14b Qwen 27B, 14c Gemma, 14d ladder (32GB+ only)
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+    - Type the password once. Keep a test drive plugged in for the first minute
+      or two (it copies the AI models), then it says you can unplug it.
+    - Already done some? Leave them out:   SKIP="xcode blender" zsh ...att-queue.zsh
+      Only some?                           QUEUE="sustained gemma" zsh ...att-queue.zsh
+    - Don't use the Mac while it runs. Every card lands in Results/<Mac>/Queue/.
 
-  GAMES live in their own folder at the top of the drive: "Adam Talks Tech Games"
-  (Steam Library inside: Cyberpunk, War Thunder). Drag it into ~/Downloads only
-  for the game tests, so they run off the Mac's internal drive (fair on every Mac),
-  then delete it. It's separate because it's so big.
+==================================================================
+C. HANDS-ON TESTS  (need you there; do them in any order)
+==================================================================
+For 6, 7, 13, 15, 16 run this first and leave its window open (it quits apps,
+pauses background scanning, waits till the Mac is cool). Press Return in it when done:
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Cinebench 2026"
 
-  INSTALL ALL THE APPS AT ONCE (new Mac):
-     cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-install-apps.zsh
-  (EXTRAS=1 in front adds 3DMark, Procyon image gen, Diffusion Bee, TG Pro.)
-  It opens the App Store pages for Xcode / Final Cut / Logic / Compressor and the
-  Creative Cloud installer for the parts that can't be scripted.
+[ ] 6.  Geekbench 7: CPU, then Compute > Metal. Screenshot both.
+[ ] 7.  Cinebench 2026: GPU, CPU multi, CPU single. Screenshot.
+[ ] 12. Puget Bench (first run of each app on a Mac: from the Puget app, see details file):
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro" "Photoshop" "Lightroom Classic" "After Effects"
+[ ] 13. Logic: Gearspace project, buffer 256 then 32, unmute until overload. Log it:
+          cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+[ ] 15. Cyberpunk 2077: drag "Adam Talks Tech Games" into Downloads, Steam > Storage >
+        Add Drive > that Steam Library. Built-in benchmark, 4 passes. Screenshot each.
+[ ] 16. War Thunder (same Steam library): built-in benchmark, throwaway run, log the 2nd.
+[ ] 17. RAM closer vs stacker (hands-off once started; ~25 min each):
+          Restart, then:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+          Restart, then:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+        First time on a Mac: the first closer is a warm-up (don't log it), restart, closer again.
+[ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
+        Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
+        Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
-WHERE RESULTS GO
-  Every script saves into  ~/Downloads/Adam Talks Tech Tests/Results/<Mac name>/
-  Nothing goes to the Desktop.
-  Apps with no script (Geekbench, Cinebench, Cyberpunk, 3DMark, Procyon):
-  screenshot the result screen into Results/<Mac name>/Screenshots
-  (make the folder the first time). Step 99 brings the results back.
+==================================================================
+D. ONE AT A TIME  (same tests as the queue, if you'd rather run just one)
+==================================================================
+  8   Xcode        cd ~/Downloads/"Adam Talks Tech Tests"/"Xcode Test" && zsh xcode-bench.sh
+  9   Blender      cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh
+  9b  Red Autumn   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh redautumn
+  10  Sustained    cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh sustained-test.sh
+  11  HandBrake    cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh
+  14a Qwen 9B      cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen9b
+  14b Qwen 27B     cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
+  14c Gemma        cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
+  14d Ladder       cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder     (32GB+)
 
-------------------------------------------------------------------
-SETUP (once per Mac)
-------------------------------------------------------------------
-TIP: Copy each command line whole, from "cd" to the end. The cd part puts
-Terminal in the right folder; without it you get "can't open input file".
+==================================================================
+E. EXTRAS  (only when a video needs them)
+==================================================================
+  E1 mflux image gen:   double-click Image Gen Test > Run Image Tests.command, pick 1
+  E2 Procyon AI Image Generation / E3 3DMark Steel Nomad: from Apps & Installers, screenshot
+  E4 More AI:           cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe   (or coding, agents, whisper)
+  E5 Memory:            cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-tabtest.zsh
+  E6 Any export timed:  cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
 
-[ ] 1. Plugged in, Low Power Mode off, macOS + App Store auto updates off,
-       same macOS as the other Macs in the batch.
-[ ] 2. Drag "Adam Talks Tech Tests" into ~/Downloads (see HOW IT WORKS above).
-[ ] 2b. Get the newest scripts (every time you sit down at a Mac that already has
-        the folder, and after Claude says a script was fixed):
-        DOUBLE-CLICK  "Update Scripts.command"  in the test folder. That's it.
-        (Same thing typed: curl -fsSL https://raw.githubusercontent.com/adamtalkstech/att-Mac-tests/main/att-update.zsh | zsh)
-        Only scripts and instructions change. Results, models, games and apps stay put.
-[ ] 3. Name the Mac (wallpaper + Mac name that every result uses):
-         cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-name-this-mac.zsh
-[ ] 4. Version card (every test day, before the first test):
-         cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-versions.zsh
-[ ] 4b. LAPTOPS: Apple's own charger plugged STRAIGHT into the Mac (MagSafe if it has it).
-        Not through a dock or hub: docks can cap the power and look like throttling.
-        The scripts print the charger wattage on the photo card and warn if it's below
-        what that chip needs (under 55W base, 65W Pro, 90W Max; the stock 96W shows as 94W, that's fine).
-[ ] 5. Restart, quit everything, let it sit 15 min before the first test.
+==================================================================
+F. DONE WITH A MAC
+==================================================================
+[ ] 99. Plug in a test drive: results copy over by themselves at the end of any test.
+        (Or drag Results/<Mac name> onto the drive's Adam Talks Tech Tests/Results.)
+[ ] Loaner going back: Resolve > Help > Deactivate License, sign out of Adobe + Steam,
+          zsh ~/Downloads/"Adam Talks Tech Tests"/"AI Tests"/att-models.zsh clean
+        then delete ~/Downloads/Adam Talks Tech Tests.
 
-------------------------------------------------------------------
-CORE TESTS (in this order, close everything else between tests)
-------------------------------------------------------------------
-FASTEST WAY (overnight / walk away): ONE command runs every scripted test in
-order (8 Xcode, 9 Blender, 9b Red Autumn, 11 HandBrake, 10 sustained, 14 local AI,
-+ ladder on 32GB+). Draw Things (18) is run by hand, not in the queue:
-     zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
-  Password once, drive plugged in for the first minute or two (it copies the AI
-  models over), then "you can unplug the drive" and walk away (~2.5-3 hours).
-  Pick tests:  QUEUE="sustained qwen27b gemma" zsh .../Tools/att-queue.zsh
-  Skip tests:  SKIP="xcode blender" zsh .../Tools/att-queue.zsh
-  Every card ends up in one file: Results/<Mac>/Queue/queue_<date>.txt.
-  Then do the hand-run ones (6, 7, 12, 13, 15, 16, 17, 18) when you're at the Mac.
-RESULTS COPY THEMSELVES: whenever a test ends with a test drive plugged in, that
-Mac's Results folder is copied onto the drive (Results/<Mac name>). No drive left
-on? Nothing lost: they copy over the next time any test ends with a drive in.
-
-BEFORE EVERY HAND-RUN TEST (Geekbench, Cinebench, Logic, Cyberpunk, 3DMark,
-Procyon, exports): this quits other apps and waits until the Mac is cool:
-     cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-ready.zsh "Cinebench 2026"
-Leave that window open during the test (it keeps Photos/Spotlight/Siri scanning
-paused) and press Return in it when the test is done.
-The scripted tests do all of this on their own: EVERY ATT script now pauses
-Photos/Spotlight/Siri scanning while it runs and wakes it back up at the end.
-If a test was force-quit:  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-resume-bg.zsh  (or restart).
-[ ] 6. Geekbench 7: CPU, then Compute > Metal.
-       Screenshot both results (or save the result links in a note).
-[ ] 7. Cinebench 2026: GPU, CPU multi, CPU single. Screenshot.
-[ ] 8. Xcode:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Xcode Test" && zsh xcode-bench.sh
-[ ] 9. Blender:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh            (install Blender 5.2.3 first)
-[ ]  9b. Blender animation (Red Autumn Forest, frames 1-25, GPU), right after 9:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh blender-bench.sh redautumn
-        Sheet: Main Results CQ.
-[ ] 10. Throttling (laptops for sure, desktops if time):
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh sustained-test.sh
-        (rests 10 min by itself, then starts. Same on every Mac. Walk away / test another Mac.)
-        If the card shows Background CPU that slowed a run, rerun with NOPAUSE=1 in front:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && NOPAUSE=1 zsh sustained-test.sh
-        Logs fan speed too (card shows "Fans: avg / max RPM"). Optional fan check on a new Mac:
-                   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-fans.zsh
-[ ] 11. HandBrake:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh         (HandBrakeCLI comes out of Apps & Installers by itself)
-[ ] 12. Puget Bench (5 apps: Resolve, Premiere, Photoshop, Lightroom, After Effects).
-        SET UP ONCE PER MAC
-          a. Apps installed: PugetBench for Creators, DaVinci Resolve Studio (activate
-             with the key in _Read Me First/LICENSES - keep private.txt), and through
-             Creative Cloud: Premiere Pro, Photoshop, Lightroom Classic, After Effects.
-             Adobe: only 2 Macs signed in at a time (sign out on another Mac first).
-          b. Open each of those apps once and click through the first-launch screens.
-             Then quit them all.
-          c. Test files (24GB): plug in a test SSD, quit Puget, then
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh load
-             (no drive has them? open Puget, click each app, let its assets download,
-              quit, then cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh save )
-          d. FIRST run of each app on a Mac: macOS asks for your password (Puget
-             installs its plugin). Terminal can't show that box, so the run fails with
-             "No result file". Do that first run from the Puget app (Standard preset,
-             "Write CSV log file" ON), type the password, let it finish.
-             After that, Terminal works for that app on that Mac.
-        RUN (one app at a time, hands off, cooldown + app-quit are automatic)
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro"
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Photoshop"
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Lightroom Classic"      (cool start: run it first after a break)
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "After Effects"          (run it TWICE, log the 2nd)
-          All four Adobe ones in a row:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro" "Photoshop" "Lightroom Classic" "After Effects"
-        AFTER
-          Ran any from the Puget app? Copy those CSVs to Results + the plugged-in drive:
-                   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh collect
-          Send Claude a photo of each score (or the collect card).
-          Resolve: Super Scale under ~5 fps = rerun.
-          Results only upload to Puget if you turn it on (leave it off).
-          Before a loaner ships: Resolve Help > Deactivate License, sign out of Adobe.
-[ ] 13. Logic: open the Gearspace benchmark project, buffer 256 then 32,
-        unmute tracks until overload (Logic Test/LOGIC TEST - READ ME.txt).
-        Log each with:
-         cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-[ ] 14. Local AI (Qwen 9B + 27B + Gemma, ladder on 32GB+). Drive plugged in.
-        Each command copies its model onto this Mac first if it's missing (no
-        separate load step), then runs. Do them in this order:
-          a. cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen9b
-          b. cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
-          c. cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
-          d. 32GB+ only, ladder (27B at 4/5/6/8-bit):
-             cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
-        (Gemma = Gemma 3 4B, Main Results AI-AO. Always the gemma-3-4b-it-GGUF build;
-         the script fetches it and warns if a different Gemma ran.)
-        LM Studio guardrails: Relaxed. If a model still won't load, Off for that run only.
-        Done with the Mac / need space: zsh att-models.zsh clean
-[ ] 15. Cyberpunk 2077 (drag the drive's "Adam Talks Tech Games" folder into ~/Downloads first):
-        a. Steam > Settings > Storage > Add Drive > choose
-           ~/Downloads/Adam Talks Tech Games/Steam Library
-           Steam finds Cyberpunk there. A quick file check is normal; if it
-           wants to redownload 62GB, stop and tell Claude.
-        b. Built-in benchmark, 4 passes (settings in the sheet, New Tests row 3).
-           Screenshot each result.
-        c. Before the folder is deleted: remove that library in Steam > Storage.
-
-[ ] 16. War Thunder (replaces Minecraft, Nov 20). Free on Steam, in the Adam Talks
-        Tech Games Steam library like Cyberpunk. First:
-          cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-ready.zsh "War Thunder"
-        Built-in benchmark from the game menu. Settings in the sheet (New Tests
-        BT, row 3). One throwaway run, log the 2nd. Photo the result + game version.
-
-[ ] 17. RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
-      Needs: Final Cut Pro + Numbers installed, LM Studio opened once, a drive plugged in.
-      It copies Qwen 9B and the Final Cut Test library (45GB) onto the Mac by itself if missing.
-      CLOSER = one app at a time, quit each when done (the best-case baseline).
-      STACKER = everything open at once (real life). Compare the two export times.
-      FIRST TIME on a Mac (Safari/Numbers/Final Cut/LM Studio never opened there):
-      run the closer once as a WARM-UP (click through welcome screens, permissions,
-      Final Cut library update), don't log it, restart, then run the real closer.
-      Restart, then the closer:
-        cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-      Restart again, then the stacker:
-        cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-      HANDS-OFF: start it and walk away. The script times Numbers itself, waits for
-      Final Cut, and clicks Share > Apple Devices 4K > Save into the Export folder.
-      One-time per Mac, at the START: it asks you to turn on Terminal in Privacy &
-      Security > Accessibility, and macOS asks "Terminal wants to control..." (OK).
-      It exports whatever project is in Final Cut's timeline, so in the WARM-UP leave
-      "universal control on mac 3 min" open in the timeline when Final Cut quits.
-      The card says WRONG PROJECT if anything else got exported.
-      If a click fails it SAYS "Final Cut needs you" out loud: click Share yourself,
-      no need to touch Terminal. MANUAL=1 in front = old press-Return way.
-      Photo the box from each run. If it hangs, put NOPAUSE=1 in front and rerun.
-[ ] 18. Draw Things image gen (Z-Image Turbo, same model on every Mac). Drive plugged in:
-          cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-        It checks the app, copies the model in from the drive if missing, opens Draw Things
-        and tells you the 2 clicks it needs (Settings > API Server ON, port 7860; pick
-        Z-Image Turbo). Then it cools down, runs 1024 + 2048, and prints the card.
-        Terminal may ask to access Draw Things' data: click Allow.
-        FIRST MAC ONLY (no drive has the model yet): download Z-Image Turbo inside Draw
-        Things, run the test, then with a drive plugged in:  zsh att-drawthings.zsh save
-
-------------------------------------------------------------------
-EXTRAS (only when a video needs it)
-------------------------------------------------------------------
-[ ] E1. mflux image gen (fully automatic, same model as step 18):
-          double-click Image Gen Test > Run Image Tests.command, pick 1
-        (needs the Image Gen Test folder with its hidden .tools inside: small Macs use Tools/att-get.zsh)
-[ ] E2. Procyon AI Image Generation (Apps & Installers > UL Procyon; key = AI
-        Inference Pro in LICENSES). Screenshot / export the result.
-[ ] E3. 3DMark Steel Nomad + Steel Nomad Light (Apps & Installers). Screenshot.
-[ ] E4. More local AI: cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe | coding | agents | whisper
-        (whisper needs whisper-coreml-setup.sh run once first)
-[ ] E5. Memory:
-          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-tabtest.zsh
-[ ] E6. SSD, WebKit, Logic Big Session, Final Cut / Lightroom exports
-        Export timer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
-
-------------------------------------------------------------------
-FINISH (every Mac)
-------------------------------------------------------------------
-[ ] 99. Bring the results back: open ~/Downloads/Adam Talks Tech Tests/Results
-        and drag ONLY the "<Mac name>" folder into the test drive's
-        Adam Talks Tech Tests/Results folder. (Don't drag the whole Results
-        folder: Finder would replace the other Macs' results.)
-        Then plug the drive into the Mac Studio and tell Claude "log <Mac name>"
-        (Claude's directions: _Read Me First/FOR CLAUDE - How to log results.txt).
-[ ] Before a loaner ships (after step 99): Resolve Help > Deactivate License, sign out of
-    Creative Cloud and Steam, att-models.zsh clean, delete
-    ~/Downloads/Adam Talks Tech Tests.
+==================================================================
+IF SOMETHING'S OFF
+==================================================================
+  Weird result or error?  Double-click Update Scripts, run it again, send Claude a photo.
+  Mac low on space:       zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh free
+  Small Mac missing a test folder:  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh
+  A test was force-quit (Spotlight/Photos act frozen):
+                          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-resume-bg.zsh   (or restart)
+  "Still open: LM Studio" at the start of a test: click Quit on LM Studio's box.
