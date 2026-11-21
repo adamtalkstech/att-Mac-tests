@@ -1,5 +1,6 @@
 #!/bin/zsh
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; }
+whence att_pause_bg >/dev/null && att_pause_bg   # pause Photos/Spotlight/Siri scanning for the test (wakes back up at the end)
 # =============================================================================
 #  ATT SSD Test Suite  (Adam Talks Tech)
 #  Standardized external SSD test you run from Terminal on a Mac.

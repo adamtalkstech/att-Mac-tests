@@ -1,3 +1,4 @@
+2026-11-20 23:05 Nov 20 2026 - Every test pauses Photos/Spotlight/Siri scanning (SSD, WebKit, memory, export timer, mflux added; att-ready holds the pause until Return)
 2026-11-20 22:55 Nov 20 2026 - Cooldown check names the busiest apps every minute it waits
 2026-11-20 22:45 Nov 20 2026 - Audit fixes: Draw Things never calls python3 without developer tools; export log marks script-clicked starts
 2026-11-20 22:35 Nov 20 2026 - Whisper: Core ML build forced onto the Neural Engine; 0 W runs flagged NOT ANE

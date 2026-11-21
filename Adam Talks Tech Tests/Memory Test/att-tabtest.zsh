@@ -1,5 +1,6 @@
 #!/bin/zsh
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; }
+whence att_pause_bg >/dev/null && att_pause_bg   # pause Photos/Spotlight/Siri scanning for the test (wakes back up at the end)
 # ATT tab test, trial v0.1 (Nov 5 2026; results path Nov 20)
 # How many Safari tabs can this Mac keep open before Safari has to reload one?
 # Opens the same 80 sites one tab at a time, marks each tab once it has loaded,

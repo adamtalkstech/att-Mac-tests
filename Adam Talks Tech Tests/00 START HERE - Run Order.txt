@@ -71,7 +71,11 @@ CORE TESTS (in this order, close everything else between tests)
 BEFORE EVERY HAND-RUN TEST (Geekbench, Cinebench, Logic, Cyberpunk, 3DMark,
 Procyon, exports): this quits other apps and waits until the Mac is cool:
      cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-ready.zsh "Cinebench 2026"
-The scripted tests do this on their own.
+Leave that window open during the test (it keeps Photos/Spotlight/Siri scanning
+paused) and press Return in it when the test is done.
+The scripted tests do all of this on their own: EVERY ATT script now pauses
+Photos/Spotlight/Siri scanning while it runs and wakes it back up at the end.
+If a test was force-quit:  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-resume-bg.zsh  (or restart).
 [ ] 6. Geekbench 7: CPU, then Compute > Metal.
        Screenshot both results (or save the result links in a note).
 [ ] 7. Cinebench 2026: GPU, CPU multi, CPU single. Screenshot.

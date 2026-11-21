@@ -1,5 +1,6 @@
 #!/bin/zsh
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; }
+whence att_pause_bg >/dev/null && att_pause_bg   # pause Photos/Spotlight/Siri scanning for the test (wakes back up at the end)
 # ATT Responsiveness Score, trial v0.1 (Nov 5 2026; results path Nov 20)
 # One score for "how snappy does this Mac stay as you pile on a normal day?"
 #

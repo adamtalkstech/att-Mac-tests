@@ -39,16 +39,20 @@ echo
 read -r -p "Pick a number: " CHOICE
 read -r -p "Condition (e.g. cool, after Blender) or Return to skip: " COND
 
+# Pause Photos/Spotlight/Siri scanning + cool down like every other ATT test (zsh helper)
+cool_run() { zsh -c 'source "$1" && ATT_KEEP="Terminal,Draw Things,DiffusionBee" att_cooldown; shift; "$@"' _ "$ROOT/Tools/att-card.zsh" "$@"; }
+[ -f "$ROOT/Tools/att-card.zsh" ] || cool_run() { "$@"; }
+
 ARGS=()
 [ -n "$COND" ] && ARGS+=(--condition "$COND")
 
 case "$CHOICE" in
-  1) "$UV" run --script att_mflux_bench.py "${ARGS[@]}" ;;
-  2) "$UV" run --script att_mflux_bench.py --tests standard,stress,fullprecision "${ARGS[@]}" ;;
+  1) cool_run "$UV" run --script att_mflux_bench.py "${ARGS[@]}" ;;
+  2) cool_run "$UV" run --script att_mflux_bench.py --tests standard,stress,fullprecision "${ARGS[@]}" ;;
   3) "$UV" run --script att_drawthings_bench.py "${ARGS[@]}" ;;
   4) "$UV" run --script att_drawthings_bench.py --show-config ;;
   5) "$UV" run --script att_diffusionbee_log.py "${ARGS[@]}" ;;
-  6) "$UV" run --script att_mflux_bench.py "${ARGS[@]}"
+  6) cool_run "$UV" run --script att_mflux_bench.py "${ARGS[@]}"
      echo "Cooling down 60s before Draw Things..."; sleep 60
      "$UV" run --script att_drawthings_bench.py "${ARGS[@]}" ;;
   *) echo "No test picked." ;;

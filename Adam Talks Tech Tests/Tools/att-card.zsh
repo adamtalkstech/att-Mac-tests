@@ -110,6 +110,9 @@ ATT_BG_ROOT=(mds mds_stores)   # Spotlight's main indexer runs as root: paused o
 att_pause_bg() {
   [[ $NOPAUSE == 1 ]] && return 0
   [[ -n $ATT_BG_PAUSED ]] && return 0
+  # A test started from another test (export timer inside the stacker) leaves the
+  # pause to the outer one, so it can't wake things up halfway through.
+  [[ -n $ATT_BG_PARENT && $ATT_BG_PARENT != $$ ]] && kill -0 $ATT_BG_PARENT 2>/dev/null && return 0
   local p pids; typeset -ga ATT_BG_PIDS; ATT_BG_PIDS=()
   for p in $ATT_BG_PROCS; do
     pids=($(pgrep -x -U $UID "$p" 2>/dev/null))
@@ -119,7 +122,7 @@ att_pause_bg() {
   if sudo -n true 2>/dev/null; then
     for p in $ATT_BG_ROOT; do sudo -n pkill -STOP -x "$p" 2>/dev/null && ATT_BG_ROOT_PAUSED=1; done
   fi
-  ATT_BG_PAUSED=1
+  ATT_BG_PAUSED=1; export ATT_BG_PARENT=$$
   (( ${#ATT_BG_PIDS} )) && print "Paused Photos/Spotlight/Siri scanning for the test${ATT_BG_ROOT_PAUSED:+ (Spotlight indexer too)} (wakes back up when it ends)."
 }
 att_resume_bg() {

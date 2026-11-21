@@ -1,5 +1,6 @@
 #!/bin/zsh
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; }
+whence att_pause_bg >/dev/null && att_pause_bg   # pause Photos/Spotlight/Siri scanning for the test (wakes back up at the end)
 # ATT memory test, trial v0.1 (Nov 5 2026; results path Nov 20)
 # Times how long each open app takes to be ready again when you switch to it,
 # counts Chrome tabs that got reloaded, and logs swap / memory pressure.
