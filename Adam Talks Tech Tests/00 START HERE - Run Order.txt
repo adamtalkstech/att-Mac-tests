@@ -85,7 +85,9 @@ The scripted tests do this on their own.
 [ ] 10. Throttling (laptops for sure, desktops if time):
                    cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && zsh sustained-test.sh
         (rests 10 min by itself, then starts. Same on every Mac. Walk away / test another Mac.)
-        Logs fan speed too (card shows "Fans: avg / max RPM"). First time on a Mac, check the fans work:
+        If the card shows Background CPU that slowed a run, rerun with NOPAUSE=1 in front:
+                   cd ~/Downloads/"Adam Talks Tech Tests"/"Blender Test" && NOPAUSE=1 zsh sustained-test.sh
+        Logs fan speed too (card shows "Fans: avg / max RPM"). Optional fan check on a new Mac:
                    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-fans.zsh
 [ ] 11. HandBrake:
                    cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh         (HandBrakeCLI comes out of Apps & Installers by itself)
@@ -160,16 +162,19 @@ EXTRAS (only when a video needs it)
 [ ] Procyon AI Image Generation (Apps & Installers > UL Procyon; key = AI
     Inference Pro in LICENSES). Screenshot / export the result.
 [ ] 3DMark Steel Nomad + Steel Nomad Light (Apps & Installers). Screenshot.
-[ ] Draw Things / mflux: Image Gen Test > Run Image Tests.command
+[ ] Draw Things / mflux: Image Gen Test > Run Image Tests.command   (small Macs: get Image Gen Test with Tools/att-get.zsh)
     (double-click Prep This Drive.command once first, with internet).
 [ ] More local AI: cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe | coding | agents | whisper
     (whisper needs whisper-coreml-setup.sh run once first)
-[ ] RAM closer vs stacker (the RAM video test, ~45 min, free apps only):
-      Needs Qwen 3.5 9B loaded into LM Studio (step 14a). Restart once before.
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh
-      Runs the closer, resets memory (no restart needed), then the stacker.
-      You only press Return when Final Cut / Numbers are loaded and click Share
-      in Final Cut (twice). Photo both boxes.
+[ ] RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
+      Needs: Qwen 3.5 9B loaded into LM Studio (step 14a), LM Studio opened once,
+      the "Final Cut Test" folder (small Macs: Tools/att-get.zsh), Final Cut + Numbers installed.
+      Restart, then the closer:
+        cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+      Restart again, then the stacker:
+        cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+      You press Return when Final Cut / Numbers have loaded and click Share in Final Cut.
+      Photo the box from each run. If it hangs, put NOPAUSE=1 in front and rerun.
 [ ] Memory:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-tabtest.zsh
