@@ -1,3 +1,4 @@
+2026-11-20 20:15 Nov 20 2026 - AI tests explain LM Studio's load guardrail block and how to set Relaxed
 2026-11-20 19:55 Nov 20 2026 - Photo card shows Mac type (mini/MacBook Pro, desktop/laptop, CPU+GPU cores, SSD)
 2026-11-20 19:50 Nov 20 2026 - Fan reader works without Xcode once a ready-made copy (Tools/att-fans-bin) exists
 2026-11-20 19:45 Nov 20 2026 - Sustained test logs fan speed (avg/max RPM per run); Tools/att-fans.zsh fan check

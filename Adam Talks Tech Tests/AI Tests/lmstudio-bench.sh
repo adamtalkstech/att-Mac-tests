@@ -509,7 +509,13 @@ qwen_suite() { # $1 test id  $2 key
   fa=$(need_file "$TRANSCRIPT_A"); fb=$(need_file "$TRANSCRIPT_B"); fc=$(need_file "$TRANSCRIPT_C")
   COLD_NEXT=1
   if [[ -n $fa ]]; then run_prompt $test "Transcript A" "$key" $QWEN_CTX_AB "$fa" "$SUMMARY_Q" "$reason" $QWEN_MAX
-    (( $? == 2 )) && { say "      Won't load at 8K. Skipping the rest of this test."; return 2; }
+    (( $? == 2 )) && { say "      Won't load at 8K. Skipping the rest of this test."
+      [[ ${(L)LOAD_ERR} == *"insufficient system resources"* || ${(L)LOAD_ERR} == *guardrail* ]] && {
+        say "      That was LM Studio's safety limit (model loading guardrails), not the Mac running out."
+        say "      For the RAM tests every Mac uses the same setting: LM Studio > Settings > App Settings >"
+        say "      Model loading guardrails > Relaxed. Then run this test again."
+        say "      (Log both: Won't load at the default setting, then the Relaxed result.)"; }
+      return 2; }
     LOAD_FIRST=${RES_LOAD[$test:Transcript A]}; first=0; fi
   if [[ -n $fb ]]; then run_prompt $test "Transcript B" "$key" $QWEN_CTX_AB "$fb" "$SUMMARY_Q" "$reason" $QWEN_MAX
     (( $? == 2 )) && return 2
