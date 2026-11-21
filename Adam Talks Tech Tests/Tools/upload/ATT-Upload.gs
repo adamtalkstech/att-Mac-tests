@@ -27,7 +27,7 @@ function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(TAB) || ss.insertSheet(TAB);
   if (sh.getLastRow() === 0) {
-    sh.appendRow(['Received', 'Mac', 'Test', 'Mac kind', 'Test finished', 'Files', 'Logs (zip)', 'Summary file', 'Summary', 'Note']);
+    sh.appendRow(['Received', 'Mac', 'Mac ID', 'Test', 'Mac kind', 'Test finished', 'Files', 'Logs (zip)', 'Summary file', 'Summary', 'Note']);
     sh.setFrozenRows(1);
   }
   var folderId = props.getProperty('ATT_FOLDER_ID');
@@ -71,14 +71,14 @@ function doPost(e) {
       var link = '';
       if (d.kind === 'result' && d.zip_b64) {
         var root = DriveApp.getFolderById(props.getProperty('ATT_FOLDER_ID'));
-        var macFolder = sub_(root, name_(d.mac) || 'Unknown Mac');
+        var macFolder = sub_(root, (name_(d.mac) || 'Unknown Mac') + (/^[0-9a-f]{8}$/.test(d.macid || '') ? ' [' + d.macid + ']' : ''));
         var fname = name_(d.test || 'test') + ' - ' + Utilities.formatDate(new Date(), 'America/Chicago', 'yyyy-MM-dd HH-mm-ss') + '.zip';
         var blob = Utilities.newBlob(Utilities.base64Decode(d.zip_b64), 'application/zip', fname);
         link = macFolder.createFile(blob).getUrl();
       }
       var summary = '';
       if (d.summary_b64) summary = Utilities.newBlob(Utilities.base64Decode(d.summary_b64)).getDataAsString('UTF-8').slice(0, 45000);
-      sh.appendRow([new Date(), cell_(d.mac), cell_(d.test), cell_(d.mackind), cell_(d.when),
+      sh.appendRow([new Date(), cell_(d.mac), cell_(/^[0-9a-f]{8}$/.test(d.macid || '') ? d.macid : ''), cell_(d.test), cell_(d.mackind), cell_(d.when),
                     Number(d.files) || 0, link, cell_(d.summary_file), cell_(summary), cell_(d.note)]);
     } finally { lock.releaseLock(); }
     return reply_(d.kind === 'ping' ? 'ok ping received' : 'ok sent to the Mac Tests sheet + Drive');

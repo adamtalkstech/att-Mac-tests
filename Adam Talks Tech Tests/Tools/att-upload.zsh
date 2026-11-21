@@ -58,7 +58,7 @@ write_conf() {   # $1 url  $2 key
 }
 
 # Keep names to safe characters (no quotes/backslashes can break the JSON)
-clean() { print -r -- "$1" | LC_ALL=C tr -cd "A-Za-z0-9 ._()'+-" | cut -c1-120; }
+clean() { print -r -- "$1" | LC_ALL=C tr -cd "A-Za-z0-9 ._()'+/-" | cut -c1-160; }
 
 # $1 = json body file, $2 = label for messages. Returns 0 only if the server said ok.
 send() {
@@ -129,37 +129,62 @@ cmd_forget() {
   rm -f $CONF $MARK && say "Upload key removed from this Mac. (Do this before a loaner ships back.)"
 }
 
+# A short ID that's unique to this Mac's hardware (a one-way hash of its hardware UUID, so the
+# serial number is never sent). Two Macs both called "MacBook Pro" still land in separate folders.
+mac_id() {
+  ioreg -rd1 -c IOPlatformExpertDevice 2>/dev/null | awk -F'"' '/IOPlatformUUID/ {print $4}' | shasum -a 256 | cut -c1-8
+}
+TXT=( \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) )
+
+# Zip + send one folder's files. $1 = folder, $2 = label, $3 = folder name as saved (Results/<this>), rest = files
+send_batch() {
+  local dir=$1 label=$2 resname=$3; shift 3
+  local -a files=("$@")
+  (( ${#files} )) || return 0
+  local tmp=$(mktemp -d)
+  ( cd "$dir" && print -rl -- $files | zip -q -X "$tmp/results.zip" -@ ) 2>/dev/null
+  local size=$(stat -f %z "$tmp/results.zip" 2>/dev/null || echo 0) zipb64="" note=""
+  if (( size > 0 && size <= MAXZIP )); then zipb64=$(base64 -i "$tmp/results.zip" | tr -d '\n')
+  else note="zip too big (${size} bytes), logs not sent: copy Results/$resname from a drive"; fi
+  [[ $resname != $ATT_MAC && $resname != . ]] && note="${note:+$note; }from Results/$resname on this Mac (older name, or copied from a drive)"
+  local newest=$(cd "$dir" && ls -t ${(M)files:#*.txt} 2>/dev/null | head -1) summary=""
+  [[ -n $newest ]] && summary=$(head -c 40000 "$dir/$newest" | base64 | tr -d '\n')
+  print -rn -- "{\"kind\":\"result\",\"mac\":\"$(clean "$ATT_MAC")\",\"macid\":\"$ATT_MACID\",\"test\":\"$(clean "$label")\",\"mackind\":\"$(clean "$ATT_KIND")\",\"when\":\"$(date '+%Y-%m-%d %H:%M:%S %Z')\",\"files\":${#files},\"note\":\"$(clean "$note")\",\"summary_file\":\"$(clean "$resname/${newest#./}")\",\"summary_b64\":\"$summary\",\"zip_b64\":\"$zipb64\"}" > $tmp/body.json
+  print "Uploading ${#files} result file(s) from Results/$resname to the Mac Tests sheet + Drive..."
+  send $tmp/body.json; local rc=$?
+  rm -rf $tmp
+  return $rc
+}
+
 # Upload every result file that changed since the last good upload. $1 = test name
 cmd_auto() {
   [[ -n $NOUPLOAD ]] && return 0
   load_conf || return 0
-  local mac=$(scutil --get ComputerName 2>/dev/null)
-  local dir="$ROOT/Results/$mac"
-  [[ -d $dir ]] || return 0
+  ATT_MAC=$(scutil --get ComputerName 2>/dev/null)
+  ATT_MACID=$(mac_id)
+  ATT_KIND=$(cat $HOME/.att/mac-kind.txt 2>/dev/null)
+  local stamp=$(date +%s) markt=$(mktemp) ok=1 d n
+  touch -t "$(date -r $(( stamp - 1 )) +%Y%m%d%H%M.%S)" $markt   # anything written during the upload still counts next time
   local -a files
-  if [[ -n $ATT_UPLOAD_ALL ]]; then   # att-upload.zsh all: every text result file on this Mac
-    files=("${(@f)$(cd "$dir" && find . -type f \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) 2>/dev/null)}")
-  elif [[ -f $MARK ]]; then
-    files=("${(@f)$(cd "$dir" && find . -type f \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) -newer "$MARK" 2>/dev/null)}")
-  else   # first upload on this Mac: last 2 days only
-    files=("${(@f)$(cd "$dir" && find . -type f \( -name '*.txt' -o -name '*.csv' -o -name '*.log' -o -name '*.json' \) -mtime -2 2>/dev/null)}")
+  if [[ -n $ATT_UPLOAD_ALL ]]; then
+    # Every folder in Results, one upload each: this Mac's, any older name it had, anything copied from a drive.
+    for d in "$ROOT/Results"/*(N/); do
+      n=${d:t}
+      files=("${(@f)$(cd "$d" && find . -type f $TXT 2>/dev/null)}"); files=(${files:#})
+      send_batch "$d" "$1" "$n" $files || ok=0
+    done
+    for d in "$ROOT/Results"/*.csv(N); do   # shared CSVs at the top (All Macs lmstudio.csv etc.)
+      send_batch "$ROOT/Results" "$1 (shared CSVs)" "." "./${d:t}" || ok=0
+    done
+  else
+    d="$ROOT/Results/$ATT_MAC"; [[ -d $d ]] || { rm -f $markt; return 0; }
+    if [[ -f $MARK ]]; then files=("${(@f)$(cd "$d" && find . -type f $TXT -newer "$MARK" 2>/dev/null)}")
+    else files=("${(@f)$(cd "$d" && find . -type f $TXT -mtime -2 2>/dev/null)}"); fi   # first time: last 2 days
+    files=(${files:#})
+    (( ${#files} )) || { rm -f $markt; return 0; }
+    send_batch "$d" "$1" "$ATT_MAC" $files || ok=0
   fi
-  files=(${files:#})
-  (( ${#files} )) || return 0
-  local stamp=$(date +%s) tmp=$(mktemp -d)
-  touch -t "$(date -r $(( stamp - 1 )) +%Y%m%d%H%M.%S)" $tmp/mark   # anything written during the upload still counts next time
-  ( cd "$dir" && print -rl -- $files | zip -q -X "$tmp/results.zip" -@ ) 2>/dev/null
-  local size=$(stat -f %z "$tmp/results.zip" 2>/dev/null || echo 0) zipb64="" note=""
-  if (( size > 0 && size <= MAXZIP )); then zipb64=$(base64 -i "$tmp/results.zip" | tr -d '\n')
-  else note="zip too big (${size} bytes), logs not sent"; fi
-  # Summary text for the sheet: the newest .txt in this batch (the test's own results file)
-  local newest=$(cd "$dir" && ls -t ${(M)files:#*.txt} 2>/dev/null | head -1) summary=""
-  [[ -n $newest ]] && summary=$(head -c 40000 "$dir/$newest" | base64 | tr -d '\n')
-  local kind=$(clean "$(cat $HOME/.att/mac-kind.txt 2>/dev/null)")
-  print -rn -- "{\"kind\":\"result\",\"mac\":\"$(clean $mac)\",\"test\":\"$(clean "$1")\",\"mackind\":\"$kind\",\"when\":\"$(date '+%Y-%m-%d %H:%M:%S %Z')\",\"files\":${#files},\"note\":\"$(clean "$note")\",\"summary_file\":\"$(clean "${newest#./}")\",\"summary_b64\":\"$summary\",\"zip_b64\":\"$zipb64\"}" > $tmp/body.json
-  print "Uploading ${#files} result file(s) to the Mac Tests sheet + Drive..."
-  send $tmp/body.json && { mkdir -p ${MARK:h}; mv -f $tmp/mark $MARK; }
-  rm -rf $tmp
+  if (( ok )); then mkdir -p ${MARK:h}; mv -f $markt $MARK; else rm -f $markt; fi
   return 0
 }
 
