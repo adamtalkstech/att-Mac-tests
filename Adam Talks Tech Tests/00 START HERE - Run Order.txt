@@ -70,14 +70,14 @@ CORE TESTS (in this order, close everything else between tests)
 ------------------------------------------------------------------
 FASTEST WAY (overnight / walk away): ONE command runs every scripted test in
 order (8 Xcode, 9 Blender, 9b Red Autumn, 11 HandBrake, 10 sustained, 14 local AI,
-+ ladder on 32GB+, + 18 Draw Things if it's already open with the API on):
++ ladder on 32GB+). Draw Things (18) is run by hand, not in the queue:
      zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
   Password once, drive plugged in for the first minute or two (it copies the AI
   models over), then "you can unplug the drive" and walk away (~2.5-3 hours).
   Pick tests:  QUEUE="sustained qwen27b gemma" zsh .../Tools/att-queue.zsh
   Skip tests:  SKIP="xcode blender" zsh .../Tools/att-queue.zsh
   Every card ends up in one file: Results/<Mac>/Queue/queue_<date>.txt.
-  Then do the hand-run ones (6, 7, 12, 13, 15, 16, 17) when you're at the Mac.
+  Then do the hand-run ones (6, 7, 12, 13, 15, 16, 17, 18) when you're at the Mac.
 RESULTS COPY THEMSELVES: whenever a test ends with a test drive plugged in, that
 Mac's Results folder is copied onto the drive (Results/<Mac name>). No drive left
 on? Nothing lost: they copy over the next time any test ends with a drive in.

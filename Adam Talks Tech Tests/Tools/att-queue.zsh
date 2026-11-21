@@ -9,11 +9,10 @@
 #    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
 #
 #  Default order: xcode blender redautumn handbrake sustained qwen9b qwen27b gemma
-#                 + ladder (32GB+) + drawthings (only if Draw Things is already open
-#                 with the API server on and Z-Image Turbo selected)
+#                 + ladder (32GB+). Draw Things is NOT in the queue: run step 18 by hand.
 #  Pick your own:  QUEUE="sustained qwen27b gemma" zsh att-queue.zsh
 #  Leave some out: SKIP="xcode blender" zsh att-queue.zsh
-#  Also possible:  ladder whisper drawthings
+#  Also possible:  ladder whisper
 #
 #  DRIVE: only needed for the first 1-2 minutes. It copies the AI models it will
 #  need onto the Mac first, then says "you can unplug the drive". If a drive is
@@ -21,7 +20,7 @@
 #  Results: every test's normal files + Results/<Mac>/Queue/queue_<date>.txt with
 #  every photo card in one place (send Claude that file or a photo of the summary).
 #  Not in the queue (need you there): Geekbench, Cinebench, Puget first runs,
-#  Logic, games, stacker (needs restarts), external SSD test.
+#  Logic, games, stacker (needs restarts), Draw Things, external SSD test.
 # =============================================================================
 zmodload zsh/datetime
 TOOLS=${0:A:h}; ROOT=${TOOLS:h}
@@ -35,21 +34,18 @@ STAMP=$(date +%Y-%m-%d_%H-%M)
 QDIR="$ROOT/Results/$MAC/Queue"; mkdir -p "$QDIR"
 LOG="$QDIR/queue_${STAMP}.log"; SUMMARY="$QDIR/queue_${STAMP}.txt"
 
-dt_ready() { curl -sf -m 3 http://127.0.0.1:7860/ 2>/dev/null | grep -qi 'z_image'; }
-
 typeset -A DIR CMD MINS
 DIR=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrake "HandBrake Test" sustained "Blender Test"
-     qwen9b "AI Tests" qwen27b "AI Tests" gemma "AI Tests" ladder "AI Tests" whisper "AI Tests" drawthings "Image Gen Test")
+     qwen9b "AI Tests" qwen27b "AI Tests" gemma "AI Tests" ladder "AI Tests" whisper "AI Tests")
 CMD=(xcode "xcode-bench.sh" blender "blender-bench.sh" redautumn "blender-bench.sh redautumn" handbrake "handbrake-bench.zsh"
      sustained "sustained-test.sh" qwen9b "lmstudio-bench.sh qwen9b" qwen27b "lmstudio-bench.sh qwen27b" gemma "lmstudio-bench.sh gemma"
-     ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper" drawthings "att-drawthings.zsh")
-MINS=(xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 8 drawthings 15)
+     ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper")
+MINS=(xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 8)
 
 if [[ -n $QUEUE ]]; then LIST=(${=QUEUE})
 else
   LIST=(xcode blender redautumn handbrake sustained qwen9b qwen27b gemma)
   (( RAM >= 32 )) && LIST+=(ladder)
-  dt_ready && LIST+=(drawthings)
 fi
 for s in ${=SKIP}; do LIST=(${LIST:#$s}); done
 
@@ -59,7 +55,6 @@ for t in $LIST; do
   [[ -n ${CMD[$t]} ]] || { NOTES+=("$t: unknown test name, skipped"); continue; }
   local_dir="$ROOT/${DIR[$t]}"
   [[ -f "$local_dir/${${(z)CMD[$t]}[1]}" ]] || { NOTES+=("$t: ${DIR[$t]} folder isn't on this Mac (Tools/att-get.zsh), skipped"); continue; }
-  [[ $t == drawthings ]] && ! dt_ready && { NOTES+=("drawthings: Draw Things isn't open with the API server on + Z-Image Turbo selected, skipped"); continue; }
   RUN+=($t)
 done
 (( ${#RUN} )) || { print "Nothing to run."; print -l $NOTES; exit 1; }
