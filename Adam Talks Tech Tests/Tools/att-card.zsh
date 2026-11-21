@@ -85,11 +85,12 @@ att_power_check() {
     print "!! On battery. Plug in Apple's charger straight into the Mac (not a dock) and start again."
     ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING on battery"; return 0
   fi
-  # minimum = roughly the charger Apple ships with that class of chip
-  local chip=$(sysctl -n machdep.cpu.brand_string 2>/dev/null) min=60
-  [[ $chip == *Pro* ]] && min=70
-  [[ $chip == *Max* ]] && min=96
-  [[ $chip == *Ultra* ]] && min=96
+  # minimum = a bit under the charger Apple ships with that class of chip
+  # (Apple's own chargers report a few watts under the label: the stock 96W shows 94W)
+  local chip=$(sysctl -n machdep.cpu.brand_string 2>/dev/null) min=55
+  [[ $chip == *Pro* ]] && min=65
+  [[ $chip == *Max* ]] && min=90
+  [[ $chip == *Ultra* ]] && min=90
   print "Power: charger ${w:-?}W"
   ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }charger ${w:-?}W"
   if [[ -n $w ]] && (( w < min )); then

@@ -57,7 +57,7 @@ Terminal in the right folder; without it you get "can't open input file".
 [ ] 4b. LAPTOPS: Apple's own charger plugged STRAIGHT into the Mac (MagSafe if it has it).
         Not through a dock or hub: docks can cap the power and look like throttling.
         The scripts print the charger wattage on the photo card and warn if it's below
-        what that chip needs (60W base, 70W Pro, 96W Max).
+        what that chip needs (under 55W base, 65W Pro, 90W Max; the stock 96W shows as 94W, that's fine).
 [ ] 5. Restart, quit everything, let it sit 15 min before the first test.
 
 ------------------------------------------------------------------
