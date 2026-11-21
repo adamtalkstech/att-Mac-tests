@@ -280,9 +280,7 @@ load_model() { # $1=key $2=context -> LOAD_S, INSTANCE, LOAD_ERR
 make_payload() { # out model file question reasoning maxtokens
   jq -n --arg m "$2" --rawfile f "$3" --arg q "$4" --arg r "$5" --argjson mx "$6" --argjson t "$TEMP" '
     { model: $m,
-      input: ((if $f == "" then $q elif $q == "" then $f else ($f | rtrimstr("\n")) + "\n" + $q end)
-              # no API switch to turn thinking off for this model? Qwen honors /no_think in the prompt
-              + (if $r == "" and ($m | ascii_downcase | test("qwen")) then "\n/no_think" else "" end)),
+      input: (if $f == "" then $q elif $q == "" then $f else ($f | rtrimstr("\n")) + "\n" + $q end),
       store: false, temperature: $t, max_output_tokens: $mx }
     + (if $r == "" then {} else {reasoning: $r} end)' > "$1"
 }
@@ -343,7 +341,7 @@ run_once() { # key ctx file question reasoning maxtok -> R_*, RUN_ST, RUN_NOTE, 
         *)       RUN_ST=ERROR; RUN_NOTE=$R_ERR ;;
       esac
       [[ -n $R_OUT && $R_OUT == $mx ]] && RUN_NOTE="${RUN_NOTE:+$RUN_NOTE; }hit ${mx}-token cap"
-      [[ -n $R_REASON_TOK && $R_REASON_TOK != 0 ]] && RUN_NOTE="${RUN_NOTE:+$RUN_NOTE; }WARNING thinking was on (${R_REASON_TOK} reasoning tokens)"
+      [[ -n $R_REASON_TOK && $R_REASON_TOK != 0 ]] && RUN_NOTE="${RUN_NOTE:+$RUN_NOTE; }note: thinking on (${R_REASON_TOK} reasoning tokens; standard for Qwen 3.5, same on every Mac)"
     fi
   fi
   "$LMS" unload --all >/dev/null 2>&1
@@ -475,7 +473,7 @@ test_gemma() {
 qwen_suite() { # $1 test id  $2 key
   local test=$1 key=$2 reason="off" fa fb fc first=1
   if ! reasoning_off_ok "$key"; then
-    warn "LM Studio doesn't list a thinking OFF option for this model. Adding /no_think to the prompt (Qwen) and flagging any thinking tokens."
+    warn "LM Studio can't turn thinking off for this model over its API (known LM Studio bug with Qwen 3.5). Running with thinking on, the same on every Mac."
     reason=""
   fi
   fa=$(need_file "$TRANSCRIPT_A"); fb=$(need_file "$TRANSCRIPT_B"); fc=$(need_file "$TRANSCRIPT_C")
@@ -496,7 +494,7 @@ qwen_suite() { # $1 test id  $2 key
   return 0
 }
 
-QWEN_CARD="Thinking OFF. Transcript A/B at 8K context, C at 32K. Prompt: \"$SUMMARY_Q\" Plus Roman 10 paragraphs at 8K."
+QWEN_CARD="Thinking ON (LM Studio can't turn it off for Qwen 3.5), max 4,096 tokens. Transcript A/B at 8K context, C at 32K. Prompt: \"$SUMMARY_Q\" Plus Roman 10 paragraphs at 8K."
 
 test_qwen9b() {
   say ""; say "=== TEST 2: Qwen 3.5 9B (MLX 4-bit) ==="
