@@ -1,3 +1,4 @@
+2026-11-20 19:55 Nov 20 2026 - Photo card shows Mac type (mini/MacBook Pro, desktop/laptop, CPU+GPU cores, SSD)
 2026-11-20 19:50 Nov 20 2026 - Fan reader works without Xcode once a ready-made copy (Tools/att-fans-bin) exists
 2026-11-20 19:45 Nov 20 2026 - Sustained test logs fan speed (avg/max RPM per run); Tools/att-fans.zsh fan check
 2026-11-20 19:35 Nov 20 2026 - Charger warning matches the chip (60W base, 70W Pro, 96W Max)

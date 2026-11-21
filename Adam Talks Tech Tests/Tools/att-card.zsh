@@ -1,6 +1,24 @@
 # ATT photo card (sourced by the test scripts, not run on its own)
 # Frames the final result so one Terminal photo has everything Claude needs
 # to log it: test, Mac name, chip, RAM, macOS, date, then the numbers.
+# One line that says what kind of Mac this is, so two Macs with the same chip can't be mixed up:
+#   "Mac mini (Mac17,4) | desktop | 18-core CPU, 20-core GPU | 1TB SSD"
+# Worked out once per Mac and kept in ~/.att/mac-kind.txt (delete it to redo).
+att_mac_kind() {
+  local f=$HOME/.att/mac-kind.txt
+  [[ -s $f && $f -nt /System/Library/CoreServices/SystemVersion.plist ]] && { print -r -- "$(<$f)"; return; }
+  local hw=$(system_profiler SPHardwareDataType 2>/dev/null)
+  local name=$(print -r -- "$hw" | awk -F': ' '/Model Name/ {print $2; exit}')
+  local id=$(sysctl -n hw.model 2>/dev/null)
+  local cpu=$(sysctl -n hw.ncpu 2>/dev/null)
+  local gpu=$(system_profiler SPDisplaysDataType 2>/dev/null | awk -F': ' '/Total Number of Cores/ {print $2; exit}')
+  local kind=desktop
+  [[ $name == *Book* || -n $(pmset -g batt 2>/dev/null | grep -i InternalBattery) ]] && kind=laptop
+  local disk=$(diskutil info / 2>/dev/null | awk -F'[(:]' '/Container Total Space|Disk Size/ {gsub(/^ +| +$/,"",$2); print $2; exit}')
+  local line="${name:-Mac} ($id) | $kind | ${cpu}-core CPU${gpu:+, ${gpu}-core GPU}${disk:+ | $disk SSD}"
+  mkdir -p ${f:h}; print -r -- "$line" > $f
+  print -r -- "$line"
+}
 att_card_start() {
   local mac=$(scutil --get ComputerName 2>/dev/null)
   local chip=$(sysctl -n machdep.cpu.brand_string 2>/dev/null)
@@ -10,6 +28,7 @@ att_card_start() {
   print "#################### PHOTO THIS FOR CLAUDE ####################"
   print "TEST:  $*"
   print "MAC:   $mac"
+  print "       $(att_mac_kind)"
   print "       $chip | ${ram}GB | macOS $os"
   print "DATE:  $(date '+%b %d %Y  %I:%M %p')"
   [[ -n $ATT_COOL_NOTE ]] && print "START: $ATT_COOL_NOTE"
