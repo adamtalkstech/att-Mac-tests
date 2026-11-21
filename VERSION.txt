@@ -1,3 +1,4 @@
+2026-11-20 21:50 Nov 20 2026 - Run Order step 17: closer warm-up on a Mac's first time
 2026-11-20 21:45 Nov 20 2026 - Run Order: stacker is now step 17
 2026-11-20 21:40 Nov 20 2026 - Tests now quit TextEdit too before starting
 2026-11-20 21:35 Nov 20 2026 - Gemma: other Gemma builds set aside automatically; test refuses to run the MLX build

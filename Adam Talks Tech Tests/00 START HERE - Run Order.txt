@@ -167,6 +167,11 @@ EXTRAS (only when a video needs it)
 [ ] 17. RAM closer vs stacker (the RAM video test, two runs, ~25 min each, free apps only):
       Needs: LM Studio opened once (Qwen 9B is copied over by itself, drive plugged in),
       the "Final Cut Test" folder (small Macs: Tools/att-get.zsh), Final Cut + Numbers installed.
+      CLOSER = one app at a time, quit each when done (the best-case baseline).
+      STACKER = everything open at once (real life). Compare the two export times.
+      FIRST TIME on a Mac (Safari/Numbers/Final Cut/LM Studio never opened there):
+      run the closer once as a WARM-UP (click through welcome screens, permissions,
+      Final Cut library update), don't log it, restart, then run the real closer.
       Restart, then the closer:
         cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
       Restart again, then the stacker:
