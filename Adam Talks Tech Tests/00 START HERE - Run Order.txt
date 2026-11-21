@@ -15,6 +15,11 @@ HOW IT WORKS
   Big folders: AI Tests 115GB (the models), Logic Test - Big Session 63GB,
   Final Cut Test 45GB, Apps & Installers 25GB, Lightroom Test 16GB,
   WebKit Test 7GB, HandBrake Test 6GB. On a 512GB Mac do one big one at a time.
+  SMALL MACS (Air Kit / Mini Kit on the drives): the kit has the scripts but not every
+  big test folder. Copy just the one you need next, test, then free it again:
+     zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh          (copy from the drive)
+     zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-get.zsh free     (delete from this Mac)
+  It copies onto the Mac's own SSD, so results stay fair. Results are never touched.
   Tip for AI Tests: drag it WITHOUT the "LM Studio Models" folder and run
   att-models.zsh load with the drive plugged in (copies only the models you pick).
 
@@ -124,12 +129,13 @@ The scripted tests do this on their own.
         a. Load the models into LM Studio (quit LM Studio first):
              cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh att-models.zsh load
            Uses "LM Studio Models" in this folder if you dragged it, else the
-           drive. Pick Qwen 3.5 9B + Qwen3.8 27B 4-bit + Gemma 3 4B.
+           drive. Pick Qwen 3.5 9B + Qwen3.8 27B 4-bit + gemma-3-4b-it-GGUF.
         b. Open LM Studio once, then:
              cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen9b
              cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
              cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
-           (Gemma = Gemma 3 4B, Main Results AI-AO. Load it in 14a too: pick gemma-3-4b.)
+           (Gemma = Gemma 3 4B, Main Results AI-AO. Load it in 14a too: pick gemma-3-4b-it-GGUF,
+            the same build on every Mac. The script warns if a different Gemma ran.)
            LM Studio guardrails: Relaxed. If a model still won't load, Off for that run only.
         c. Ladder (27B at 4/5/6/8-bit, Macs with 32GB+; load those 4 in 14a first):
              cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder

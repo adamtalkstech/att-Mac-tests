@@ -71,7 +71,7 @@ CODE_MAX=${CODE_MAX:-4096}
 
 # Models are found by name. Force one with GEMMA_MODEL=, QWEN9_MODEL=, QWEN27_MODEL=,
 # MOE_MODEL=, CODE_MODEL= (exact key from "info").
-GEMMA_PATTERN='gemma-3-4b'
+GEMMA_PATTERN='gemma-3-4b-it-GGUF'   # Nov 20 2026: lock to the Q4_K_M GGUF build on every Mac (the MLX qat build gives different output)
 QWEN9_PATTERN='qwen3\.5-9b-mlx-4bit';   QWEN9_LOOSE='qwen3\.5-9b'
 QWEN27_PATTERN='qwen3\.8-27b-mlx-4bit'; QWEN27_LOOSE='qwen3\.8-27b'
 MOE_PATTERN=${MOE_PATTERN:-'30b-a3b'}
@@ -487,7 +487,11 @@ power_line() { # power summary for one test
 test_gemma() {
   say ""; say "=== TEST 1: Gemma 3 4B ==="
   local key=$(resolve_model "$GEMMA_MODEL" "$GEMMA_PATTERN")
-  [[ -z $key ]] && { warn "Gemma 3 4B isn't downloaded on this Mac. Skipping."; return; }
+  if [[ -z $key ]]; then
+    key=$(resolve_model "" 'gemma-3-4b')
+    [[ -z $key ]] && { warn "Gemma 3 4B isn't downloaded on this Mac. Skipping."; return; }
+    warn "The standard Gemma build (gemma-3-4b-it-GGUF, Q4_K_M) isn't loaded, so this ran a different Gemma build: NOT comparable. Load gemma-3-4b-it-GGUF with att-models.zsh load and rerun."
+  fi
   test_card "Gemma 3 4B" "$key" "Roman 50-paragraph essay + Apple environment summary, context $GEMMA_CTX, max $GEMMA_MAX tokens"
   run_prompt gemma Roman "$key" $GEMMA_CTX /dev/null "$ROMAN50" "" $GEMMA_MAX
   local apple; if apple=$(need_file "$APPLE_FILE"); then
