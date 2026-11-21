@@ -149,8 +149,17 @@ att_sync_results() {
   (( n )) && print "Results copied to the plugged-in drive(s): Results/$mac"
   return 0
 }
-trap 'att_resume_bg; att_sync_results' EXIT
-trap 'att_resume_bg; att_sync_results; exit 130' INT TERM HUP
+# Send new result files to the Mac Tests sheet + Drive (Tools/att-upload.zsh; does nothing until
+# this Mac is set up with att-upload.zsh setup; NOUPLOAD=1 skips it)
+ATT_TEST_NAME="${ZSH_ARGZERO:t}${1:+ $1}"
+att_upload_results() {
+  [[ -n $NOUPLOAD || ! -s $HOME/.att/upload.conf ]] && return 0
+  local root=${ATT_TOOLS_DIR:h}; [[ $root == /Volumes/* ]] && return 0
+  zsh "$ATT_TOOLS_DIR/att-upload.zsh" auto "$ATT_TEST_NAME" 2>/dev/null
+  return 0
+}
+trap 'att_resume_bg; att_sync_results; att_upload_results' EXIT
+trap 'att_resume_bg; att_sync_results; att_upload_results; exit 130' INT TERM HUP
 
 # Every cooldown is also saved to Results/<Mac>/cooldowns.csv (date, time, test, waited s, result)
 att_cool_log() {   # $1 waited seconds, $2 result

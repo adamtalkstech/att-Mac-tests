@@ -1,0 +1,21 @@
+UPLOAD RESULTS: every test sends its new result files (cards, CSVs, logs) to the
+Mac Tests sheet (Raw Results tab) + Google Drive (ATT Test Results/<Mac>/).
+Signed with a secret key; the key is never in GitHub. Does nothing until set up.
+
+Set up this Mac (finds the key on a plugged-in test drive, or asks for it):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh setup
+
+Send a test ping:
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh test
+
+Upload anything not sent yet:
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh now
+
+BEFORE A LOANER SHIPS BACK (removes the key):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh forget
+
+Skip uploading for one test: put NOUPLOAD=1 in front of it.
+
+One-time, on Adam's own Mac only:
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh save-to-drive

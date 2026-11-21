@@ -73,7 +73,7 @@ sudo -v || { print "Need the password to run unattended."; exit 1; }
 { trap - INT TERM; while true; do sudo -n true 2>/dev/null; sleep 50; done } &
 KEEP=$!
 caffeinate -dims -w $$ &
-trap 'kill $KEEP 2>/dev/null; att_resume_bg; att_sync_results' EXIT
+trap 'kill $KEEP 2>/dev/null; att_resume_bg; att_sync_results; att_upload_results' EXIT
 trap 'print "\nQueue stopped."; exit 130' INT TERM
 
 # Models first, so the drive can be unplugged

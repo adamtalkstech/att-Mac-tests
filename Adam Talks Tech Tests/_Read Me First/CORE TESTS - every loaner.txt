@@ -20,3 +20,6 @@ other games, SSD, WebKit, memory/stack test.
 
 BEFORE IT SHIPS: results copied to the LaCie, Resolve deactivated, Adobe
 signed out, Steam signed out.
+
+BEFORE IT SHIPS BACK: remove the results upload key (Nov 21 2026):
+      zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh forget
