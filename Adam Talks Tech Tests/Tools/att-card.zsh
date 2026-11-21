@@ -52,6 +52,27 @@ att_quit_apps() {
   return 0
 }
 
+# ATT power check (laptops): what's actually powering the Mac. A dock or a small
+# USB-C charger can cap the power an M5 Pro/Max needs under load, which looks
+# like throttling. Logged on the photo card; warns under 96W. Desktops skip it.
+att_power_check() {
+  [[ -n $ATT_POWER_CHECKED ]] && return 0; ATT_POWER_CHECKED=1
+  sysctl -n hw.model 2>/dev/null | grep -qi book || [[ -n $(pmset -g batt 2>/dev/null | grep -i InternalBattery) ]] || return 0
+  local w src
+  w=$(system_profiler SPPowerDataType 2>/dev/null | awk -F': ' '/Wattage/{print $2; exit}')
+  src=$(pmset -g batt 2>/dev/null | head -1 | sed "s/.*'\(.*\)'.*/\1/")
+  if [[ $src != "AC Power" ]]; then
+    print "!! On battery. Plug in Apple's charger straight into the Mac (not a dock) and start again."
+    ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }WARNING on battery"; return 0
+  fi
+  print "Power: charger ${w:-?}W"
+  ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }charger ${w:-?}W"
+  if [[ -n $w ]] && (( w < 96 )); then
+    print "!! Only ${w}W reaching the Mac (a dock or small charger?). Use Apple's charger straight into the Mac for fair results."
+    ATT_COOL_NOTE="${ATT_COOL_NOTE}; WARNING under 96W"
+  fi
+}
+
 # ATT pause background: freezes macOS's Photos/Spotlight/Siri scanners during a test
 # (kill -STOP, no password) and wakes them again when the script ends (kill -CONT).
 # These run as your user and start scanning whenever the Mac looks idle, which
@@ -106,6 +127,7 @@ att_cool_log() {   # $1 waited seconds, $2 result
 att_cooldown() {
   local again=0; [[ $1 == --again ]] && again=1
   (( again )) || att_quit_apps
+  att_power_check
   att_pause_bg
   [[ $NOCOOL == 1 ]] && { print "Cooldown check skipped (NOCOOL=1)."; return 0; }
   local rest=${COOL:-0} need=${QUIET:-60} quiet=0 waited=0 lvl load name

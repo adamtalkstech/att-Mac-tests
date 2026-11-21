@@ -54,6 +54,9 @@ Terminal in the right folder; without it you get "can't open input file".
          cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-name-this-mac.zsh
 [ ] 4. Version card (every test day, before the first test):
          cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-versions.zsh
+[ ] 4b. LAPTOPS: Apple's own charger plugged STRAIGHT into the Mac (MagSafe if it has it).
+        Not through a dock or hub: docks can cap the power and look like throttling.
+        The scripts print the charger wattage on the photo card and warn under 96W.
 [ ] 5. Restart, quit everything, let it sit 15 min before the first test.
 
 ------------------------------------------------------------------
