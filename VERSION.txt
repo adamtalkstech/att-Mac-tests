@@ -1,3 +1,4 @@
+2026-11-20 20:45 Nov 20 2026 - Run Order: Gemma and ladder commands added to step 14
 2026-11-20 20:40 Nov 20 2026 - Charger warning no longer trips on Apple's stock chargers (96W reads 94W)
 2026-11-20 20:35 Nov 20 2026 - Fan reader ships ready-made (Tools/att-fans-bin): no Xcode needed on any Mac
 2026-11-20 20:15 Nov 20 2026 - AI tests explain LM Studio's load guardrail block and how to set Relaxed
