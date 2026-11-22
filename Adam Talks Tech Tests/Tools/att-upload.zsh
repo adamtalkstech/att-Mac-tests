@@ -193,10 +193,11 @@ case $1 in
   newkey) cmd_newkey ;;
   setup) cmd_setup ;;
   test) cmd_test ;;
-  now) cmd_auto "manual upload" ;;
+  now) load_conf || { say "This Mac isn't set up yet. Run:  zsh \"$TOOLS/att-upload.zsh\" setup   (test drive plugged in)"; exit 1; }; cmd_auto "manual upload" ;;
   all)   # first gather the Puget CSVs that app runs left in Puget's own folder
     [[ -f "$ROOT/Puget Test/att-puget.zsh" ]] && ( cd "$ROOT/Puget Test" && NOUPLOAD=1 zsh att-puget.zsh collect >/dev/null 2>&1 ) && say "Gathered the Puget CSVs into Results first."
-    ATT_UPLOAD_ALL=1 cmd_auto "full backfill" ;;
+    load_conf || { say "This Mac isn't set up yet, so nothing was sent. Run:  zsh \"$TOOLS/att-upload.zsh\" setup   (test drive plugged in), then all again."; exit 1; }
+    ATT_UPLOAD_ALL=1 cmd_auto "full backfill"; say "Done. Check the Raw Results tab." ;;
   save-to-drive) cmd_save_to_drive ;;
   forget) cmd_forget ;;
   auto) cmd_auto "${2:-test}" ;;
