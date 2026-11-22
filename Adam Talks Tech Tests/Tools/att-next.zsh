@@ -103,6 +103,8 @@ if [[ -n $GO ]]; then
   for t in ${=GO}; do
     T_SINCE_S=$(since_for $t)
     hit=( "$RES"/${~PAT[$t]:-NOMATCH}(N+newer) )
+    # Nov 22: a Whisper run that stopped on an old kit doesn't count as done
+    [[ $t == whisper ]] && hit=( ${(f)"$(for h in $hit; do grep -q "Old Whisper kit" "$h" 2>/dev/null || print -r -- "$h"; done)"} )
     T_SINCE_S=""
     (( ${#hit} )) && DONE_GO+=($t) || left+=($t)
   done

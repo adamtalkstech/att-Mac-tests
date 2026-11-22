@@ -759,6 +759,12 @@ test_whisper() {
   if [[ -z $WHISPER_DIR || ! -x $WHISPER_DIR/bin/whisper-cli-metal ]]; then
     warn "No Whisper kit on this Mac or a plugged-in drive. Plug in P7 or P9 (they have it) and rerun: it copies itself over. Skipping."; return
   fi
+  # Nov 22 (Adam: anything run on the wrong Whisper kit gets rerun): never run on an old, unlocked kit.
+  if ! locked "$WHISPER_DIR"; then
+    warn "Old Whisper kit (not locked to the Neural Engine) and no new kit on a plugged-in drive. Old Whisper kit: not run."
+    warn "Plug in the P9, OWC Envoy or LaCie (they have the Nov 22 kit) and run Whisper again. Nothing gets logged from this."
+    return
+  fi
   xattr -dr com.apple.quarantine "$WHISPER_DIR" 2>/dev/null   # copied/AirDropped kits get blocked otherwise
   local model="$WHISPER_DIR/models/ggml-large-v3-turbo.bin" audio
   [[ -s $model ]] || { warn "Model missing in $WHISPER_DIR/models. Rerun whisper-coreml-setup.sh."; return; }

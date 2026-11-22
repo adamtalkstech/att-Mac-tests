@@ -3,6 +3,8 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Whisper (5:25 PM): never runs on an old, unlocked kit any more (stops and says to plug in the P9/OWC/LaCie);
+  a stopped run doesn't count as done in Run This Next. Old-kit cells on the sheet are marked NOT CLEAN.
 - att-prime fix (5:20 PM): app lookup stopped at the first missing /Applications/*/ folder ("no matches found"),
   so no app got its first-launch / permission prompt before walking away. Fixed.
 - NEW step 20 att-ssd-internal.zsh (SSD Test folder, queue name ssdint): the Mac's own SSD with no Homebrew/fio.
