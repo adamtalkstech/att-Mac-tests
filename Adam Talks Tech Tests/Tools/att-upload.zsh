@@ -79,11 +79,12 @@ cmd_newkey() {
   [[ $key == [0-9a-f](#c64) ]] || { say "openssl didn't make a key."; exit 1; }
   local url=""; load_conf 2>/dev/null && url=$ATT_UPLOAD_URL
   write_conf "${url:-https://script.google.com/macros/s/PASTE/exec}" "$key"
-  say "New upload key (saved to $CONF):"
-  say ""
-  say "  $key"
-  say ""
-  say "Paste it into the Apps Script: Project Settings > Script Properties > ATT_KEY."
+  print -rn -- "$key" | pbcopy 2>/dev/null
+  say "New upload key made and saved to $CONF (only you can read it)."
+  say "It's on your clipboard now (not shown on screen, so it never ends up in a photo or screenshot)."
+  say "Paste it into the Apps Script: Project Settings > Script Properties > ATT_KEY (Cmd-V)."
+  say "Need to see it?  SHOWKEY=1 zsh \"$TOOLS/att-upload.zsh\" newkey   prints a NEW one."
+  [[ -n $SHOWKEY ]] && say "  $key"
   say "Then run:  zsh \"$TOOLS/att-upload.zsh\" setup   and paste the web app URL."
   say "(If you make a new key, every Mac needs setup again.)"
 }
