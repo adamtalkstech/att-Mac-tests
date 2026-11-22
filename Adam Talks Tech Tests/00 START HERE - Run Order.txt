@@ -67,6 +67,12 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
         App switch every minute, YouTube dropped frames, old tabs, Qwen tok/s, FCP export at the end.
           cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-realday.zsh everyday
           cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-realday.zsh creator
+[ ] 17e. macOS by itself (idle RAM) + GPU memory cap. Restart, log in, then (~8 min, hands-off):
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh on
+        Then Apple Intelligence OFF (System Settings > Apple Intelligence & Siri), restart, run it with  off,
+        and turn Apple Intelligence back on afterwards.
+[ ] 17f. What each display costs in RAM (hands-on, ~10 min). Restart first; plug displays in when it asks:
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-displays.zsh
 [ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
         Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
         Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh

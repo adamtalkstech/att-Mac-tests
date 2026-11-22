@@ -18,6 +18,7 @@ dgb=${disk%% *}; dgb=${dgb%%.*}; [[ $disk == *TB* ]] && dgb=$(( dgb * 1000 ))
 key=""
 case "$name|$chip" in
   *iMac*\|*M6*) key=M6-IMAC ;;
+  *"MacBook Neo"*\|*) (( ${dgb:-0} > 300 )) && key=NEO-512 || key=NEO-256 ;;
   *"MacBook Air"*) key=AIR ;;
   *"Mac Studio"*\|*"M5 Max"*) key=STUDIO-M5MAX ;;
   *"Mac Studio"*\|*"M4 Max"*) key=STUDIO-M4MAX ;;

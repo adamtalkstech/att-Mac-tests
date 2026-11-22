@@ -57,3 +57,25 @@ att_appmem_peaks() {
     END { for (a in pk) printf "%.0f|%s|%.0f|%s\n", pk[a], a, pc[a], ps[a] }' "$csv" | sort -t'|' -k1,1nr | head -$top |
   awk -F'|' '{ printf "  %-28s %6.1f GB  (%4.1f GB compressed, %4.1f GB in RAM)  peak at: %s\n", substr($2,1,28), $1/1024, $3/1024, ($1-$3)/1024, $4 }'
 }
+
+# Nov 22: the whole Mac's memory, the way Activity Monitor's bottom box adds it up.
+# Prints  used|app|wired|compressed|cached  in GB  (used = app + wired + compressed).
+att_mem_used() {
+  vm_stat | awk -v ps=$(pagesize) '
+    function v(s){ gsub(/\./,"",s); return s+0 }
+    /Anonymous pages/ {an=v($3)} /Pages purgeable/ {pu=v($3)} /Pages wired down/ {wi=v($4)}
+    /Pages occupied by compressor/ {co=v($5)} /File-backed pages/ {fb=v($3)}
+    END { g=ps/1073741824; app=(an-pu)*g; printf "%.2f|%.2f|%.2f|%.2f|%.2f\n", app+wi*g+co*g, app, wi*g, co*g, fb*g }'
+}
+# Most memory the GPU may use (Metal's recommended working set), in GB. Needs Xcode tools once (swiftc);
+# falls back to the iogpu.wired_limit_mb setting if someone raised it by hand.
+att_gpu_cap() {
+  local bin=$HOME/.att/gpucap src=$HOME/.att/gpucap.swift
+  if [[ ! -x $bin ]] && whence swiftc >/dev/null; then
+    mkdir -p $HOME/.att
+    print 'import Metal; if let d = MTLCreateSystemDefaultDevice() { print(d.recommendedMaxWorkingSetSize) }' > $src
+    swiftc -O -o $bin $src 2>/dev/null
+  fi
+  if [[ -x $bin ]]; then $bin | awk '{printf "%.1f\n", $1/1073741824}'; return; fi
+  local l=$(sysctl -n iogpu.wired_limit_mb 2>/dev/null); [[ -n $l && $l != 0 ]] && awk -v m=$l 'BEGIN{printf "%.1f\n", m/1024}'
+}

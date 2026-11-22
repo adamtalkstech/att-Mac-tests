@@ -1,0 +1,4 @@
+STEP 17f · What each extra display costs in RAM · hands-on, ~10 min
+Restart first. Start with what's normally plugged in; it asks you to plug in one more display, twice.
+cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-displays.zsh
+Only one extra display:  STEPS=2 zsh att-displays.zsh

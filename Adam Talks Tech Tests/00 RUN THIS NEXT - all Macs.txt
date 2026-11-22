@@ -1,5 +1,5 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 10:40 AM
+Updated: Nov 22 2026, 11:10 AM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
@@ -9,6 +9,8 @@ NOV 22 AFTERNOON/TONIGHT:
  * Keep P9 or the OWC Envoy plugged in for the first minute of each walk-away run (it copies the new
    Whisper kit), and stay for that first minute: it opens each app once and you click Allow / OK.
  * Redo on every Mac: 14f Whisper (new Neural Engine kit) and 17c App RAM (Final Cut/Logic now counted right).
+ * NEW RAM tests: 17e macOS by itself (idle RAM, Apple Intelligence on/off, GPU memory cap) and 17f what each
+   display costs. Real Day now logs SSD writes per hour. Both show in each Mac's list from the sheet.
  * NEW 17d Real Day on the M6 minis, iMac and M6 MacBook Pro (about 70-80 min each, walk-away).
    Leave it out with  SKIP="realday realdaycreator"  in front of the go command.
  * Results go into the sheet by themselves now. Photos only for Geekbench, Cinebench, games, Puget app runs.
@@ -338,6 +340,22 @@ GO=sheet blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
    First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
    If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+
+[[NEO-256]]
+NAME=MacBook Neo 8GB (256GB) · RAM video: the 8GB end
+ROWS=MR:13 NT:21
+GO=bandwidth appmem responsiveness realday
+SKIPT=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper cinebench geekbench puget-resolve puget-premiere puget-ae puget-ps puget-lr logic cyberpunk warthunder stacker drawthings magmask fcpexports lightroom ssd braw
+RAM tests only (Nov 22): walk-away line, then steps 17e (idle, on + off) and 17f (displays) from the list above.
+App RAM will try Qwen 9B on 8GB: if it won't load or swaps hard, that's the result.
+
+[[NEO-512]]
+NAME=MacBook Neo 8GB (512GB) · RAM video: the 8GB end
+ROWS=MR:14 NT:21
+GO=bandwidth appmem responsiveness realday
+SKIPT=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper cinebench geekbench puget-resolve puget-premiere puget-ae puget-ps puget-lr logic cyberpunk warthunder stacker drawthings magmask fcpexports lightroom ssd braw
+RAM tests only (Nov 22): walk-away line, then steps 17e (idle, on + off) and 17f (displays) from the list above.
+App RAM will try Qwen 9B on 8GB: if it won't load or swaps hard, that's the result.
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)

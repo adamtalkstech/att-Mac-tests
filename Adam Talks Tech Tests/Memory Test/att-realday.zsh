@@ -189,6 +189,12 @@ print "Biggest apps (peak, Activity Monitor 'Memory'):"
 att_appmem_peaks "$APPCSV" 8
 (( HAS_CAM )) || print "No camera on this Mac: Photo Booth (call stand-in) skipped"
 att_log "New Tests" "Real Day $PILE" "${A_ALL} / ${W_ALL} ms | ${A_FIRST} -> ${A_LAST} ms | $WORST, swap +$SWAP GB | YT drop ${YPCT}%$([[ $PILE == creator ]] && print " | Qwen ${QT[1]:-?} -> ${QT[-1]:-?} tok/s | FCP ${EXP:-?} s")"
+SSDW=$(val 'SSD written during test GB')
+if [[ -n $SSDW ]]; then
+  GBH=$(awk -v w=$SSDW -v d=$DURATION 'BEGIN{printf "%.1f", w*3600/d}')
+  print "SSD writes: $GBH GB per hour, about $(awk -v h=$GBH 'BEGIN{printf "%.0f", h*8}') GB in an 8-hour day (swap +$SWAP GB)"
+  att_log "New Tests" "SSD writes during Real Day $PILE" "$GBH GB/h (~$(awk -v h=$GBH 'BEGIN{printf "%.0f", h*8}') GB per 8-h day) | swap +$SWAP GB"
+fi
 print "Logs: ${PCSV:t}, ${APPCSV:t}, ${MCSV:t}"
 att_card_end
 } | tee "$RES"

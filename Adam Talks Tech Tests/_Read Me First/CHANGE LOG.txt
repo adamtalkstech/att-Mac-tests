@@ -3,6 +3,10 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- RAM worries (New Tests CH-CM): Real Day logs SSD writes per hour (+ per 8-h day) and swap; NEW att-idle.zsh
+  (17e: macOS by itself after a restart, Apple Intelligence on / off, plus the GPU memory cap from Metal);
+  NEW att-displays.zsh (17f: whole-Mac + WindowServer memory as displays are added). MacBook Neo 8GB sections
+  (RAM tests only) in Run This Next; New Tests row 21.
 - Run This Next reads the live Mac Tests sheet (att-next.zsh + Tools/att-sheet-gaps.js + Tools/att-tests-catalog.txt).
   Each Mac's section has ROWS=MR:<row> NT:<row>. Blank cells, or ones marked RERUN / NOT CLEAN / NOT VALID /
   PROVISIONAL, show under "STILL NEEDED ON THE SHEET". GO=sheet runs every walk-away test the sheet is missing.

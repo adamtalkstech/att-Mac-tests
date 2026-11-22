@@ -1,0 +1,7 @@
+STEP 17e · How much memory macOS uses by itself (+ the GPU memory cap) · ~8 min, hands-off
+Restart, log in, open Terminal, then:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh on
+
+Then turn Apple Intelligence OFF (System Settings > Apple Intelligence & Siri), restart, and run:
+cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh off
+Turn Apple Intelligence back on when it's done.
