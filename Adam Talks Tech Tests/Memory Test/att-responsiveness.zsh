@@ -221,7 +221,9 @@ OSA
 print "ATT Responsiveness Score (step 17b) on $MAC"
 
 # --- 1. One-time settings check (stops with the fix, no prompts) ---
-if ! osascript -e 'tell application "System Events" to get name of first process' >/dev/null 2>&1; then
+# Nov 21: listing processes works WITHOUT Accessibility; counting a window doesn't. Test the real thing
+# (the 16GB mini's warm-up failed all 40 app checks until macOS's Accessibility prompt was answered).
+if ! osascript -e 'tell application "System Events" to tell process "Finder" to count windows' >/dev/null 2>&1; then
   print "!! Terminal can't control other apps yet."
   print "   System Settings > Privacy & Security > Accessibility: turn Terminal ON, quit Terminal, then run this again."
   exit 1
@@ -291,7 +293,7 @@ for (( run=1; run<=RUNS; run++ )); do
       read ms rc <<< "$(probe_app "$a")"
       printf "  %-16s %6s ms%s\n" "$a" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
       print "${target},\"${a}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run},${plev},${comp}," >> "$CSV"
-      if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
+      if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( run == 1 && WARMUP )) || (( noanswer++ )); fi
       sleep 1
     done
     if (( opened >= 5 )); then
@@ -300,7 +302,7 @@ for (( run=1; run<=RUNS; run++ )); do
         (( probes++ )); (( rc == 0 && rl == 1 )) && (( prl++ ))
         printf "  %-16s %6s ms%s%s\n" "old tab #${n}" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')" "$( (( rc == 0 && rl == 1 )) && print '  (had to RELOAD)')"
         print "${target},\"tab ${n}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run},${plev},${comp},$( (( rc == 0 && rl == 1 )) && print yes || print no)" >> "$CSV"
-        if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
+        if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( run == 1 && WARMUP )) || (( noanswer++ )); fi
         sleep 1
       done
     fi

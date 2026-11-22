@@ -1,3 +1,4 @@
+2026-11-22 02:30 Nov 21 2026 - Responsiveness: start check really tests Accessibility (stops with the fix instead of failing app checks); warm-up no-answers no longer counted on the card
 2026-11-22 02:20 Nov 21 2026 - Run This Next: closer, stacker, responsiveness and Draw Things show ✓ DONE once that Mac has a result after SINCE
 2026-11-22 02:05 Nov 21 2026 - Time zones: the walk-away queue sets the Mac to Central (password already asked), Run This Next flags a non-Central Mac, cards show the zone
 2026-11-22 01:55 Nov 21 2026 - Run This Next: "already done" check uses Central time on every Mac (Pacific-clock Macs kept repeating tests)
