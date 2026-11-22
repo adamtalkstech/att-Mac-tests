@@ -44,9 +44,13 @@ WB=""; for f in "$HERE/ATT Stack Test Workbook v1.1.numbers" "$HERE/ATT Stack Te
 SITES=("${(@f)$(sed -n "/^SITES=(/,/^)/p" "$HERE/att-tabtest.zsh" | grep -o "https://[^']*")}")
 LMS=$(command -v lms 2>/dev/null); [[ -z $LMS ]] && LMS="$HOME/.lmstudio/bin/lms"
 # Final Cut Pro app (found by its ID, whatever the app is called)
-FCP_APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut'" 2>/dev/null | grep '\.app$' | grep -v '^/Volumes' | head -1)
-[[ -z $FCP_APP && -d "/Applications/Final Cut Pro.app" ]] && FCP_APP="/Applications/Final Cut Pro.app"
-[[ -n $FCP_APP ]] || { print "Final Cut Pro isn't installed on this Mac. Install it from the App Store, open it once, then rerun."; exit 1; }
+# Nov 21: also finds the Apple Creator Studio version (different name/ID) and works when Spotlight is off.
+FCP_APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut*'" 2>/dev/null | grep '\.app$' | grep -v '^/Volumes' | head -1)
+[[ -z $FCP_APP ]] && FCP_APP=$(print -l /Applications/*Final*Cut*.app(N) /Applications/*/*Final*Cut*.app(N) $HOME/Applications/*Final*Cut*.app(N) | head -1)
+[[ -z $FCP_APP ]] && FCP_APP=$(ps -axo comm= | grep -i -m1 'Final Cut[^/]*\.app/' | sed 's#\(.*\.app\)/.*#\1#')
+[[ -z $FCP_APP ]] && FCP_APP=$(osascript -e 'POSIX path of (path to application id "com.apple.FinalCut")' 2>/dev/null | sed 's#/$##')
+[[ -n $FCP_APP ]] || { print "Couldn't find Final Cut Pro on this Mac. If it IS installed, run this and send Claude a photo:"; print '  ls /Applications | grep -i final; mdfind "kMDItemDisplayName == *Final*Cut*" | grep .app$ | head'; exit 1; }
+print "Final Cut: $FCP_APP"
 FCP_NAME=${${FCP_APP:t}%.app}
 # Test library: copy it from the plugged-in drive if this Mac doesn't have it (one time, ~45GB)
 if [[ ! -e $LIB ]]; then
