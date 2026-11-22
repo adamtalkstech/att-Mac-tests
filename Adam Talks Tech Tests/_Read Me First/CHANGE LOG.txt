@@ -3,6 +3,9 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 21 2026 (night)
+- att-responsiveness.zsh: now 3 runs; run 1 is a warm-up (apps' first
+  launch) shown on the card but not counted; runs 2-3 averaged. WARMUP=0
+  counts all runs. Queue time 50 min.
 - att-responsiveness.zsh: runs the 0-80 tab climb TWICE by default with a
   cooldown between, averages the scores, shows each run and the spread
   (flags over 15%). RUNS=1 for a single run. Queue time 35 min.

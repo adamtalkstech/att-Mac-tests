@@ -1,4 +1,4 @@
-Step 17b, felt speed (restart first):
+Step 17b, felt speed (restart first). 3 runs, first is a warm-up, ~45 min:
 cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 
 One-time: Safari > Settings > Advanced > Show features for web developers, then Developer > Allow JavaScript from Apple Events. Terminal ON in Accessibility.

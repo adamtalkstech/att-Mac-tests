@@ -2,7 +2,7 @@
 # ATT Responsiveness Score, Run Order step 17b (v1.0, Nov 21 2026; rebuilt to match the newer tests)
 # One score for "how snappy does this Mac stay as you pile on a normal day?"
 #
-# Hands off, about 30 minutes (2 runs averaged; RUNS=1 for one). No Return presses.
+# Hands off, about 45 minutes: 3 runs, run 1 is a warm-up, runs 2-3 averaged (RUNS=1 for one). No Return presses.
 #   1. Checks Accessibility + Safari's Apple Events setting (stops with the fix if either is off).
 #   2. Same start as every test: quits other apps, power check, pauses Photos/Spotlight, cooldown.
 #   3. Opens Safari + a few built-in Apple apps, then 80 websites in steps: 0, 20, 40, 60, 80 tabs.
@@ -194,7 +194,8 @@ for a in $WANT_APPS; do open -Ra "$a" 2>/dev/null && APPS+=("$a") || MISSING+=("
 # --- 2. Same clean start as every test (quits apps incl. Safari, power check, pause scanners, cooldown) ---
 ATT_KEEP="Claude,Screen Sharing" att_cooldown
 
-RUNS=${RUNS:-2}   # Nov 21: runs the whole 0-80 tab climb twice by default (RUNS=1 for a quick one)
+RUNS=${RUNS:-3}   # Nov 21: 3 climbs by default; run 1 is a warm-up (first launch of apps), runs 2-3 averaged
+WARMUP=${WARMUP:-1}; (( RUNS < 2 )) && WARMUP=0   # WARMUP=0 counts every run; RUNS=1 = one counted run
 sc() { local v=$1; (( v <= 0 )) && { print 0; return; }; local s=$(( INSTANT_MS * 1000 / v )); (( s > 1000 )) && s=1000; print $s; }
 print "stage_tabs,item,ms,ok,swap_used,memory_free,run" > "$CSV"
 att_watch_start "$BGLOG" "Safari|WebKit|Calculator|Chess|Dictionary|Font Book|Activity Monitor|TV|GarageBand|osascript|System Events|memory_pressure"
@@ -202,7 +203,7 @@ typeset -a R_LOADED R_LIGHT R_SCORE R_AVG0 R_AVG80 R_WORST80 R_SLOWER R_SWAP R_L
 noanswer=0
 
 for (( run=1; run<=RUNS; run++ )); do
-  print "\n################ RUN $run of $RUNS ################"
+  print "\n################ RUN $run of $RUNS$( (( run == 1 && WARMUP )) && print ' (warm-up, not counted)') ################"
   if (( run > 1 )); then
     print "Resetting between runs: quit Safari + test apps, then cooldown again."
     for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
@@ -251,6 +252,10 @@ for (( run=1; run<=RUNS; run++ )); do
     print "!! Run $run had no usable timings; not counted."; continue
   fi
   read swap free <<< "$(mem_vals)"
+  if (( run == 1 && WARMUP )); then
+    R_LINES+=("$(printf 'Run 1: warm-up, not counted (loaded %d, 80 tabs %d ms)' $(sc ${stage_avg[-1]}) ${stage_avg[-1]})")
+    continue
+  fi
   R_LOADED+=($(sc ${stage_avg[-1]})); R_LIGHT+=($(sc ${stage_avg[1]})); R_SCORE+=($(sc $(( all_total / all_count ))))
   R_AVG0+=(${stage_avg[1]}); R_AVG80+=(${stage_avg[-1]}); R_WORST80+=(${stage_worst[-1]}); R_SWAP+=($swap)
   R_SLOWER+=($(( (stage_avg[-1] - stage_avg[1]) * 100 / stage_avg[1] )))
@@ -275,7 +280,7 @@ avg0=$(mean $R_AVG0); avg80=$(mean $R_AVG80); worst80=${${(On)R_WORST80}[1]}; sl
 spread=0; (( n > 1 && loaded > 0 )) && spread=$(( (${${(On)R_LOADED}[1]} - ${${(on)R_LOADED}[1]}) * 100 / loaded ))
 swap=${R_SWAP[-1]}
 
-{ att_card_start "Responsiveness (app switching, 0 to 80 tabs), ${n} run(s) averaged"
+{ att_card_start "Responsiveness (app switching, 0 to 80 tabs), ${n} run(s) averaged$( (( WARMUP )) && print ' after a warm-up')"
   print "LOADED SCORE (80 tabs): ${loaded}   <- headline (1000 = instant, higher is better)"
   print "Light score (0 tabs):   ${light}"
   print "Overall score:          ${score}"

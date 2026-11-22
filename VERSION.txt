@@ -1,3 +1,4 @@
+2026-11-21 22:00 Nov 21 2026 - Responsiveness (17b): 3 runs, run 1 is a warm-up (not counted), runs 2-3 averaged
 2026-11-21 21:45 Nov 21 2026 - Responsiveness (17b) runs twice by default and averages (RUNS=1 for one), flags spread over 15%
 2026-11-21 21:30 Nov 21 2026 - Responsiveness (17b) v1.0: hands-off, shared cooldown, SHEET card, .txt+.csv upload, queue-able
 2026-11-21 21:15 Nov 21 2026 - Stacker deletes its export after timing it, and clears old exports before each run
