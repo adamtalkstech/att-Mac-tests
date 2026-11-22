@@ -1,5 +1,7 @@
 RUN THIS NEXT - every Mac's next tests (updated by Claude, pushed through GitHub)
 Updated: Nov 21 2026, 7:30 PM
+STEP 0, EVERY TIME on EVERY Mac: update the scripts first (paste this one line):
+  zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"
 Update Scripts opens just THIS Mac's part in TextEdit. Step numbers = "00 START HERE - Run Order.txt".
 Laptops: Apple's charger straight into the Mac, no dock.
 FIRST ON EVERY MAC (once). Plug in a test drive that has the key (LaCie now), then paste this ONE line:

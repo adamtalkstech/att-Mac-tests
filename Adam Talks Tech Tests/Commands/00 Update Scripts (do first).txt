@@ -1,0 +1,4 @@
+Do this first every time you sit down at a Mac (one line):
+zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"
+
+Or double-click Update Scripts.command in the test folder.

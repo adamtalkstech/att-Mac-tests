@@ -33,6 +33,10 @@ esac
   print "THIS MAC: ${name:-Mac} ($model) | $chip | ${ram}GB | ${gpu:-?}-core GPU | ${disk:-?} SSD"
   print "$(head -2 "$ALL" | tail -1)"
   print ""
+  print "STEP 0, EVERY TIME YOU SIT DOWN AT THIS MAC: update the scripts (paste this one line):"
+  print -r -- '  zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"'
+  print "  (or double-click Update Scripts.command in the test folder)"
+  print ""
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
     awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on && !/^GO=/' "$ALL"
     print ""
