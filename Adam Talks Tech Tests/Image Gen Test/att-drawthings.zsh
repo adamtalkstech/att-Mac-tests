@@ -146,7 +146,7 @@ if ! api_ok; then
   until [[ ${(L)$(cur_model)} == *z_image* ]]; do print -n "Pick Z-Image Turbo as the model, then press Return. "; read -r; done
 fi
 LOG="$ATT_RESULTS_DIR/.drawthings_$(date +%Y%m%d-%H%M%S).out"; mkdir -p "$ATT_RESULTS_DIR"
-cd "$KIT" && "${PY[@]}" att_drawthings_bench.py --tests "${TESTS:-standard,stress}" 2>&1 | tee "$LOG"
+cd "$KIT" && PYTHONUNBUFFERED=1 "${PY[@]}" att_drawthings_bench.py --tests "${TESTS:-standard,stress}" 2>&1 | tee "$LOG"
 
 att_card_start "Draw Things image gen (Z-Image Turbo, seed 42, 8 steps)"
 print "Draw Things $DTV | $(grep -m1 '^Draw Things settings:' "$LOG" | cut -c23-)"
