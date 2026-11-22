@@ -3,6 +3,11 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Site /mac-tests (page 202, 11:02 AM): Blender Classroom/Barbershop GPU now use the 2nd run (1st includes the shader
+  compile); LM Studio writing/summarizing only compare the current Gemma GGUF method (2,033 / 91 tokens); Cinebench
+  2026 multi, single and GPU added; Puget Lightroom note fixed (minis ran LR 16 too). Sheet: 14" M5 Max dock Cinebench
+  + Puget (Resolve, Premiere, Photoshop, Lightroom), upgraded mini Cinebench multi, M5 Pro mini Blackmagic disk
+  (5000/5000) marked NOT CLEAN with the old value kept in the cell.
 - App RAM 17c v1.2: Safari/Chrome now log REAL memory use (whole-Mac "Memory Used" at the peak minus idle, with
   squeezed memory at its squeezed size) next to what Activity Monitor says. Activity Monitor's per-app number counts
   compressed memory at full size, which made Safari look like it wanted 15-17 GB even on 16GB Macs. The 5-second
