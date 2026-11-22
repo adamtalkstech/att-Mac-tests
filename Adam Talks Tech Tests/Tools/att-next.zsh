@@ -40,7 +40,12 @@ SINCE=$( [[ -n $key ]] && sec | awk '/^SINCE=/ {sub(/^SINCE=/,""); print; exit}'
 # SINCE times are Central (Adam's time). Some test Macs are set to Pacific, so pin the zone (Nov 21 fix:
 # a Pacific Mac read 22:05 as 22:05 Pacific and kept asking for tests it had already done).
 SINCE_S=$(date -j -f "%Y-%m-%d %H:%M %z" "$SINCE -0600" +%s 2>/dev/null || echo 0)
-newer() { local m; m=$(stat -f %m "$REPLY" 2>/dev/null || echo 0); (( m > SINCE_S )); }
+newer() { local m; m=$(stat -f %m "$REPLY" 2>/dev/null || echo 0); (( m > ${T_SINCE_S:-$SINCE_S} )); }
+# Nov 22: one test can have its own start time (SINCE_whisper=2026-11-22 06:45 at the top of the file or
+# in a Mac's section), so a test that has to be redone shows again without bringing back finished ones.
+since_for() { local v; v=$( [[ -n $key ]] && sec | awk -v k="SINCE_$1=" 'index($0,k)==1 {print substr($0,length(k)+1); exit}')
+  [[ -z $v ]] && v=$(awk -v k="SINCE_$1=" 'index($0,k)==1 {print substr($0,length(k)+1); exit}' "$ALL")
+  [[ -n $v ]] && date -j -f "%Y-%m-%d %H:%M %z" "$v -0600" +%s 2>/dev/null; }
 RES="$ROOT/Results/$(scutil --get ComputerName 2>/dev/null)"
 typeset -A PAT; PAT=(bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
   xcode "Xcode/xcode-bench_*" blender "Blender/blender-standard_*" redautumn "Blender/blender-redautumn_*"
@@ -49,7 +54,9 @@ typeset -A PAT; PAT=(bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/hand
 if [[ -n $GO ]]; then
   left=(); DONE_GO=()
   for t in ${=GO}; do
+    T_SINCE_S=$(since_for $t)
     hit=( "$RES"/${~PAT[$t]:-NOMATCH}(N+newer) )
+    T_SINCE_S=""
     (( ${#hit} )) && DONE_GO+=($t) || left+=($t)
   done
   GO="${(j: :)left}"
@@ -133,7 +140,7 @@ LINE="============================================================"
     D_CLOSER=0 D_STACKER=0 D_RESP=0 D_DT=0
     dn "Memory/stacker_closer_*.txt" && D_CLOSER=1; dn "Memory/stacker_stacker_*.txt" && D_STACKER=1
     dn "Memory/responsiveness_*.txt" && D_RESP=1; dn "Image Tests/*" && D_DT=1
-    sec | grep -v '^NAME=\|^GO=\|^SINCE=' | awk -v c=$D_CLOSER -v st=$D_STACKER -v r=$D_RESP -v dt=$D_DT '
+    sec | grep -v '^NAME=\|^GO=\|^SINCE' | awk -v c=$D_CLOSER -v st=$D_STACKER -v r=$D_RESP -v dt=$D_DT '
       /att-stacker.zsh closer/ && c  {print "      ✓ DONE (closer)"; next}
       /att-stacker.zsh stacker/ && st {print "      ✓ DONE (stacker)"; next}
       /att-responsiveness.zsh/ && r  {print "      ✓ DONE (responsiveness)"; next}

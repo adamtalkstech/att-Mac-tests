@@ -1,6 +1,9 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 21 2026, 11:25 PM
+Updated: Nov 22 2026, 6:50 AM
 SINCE=2026-11-21 17:00
+SINCE_whisper=2026-11-22 06:45
+NOV 22: Whisper runs before 6:45 AM used the old kit (Neural Engine not locked): redo them. The queue now opens
+every app + 'Terminal wants to control' box BEFORE you walk away: stay for its first minute.
 PRIORITY on every Mac (Nov 21): the RAM tests first (Step 17 closer, stacker, 17b responsiveness),
 plus Step 14e bandwidth, NEW Step 14f Whisper (Neural Engine) and 17c App RAM appetite + any reruns
 in each Mac's walk-away line:
