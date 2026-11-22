@@ -189,7 +189,12 @@ start_power() {
   AVG_W=""; ANE_W=""; THERM=""
   (( HAVE_SUDO && POWER == 1 )) || return
   sudo -n pkill -x powermetrics 2>/dev/null
-  sudo -n powermetrics --samplers cpu_power,gpu_power,thermal -i 1000 > "$TMP/power" 2>/dev/null &
+  # Nov 22: ask for the Neural Engine sampler too (ANE watts read 0 without it on macOS 27); fall back if this macOS doesn't have it
+  if [[ -z $PM_SAMPLERS ]]; then
+    PM_SAMPLERS=cpu_power,gpu_power,thermal
+    sudo -n powermetrics --samplers cpu_power,gpu_power,ane_power,thermal -n 1 -i 200 >/dev/null 2>&1 && PM_SAMPLERS=cpu_power,gpu_power,ane_power,thermal
+  fi
+  sudo -n powermetrics --samplers $PM_SAMPLERS -i 1000 > "$TMP/power" 2>/dev/null &
   POWER_ON=1
 }
 stop_power() {
@@ -721,10 +726,17 @@ whisper_mode() {
   [[ -n $mw ]] && mw=$(printf "%.1f" $mw); [[ -n $ma ]] && ma=$(printf "%.2f" $ma)
   rt=""; [[ -n $dur ]] && rt=$(awk -v d=$dur -v w=$m 'BEGIN{printf "%.1fx", d/w}')
   RES_STATUS[$k]=OK; RES_TOTAL[$k]=$m; RES_W[$k]=$mw; RES_TPS[$k]=$rt; RES_IN[$k]=$ma
+  # Nov 22: the kit's Core ML build is locked to CPU + Neural Engine (MLComputeUnitsCPUAndNeuralEngine), so it can't
+  # use the GPU. A 0 W Neural Engine reading is powermetrics not reporting it, not a GPU run: note it, keep the result.
   if [[ $6 == coreml && -n $ma ]] && (( ma < 0.05 )); then
-    warn "Neural Engine stayed at ~0 W: Core ML ran the encoder on the GPU, not the Neural Engine. NOT a valid Neural Engine result."
-    warn "Fix: rebuild the kit with the newest whisper-coreml-setup.sh (it forces the Neural Engine), then rerun."
-    RES_STATUS[$k]="NOT ANE"
+    if grep -q "CPUAndNeuralEngine" "$WHISPER_DIR/BUILD-INFO.txt" 2>/dev/null; then
+      say "      (Neural Engine watts read 0: powermetrics isn't reporting it on this macOS. The build is locked to CPU + Neural Engine, so the time is valid.)"
+      RES_IN[$k]="n/a"
+    else
+      warn "Neural Engine stayed at ~0 W and this kit was built before the Neural Engine lock (Nov 20 evening), so Core ML may have used the GPU."
+      warn "Fix: on the Studio run  zsh whisper-coreml-setup.sh  (rebuilds the kit locked to the Neural Engine), copy whisper-test to the drives, rerun."
+      RES_STATUS[$k]="NOT ANE"
+    fi
   fi
   say "      MEDIAN: $(printf %.1f $m)s  ${rt:+$rt realtime}${mw:+  ${mw} W}${ma:+  (Neural Engine $ma W)}"
   sleep $COOLDOWN
@@ -733,8 +745,19 @@ whisper_mode() {
 test_whisper() {
   say ""; say "=== TEST 7: Whisper transcription - GPU (Metal) vs Neural Engine (Core ML) ==="
   WHISPER_DIR=$(find_dir whisper-test)
+  # Nov 22: a kit locked to the Neural Engine on a drive replaces an older (unlocked) one on this Mac
+  local locked v
+  locked() { grep -q CPUAndNeuralEngine "$1/BUILD-INFO.txt" 2>/dev/null; }
+  if [[ -n $WHISPER_DIR && $WHISPER_DIR != /Volumes/* ]] && ! locked "$WHISPER_DIR"; then
+    for v in /Volumes/*/"Adam Talks Tech Tests"/"AI Tests"/whisper-test(N); do locked "$v" && { WHISPER_DIR=$v; rm -rf "$SCRIPT_DIR/whisper-test"; break; }; done
+  fi
+  # Nov 22: found on a drive -> copy it (and the audio) onto this Mac once, so next time no drive is needed
+  if [[ $WHISPER_DIR == /Volumes/* && -x $WHISPER_DIR/bin/whisper-cli-metal ]]; then
+    say "  Copying the Whisper kit from ${${WHISPER_DIR#/Volumes/}%%/*} onto this Mac (1.6 GB, once)..."
+    ditto "$WHISPER_DIR" "$SCRIPT_DIR/whisper-test" && ditto "${WHISPER_DIR:h}/Whisper test audio.wav" "$SCRIPT_DIR/Whisper test audio.wav" 2>/dev/null && WHISPER_DIR="$SCRIPT_DIR/whisper-test"
+  fi
   if [[ -z $WHISPER_DIR || ! -x $WHISPER_DIR/bin/whisper-cli-metal ]]; then
-    warn "No whisper-test folder found. Run whisper-coreml-setup.sh once (on any Mac, saved to the LaCie). Skipping."; return
+    warn "No Whisper kit on this Mac or a plugged-in drive. Plug in P7 or P9 (they have it) and rerun: it copies itself over. Skipping."; return
   fi
   xattr -dr com.apple.quarantine "$WHISPER_DIR" 2>/dev/null   # copied/AirDropped kits get blocked otherwise
   local model="$WHISPER_DIR/models/ggml-large-v3-turbo.bin" audio
@@ -753,7 +776,7 @@ test_whisper() {
   fi
   local t=$'\t' cm cc
   cm=$( [[ ${RES_STATUS[whisper:metal]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:metal]})s / ${RES_TPS[whisper:metal]}" || print -n "-")
-  cc=$( [[ ${RES_STATUS[whisper:coreml]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:coreml]})s / ${RES_TPS[whisper:coreml]} / ANE ${RES_IN[whisper:coreml]:-?} W" || print -n "${RES_STATUS[whisper:coreml]:--} (don't log)")
+  cc=$( [[ ${RES_STATUS[whisper:coreml]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:coreml]})s / ${RES_TPS[whisper:coreml]}$([[ ${RES_IN[whisper:coreml]} == n/a ]] || print -n " / ANE ${RES_IN[whisper:coreml]:-?} W")" || print -n "${RES_STATUS[whisper:coreml]:--} (don't log)")
   SHEET_LINES+=("New Tests  BJ-BK (Whisper GPU, Whisper Neural Engine):${t}${cm}${t}${cc}")
 }
 

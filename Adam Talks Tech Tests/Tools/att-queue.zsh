@@ -96,8 +96,12 @@ fi
 # Whisper (14f): the kit (1.6 GB) and the audio live on the drive. Copy them in once so the drive can still go.
 if (( ${RUN[(I)whisper]} )); then
   AI="$ROOT/AI Tests"
+  _locked() { grep -q CPUAndNeuralEngine "$1/BUILD-INFO.txt" 2>/dev/null; }
+  _drv=""; for v in /Volumes/*(N); do [[ -x "$v/Adam Talks Tech Tests/AI Tests/whisper-test/bin/whisper-cli-coreml" ]] && { _drv="$v/Adam Talks Tech Tests/AI Tests"; _locked "$_drv/whisper-test" && break; }; done
+  # Nov 22: also replace an old kit (built before the Neural Engine lock) when a drive has the locked one
+  [[ -n $_drv ]] && _locked "$_drv/whisper-test" && ! _locked "$AI/whisper-test" && rm -rf "$AI/whisper-test"
   if [[ ! -x "$AI/whisper-test/bin/whisper-cli-coreml" || ! -s "$AI/Whisper test audio.wav" ]]; then
-    src=""; for v in /Volumes/*(N); do [[ -x "$v/Adam Talks Tech Tests/AI Tests/whisper-test/bin/whisper-cli-coreml" ]] && { src="$v/Adam Talks Tech Tests/AI Tests"; break; }; done
+    src=$_drv
     if [[ -n $src ]]; then
       print "\nCopying the Whisper kit from ${src#/Volumes/} (1.6 GB, once per Mac)..."
       ditto "$src/whisper-test" "$AI/whisper-test" && ditto "$src/Whisper test audio.wav" "$AI/Whisper test audio.wav"
