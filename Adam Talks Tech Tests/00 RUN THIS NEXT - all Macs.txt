@@ -95,6 +95,9 @@ NAME=14" M5 Max PROLED (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 5. Step 16 · War Thunder · hands-on
 6. Step 18 · Draw Things · hands-on
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 Optional: Step 9 · Blender rerun (background slowed the CPU run)
 
@@ -114,6 +117,7 @@ NAME=16" M5 Max PROLED (B&H loaner)
    cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
 4. Step 16 · War Thunder · hands-on
 5. Step 18 · Draw Things · hands-on
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M5PRO-MBP]]
@@ -128,6 +132,7 @@ NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 2. Step 16 · War Thunder · hands-on
 3. Step 18 · Draw Things · hands-on
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-MBP]]
@@ -144,6 +149,9 @@ NAME=M6 MacBook Pro (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 3. Step 16 · War Thunder · hands-on
 4. Step 18 · Draw Things · hands-on
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-IMAC]]
@@ -164,6 +172,8 @@ GO=qwen9b qwen27b gemma
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 5. Step 16 · War Thunder · hands-on
 6. Step 18 · Draw Things · hands-on
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
@@ -179,6 +189,8 @@ NAME=M5 Pro PROLED MacBook Pro (yours)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 3. Step 16 · War Thunder · hands-on
 4. Step 18 · Draw Things · hands-on
+   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
