@@ -37,7 +37,9 @@ UPD=$(sed -n 2p "$ALL")
 # file, or a SINCE= line in this Mac's section), so it stops asking for them again.
 SINCE=$( [[ -n $key ]] && sec | awk '/^SINCE=/ {sub(/^SINCE=/,""); print; exit}')
 [[ -z $SINCE ]] && SINCE=$(awk '/^SINCE=/ {sub(/^SINCE=/,""); print; exit}' "$ALL")
-SINCE_S=$(date -j -f "%Y-%m-%d %H:%M" "$SINCE" +%s 2>/dev/null || echo 0)
+# SINCE times are Central (Adam's time). Some test Macs are set to Pacific, so pin the zone (Nov 21 fix:
+# a Pacific Mac read 22:05 as 22:05 Pacific and kept asking for tests it had already done).
+SINCE_S=$(date -j -f "%Y-%m-%d %H:%M %z" "$SINCE -0600" +%s 2>/dev/null || echo 0)
 newer() { local m; m=$(stat -f %m "$REPLY" 2>/dev/null || echo 0); (( m > SINCE_S )); }
 RES="$ROOT/Results/$(scutil --get ComputerName 2>/dev/null)"
 typeset -A PAT; PAT=(bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
