@@ -152,7 +152,7 @@ fmt_time() {
 
 att_card_start "Export timer: $TEST"
 print "$LABEL  |  $TEST"
-print "Export time:        $(fmt_time $TOTAL)   (Return press to last file change)"
+print "Export time:        $(fmt_time $TOTAL)   ($( (( AUTO == 2 )) && print "Save click" || { (( AUTO )) && print "first file" || print "Return press"; }) to last file change)"
 (( AUTO )) || print "First file to last: $(fmt_time $FROM_FIRST)"
 printf "Files: %d   Size: %.1f MB\n" $SNAP_N $(( SNAP_BYTES / 1048576.0 ))
 (( COUNT > 0 && SNAP_N < COUNT )) && print "!! Only $SNAP_N of $COUNT files. It stopped on the ${STABLE}s quiet rule. Check the export finished."
@@ -168,5 +168,5 @@ MCSV="$OUTDIR/$MACNAME/Exports/exports.csv"; mkdir -p "${MCSV:h}"
 [[ -f $MCSV ]] || head -1 "$CSV" > "$MCSV"
 tail -1 "$CSV" >> "$MCSV"
 print "Logged to: $MCSV"
-print "Empty the folder before the next run."
+[[ -n $ATT_STEP_OVERRIDE ]] || print "Empty the folder before the next run."
 afplay /System/Library/Sounds/Glass.aiff 2>/dev/null

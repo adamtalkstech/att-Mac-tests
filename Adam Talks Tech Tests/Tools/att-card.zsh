@@ -45,7 +45,7 @@ att_step_for() {
     *) print "" ;;
   esac
 }
-ATT_STEP=$(att_step_for "$ZSH_ARGZERO" "$1")
+ATT_STEP=${ATT_STEP_OVERRIDE:-$(att_step_for "$ZSH_ARGZERO" "$1")}   # a test called from another (stacker -> export timer) passes its own step
 att_card_start() {
   local mac=$(scutil --get ComputerName 2>/dev/null)
   local chip=$(sysctl -n machdep.cpu.brand_string 2>/dev/null)

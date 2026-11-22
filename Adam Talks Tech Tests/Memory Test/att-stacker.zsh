@@ -100,7 +100,7 @@ fcp_export() {   # $1 label for the export log
   if (( UIOK )) && att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
     print "  Script clicked Share > Apple Devices 4K > Save. Timing it."
     if [[ ${ATT_EXPORT_DIR:-$ROOT/Export} == $ROOT/Export ]]; then
-      zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" START=$SHARE_START
+      ATT_STEP_OVERRIDE=17 zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" START=$SHARE_START
     else
       # Saved outside Export: time that one file until it stops growing, then move it into Export
       local sz=-1 n same=0
@@ -117,7 +117,7 @@ fcp_export() {   # $1 label for the export log
     att_say "Final Cut needs you. Share the 3 minute 4K project, Apple Devices 4K, to the Export folder."
     print "  In Final Cut: Share the 3-min 4K project to Adam Talks Tech Tests/Export (Apple Devices 4K)."
     print "  No need to press anything in Terminal: the clock starts when the file appears."
-    zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" AUTO=1
+    ATT_STEP_OVERRIDE=17 zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" AUTO=1
   fi
   # Right project? The 3-min test project is "universal control on mac 3 min"
   local f=$(ls "$ROOT/Export" 2>/dev/null | grep -v '^\.' | head -1)
@@ -180,7 +180,10 @@ val() { awk -F, -v k="$1" '$1==k{print $2}' "$CSV" 2>/dev/null | tail -1; }
 EXP=$(tail -1 "$ROOT/Results/$MACNAME/Exports/exports.csv" 2>/dev/null | sed -E 's/"[^"]*"//g' | awk -F, '{print $5}')   # drop quoted fields first (the test name has a comma)
 [[ $MODE == stacker ]] && "$LMS" unload --all >/dev/null 2>&1
 
-att_card_start "RAM: $MODE run (Safari, Final Cut, Numbers, LM Studio)"
+# Nov 21: the very first closer on a Mac is a warm-up (first app launches are slow): say so on the card
+WARM=""
+[[ $MODE == closer && -z $(print -l "$OUT"/stacker_closer_*.txt(N) | grep -v "$STAMP") ]] && WARM=1
+att_card_start "RAM: $MODE run (Safari, Final Cut, Numbers, LM Studio)${WARM:+  ·  WARM-UP (first closer on this Mac): don't log, restart and run the closer again}"
 {
 print "Mode:                 $MODE   (${RAM_GB}GB, settle ${SETTLE}s, 27B on top: $BIG)"
 print "Final Cut 3-min export: ${EXP:-?} s $([[ $MODE == stacker ]] && print '(with everything open)')"

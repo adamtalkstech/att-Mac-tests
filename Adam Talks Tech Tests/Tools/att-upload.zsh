@@ -62,14 +62,19 @@ clean() { print -r -- "$1" | LC_ALL=C tr -cd "A-Za-z0-9 ._()'+/-" | cut -c1-160;
 
 # $1 = json body file, $2 = label for messages. Returns 0 only if the server said ok.
 send() {
-  local body=$1 ts sig resp
-  ts=$(date +%s)
-  sig=$( { printf '%s\n' "$ts"; cat "$body"; } | openssl dgst -sha256 -hmac "$ATT_UPLOAD_KEY" -r | awk '{print $1}')
-  [[ $sig == [0-9a-f](#c64) ]] || { say "  Upload: couldn't sign it (openssl)."; return 1; }
-  resp=$(curl -sS -L --proto '=https' --tlsv1.2 --max-time 180 \
-          -H 'Content-Type: application/json' --data-binary @"$body" \
-          "$ATT_UPLOAD_URL?ts=$ts&sig=$sig" 2>&1)
-  [[ $resp == ok* ]] && { say "  Upload: ${resp#ok }"; return 0; }
+  # Nov 21: retries. Several Macs uploading at once (backfills) made the receiver wait on its
+  # lock and answer "denied". Each try is signed fresh (new time), so retrying is safe.
+  local body=$1 ts sig resp try
+  for try in 1 2 3 4; do
+    ts=$(date +%s)
+    sig=$( { printf '%s\n' "$ts"; cat "$body"; } | openssl dgst -sha256 -hmac "$ATT_UPLOAD_KEY" -r | awk '{print $1}')
+    [[ $sig == [0-9a-f](#c64) ]] || { say "  Upload: couldn't sign it (openssl)."; return 1; }
+    resp=$(curl -sS -L --proto '=https' --tlsv1.2 --max-time 180 \
+            -H 'Content-Type: application/json' --data-binary @"$body" \
+            "$ATT_UPLOAD_URL?ts=$ts&sig=$sig" 2>&1)
+    [[ $resp == ok* ]] && { say "  Upload: ${resp#ok }$( (( try > 1 )) && print " (try $try)")"; return 0; }
+    (( try < 4 )) && { say "  Upload busy (${resp[1,40]}), trying again in $(( try * 20 ))s..."; sleep $(( try * 20 + RANDOM % 10 )); }
+  done
   say "  Upload failed (${resp[1,120]}). Results are still saved on this Mac; they go up with the next test."
   return 1
 }
