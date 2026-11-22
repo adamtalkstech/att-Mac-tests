@@ -135,7 +135,12 @@ LINE="============================================================"
   print " · Loaners: before shipping, run  att-upload.zsh forget"
 } > "$OUT"
 if [[ $1 == go ]]; then
-  [[ -n $GO ]] || { print "Nothing walk-away is scheduled for this Mac right now (see its list)."; exit 0; }
+  if [[ -z $GO ]]; then
+    print "✓ All walk-away tests are done on this Mac${DONE_GO:+ (${(j:, :)DONE_GO})}."
+    nxt=$(sec | grep -m1 '^1\. ')
+    [[ -n $nxt ]] && print "Next is hands-on: $nxt  (full steps in the RUN THIS NEXT window)"
+    open -a TextEdit "$OUT" 2>/dev/null; exit 0
+  fi
   print "Starting this Mac's walk-away tests: $GO"
   QUEUE="$GO" exec zsh "$TOOLS/att-queue.zsh"
 fi
