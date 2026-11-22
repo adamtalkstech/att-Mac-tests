@@ -3,6 +3,10 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- App RAM 17c v1.2: Safari/Chrome now log REAL memory use (whole-Mac "Memory Used" at the peak minus idle, with
+  squeezed memory at its squeezed size) next to what Activity Monitor says. Activity Monitor's per-app number counts
+  compressed memory at full size, which made Safari look like it wanted 15-17 GB even on 16GB Macs. The 5-second
+  sampler also records the whole Mac's real use ("_Mac real use_" rows, left out of app totals).
 - RAM worries (New Tests CH-CM): Real Day logs SSD writes per hour (+ per 8-h day) and swap; NEW att-idle.zsh
   (17e: macOS by itself after a restart, Apple Intelligence on / off, plus the GPU memory cap from Metal);
   NEW att-displays.zsh (17f: whole-Mac + WindowServer memory as displays are added). MacBook Neo 8GB sections

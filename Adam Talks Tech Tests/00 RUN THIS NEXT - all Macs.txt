@@ -341,16 +341,8 @@ GO=sheet blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
    If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
-[[NEO-256]]
-NAME=MacBook Neo 8GB (256GB) · RAM video: the 8GB end
-ROWS=MR:13 NT:21
-GO=bandwidth appmem responsiveness realday
-SKIPT=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper cinebench geekbench puget-resolve puget-premiere puget-ae puget-ps puget-lr logic cyberpunk warthunder stacker drawthings magmask fcpexports lightroom ssd braw
-RAM tests only (Nov 22): walk-away line, then steps 17e (idle, on + off) and 17f (displays) from the list above.
-App RAM will try Qwen 9B on 8GB: if it won't load or swaps hard, that's the result.
-
 [[NEO-512]]
-NAME=MacBook Neo 8GB (512GB) · RAM video: the 8GB end
+NAME=MacBook Neo 8GB/512GB (yours) · RAM video: the 8GB end
 ROWS=MR:14 NT:21
 GO=bandwidth appmem responsiveness realday
 SKIPT=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper cinebench geekbench puget-resolve puget-premiere puget-ae puget-ps puget-lr logic cyberpunk warthunder stacker drawthings magmask fcpexports lightroom ssd braw

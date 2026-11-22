@@ -40,6 +40,9 @@ att_appmem_start() {
     while true; do
       local now=$(date +%H:%M:%S) st=$(cat /tmp/att-step 2>/dev/null | tr -d ',"')
       att_appmem_snap | awk -F'|' -v t="$now" -v s="$st" '{printf "%s,%s,\"%s\",%s,%s,%s\n", t, s, $1, $2, $3, $4}' >> "$csv"
+      # Nov 22: plus the whole Mac's REAL memory use (Activity Monitor's "Memory Used": apps in RAM + wired +
+      # the compressed store at its squeezed size). App footprints count squeezed memory at full size.
+      att_mem_used | awk -F'|' -v t="$now" -v s="$st" '{printf "%s,%s,\"_Mac real use_\",%.0f,%.0f,0\n", t, s, $1*1024, $4*1024}' >> "$csv"
       sleep $every
     done ) &!
   ATT_APPMEM_PID=$!
@@ -50,7 +53,7 @@ att_appmem_stop() { [[ -n $ATT_APPMEM_PID ]] && kill -TERM $ATT_APPMEM_PID 2>/de
 # $1 CSV, $2 how many apps (default 8). Optional $3 = only rows whose step contains this text.
 att_appmem_peaks() {
   local csv=$1 top=${2:-8} only=${3:-}
-  awk -F, -v only="$only" 'NR>1 && (only=="" || index($2, only)) {
+  awk -F, -v only="$only" 'NR>1 && $3 !~ /^"?_/ && (only=="" || index($2, only)) {
       a=$3; for (i=4; i<=NF-3; i++) a=a "," $i; gsub(/"/,"",a)
       f=$(NF-2)+0; c=$(NF-1)+0
       if (f > pk[a]) { pk[a]=f; pc[a]=c; ps[a]=$2 } }

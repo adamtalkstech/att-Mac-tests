@@ -30,7 +30,7 @@ STAMP=$(date +%Y-%m-%d_%H-%M)
 CSV="$OUT/appmem_${STAMP}.csv"; RES="$OUT/appmem_${STAMP}.txt"; PH="$OUT/.appmem_${STAMP}.phases"
 
 SITES=("${(@f)$(sed -n "/^SITES=(/,/^)/p" "$HERE/att-tabtest.zsh" | grep -o "https://[^']*")}")
-WB=""; for f in "$HERE/ATT Stack Test Workbook v1.1.numbers" "$HERE/ATT Stack Test Workbook v1.numbers"; do [[ -e $f ]] && { WB=$f; break; }; done
+WB=""; for f in "$HERE/ATT Stack Test Workbook v1.2.numbers" "$HERE/ATT Stack Test Workbook v1.numbers"; do [[ -e $f ]] && { WB=$f; break; }; done
 LIB="$ROOT/Final Cut Test/Test Library rev.fcpbundle"; FCP_PROJECT="${FCP_PROJECT:-universal control on mac 3 min}"
 FCP_APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut*'" 2>/dev/null | grep '\.app$' | grep -v '^/Volumes' | head -1)
 [[ -z $FCP_APP ]] && FCP_APP=$(print -l /Applications/*Final*Cut*.app(N) /Applications/*/*Final*Cut*.app(N) | head -1)
@@ -133,41 +133,50 @@ att_appmem_stop
 
 # ---------- Card ----------
 tot_peak() {   # $1 step label -> MB: highest whole-Mac total (every app + system) during that step
-  awk -F, -v st="$1" 'NR>1 && $2==st { t[$1]+=$(NF-2) } END { m=0; for (k in t) if (t[k]>m) m=t[k]; printf "%.0f", m }' "$CSV"; }
-tot_avg() { awk -F, -v st="$1" 'NR>1 && $2==st { t[$1]+=$(NF-2) } END { n=0; s=0; for (k in t) { s+=t[k]; n++ } printf "%.0f", n ? s/n : 0 }' "$CSV"; }
+  awk -F, -v st="$1" 'NR>1 && $2==st && $3 !~ /^"?_/ { t[$1]+=$(NF-2) } END { m=0; for (k in t) if (t[k]>m) m=t[k]; printf "%.0f", m }' "$CSV"; }
+tot_avg() { awk -F, -v st="$1" 'NR>1 && $2==st && $3 !~ /^"?_/ { t[$1]+=$(NF-2) } END { n=0; s=0; for (k in t) { s+=t[k]; n++ } printf "%.0f", n ? s/n : 0 }' "$CSV"; }
 peak_of() {   # $1 step label, $2 app regex -> "footprintMB compressedMB" at the moment the total was highest
   awk -F, -v st="$1" -v re="$2" 'NR>1 && $2==st { a=$3; for (i=4; i<=NF-3; i++) a=a "," $i; gsub(/"/,"",a)
       if (a ~ re) { f[$1]+=$(NF-2); c[$1]+=$(NF-1) } }
     END { m=0; mc=0; for (t in f) if (f[t] > m) { m=f[t]; mc=c[t] } printf "%.0f %.0f", m, mc }' "$CSV"
 }
-typeset -A FP CP; MAXC=0; MAXSW=0; WORST=green
+# Nov 22: REAL memory the Mac gave the app = peak "Memory Used" during the step minus idle (squeezed memory
+# counted at its squeezed size). Activity Monitor's per-app "Memory" counts squeezed memory at full size,
+# which is why Safari looked like it wanted 15-17 GB even on a 16GB Mac.
+real_peak() { awk -F, -v st="$1" 'NR>1 && $2==st && $3 ~ /_Mac real use_/ { if ($(NF-2)+0 > m) m=$(NF-2)+0 } END { printf "%.0f", m }' "$CSV"; }
+real_avg() { awk -F, -v st="$1" 'NR>1 && $2==st && $3 ~ /_Mac real use_/ { s+=$(NF-2); n++ } END { printf "%.0f", n ? s/n : 0 }' "$CSV"; }
+typeset -A FP CP REAL; MAXC=0; MAXSW=0; WORST=green
 att_card_start "RAM: App appetite, one app at a time (Step 17c)"
 {
 print "Each app alone. Footprint = Activity Monitor 'Memory' (what the app wants)."
 print "Compressed = the part macOS squeezed to make it fit. Swap/pressure = whole Mac."
 print ""
-IDLE_T=$(tot_avg "idle (nothing open)"); typeset -A ADD
-printf "  %-46s %8s %10s %9s %8s %s\n" "App / workload" "wants" "compressed" "Mac adds" "swap" "pressure"
+IDLE_T=$(tot_avg "idle (nothing open)"); IDLE_R=$(real_avg "idle (nothing open)"); typeset -A ADD
+printf "  %-46s %8s %10s %9s %9s %8s %s\n" "App / workload" "AM says" "squeezed" "REAL use" "Mac adds" "swap" "pressure"
 while IFS='~' read -r k re label sw0; do
   [[ $k == END || $k == idle ]] && continue
   read -r f c <<< "$(peak_of "$label" "$re")"; FP[$k]=$f; CP[$k]=$c
   endl=$(grep "^END~$k~" "$PH" | tail -1); sw1=$(print -r -- "$endl" | cut -d'~' -f3); pl=$(print -r -- "$endl" | cut -d'~' -f4)
   a=$(( $(tot_peak "$label") - IDLE_T )); (( a < 0 )) && a=0; ADD[$k]=$a
-  printf "  %-46s %5.1f GB %7.1f GB %6.1f GB %+6.1f GB %s\n" "${label:0:46}" $(( f / 1024.0 )) $(( c / 1024.0 )) $(( a / 1024.0 )) $(( ${sw1:-0} - ${sw0:-0} )) "$pl"
+  r=$(( $(real_peak "$label") - IDLE_R )); (( IDLE_R == 0 || r < 0 )) && r=0; REAL[$k]=$r
+  printf "  %-46s %5.1f GB %7.1f GB %6.1f GB %6.1f GB %+6.1f GB %s\n" "${label:0:46}" $(( f / 1024.0 )) $(( c / 1024.0 )) $(( r / 1024.0 )) $(( a / 1024.0 )) $(( ${sw1:-0} - ${sw0:-0} )) "$pl"
   (( c > MAXC )) && MAXC=$c; (( ${sw1:-0} - ${sw0:-0} > MAXSW )) && MAXSW=$(( ${sw1:-0} - ${sw0:-0} ))
   [[ $pl == red ]] && WORST=red; [[ $pl == yellow && $WORST == green ]] && WORST=yellow
 done < "$PH"
 if [[ -n ${FP[safari80]} && -n ${FP[safari20]} ]]; then
-  printf "\n  Safari: about %.0f MB per extra tab (20 -> 80 tabs)\n" $(( (FP[safari80] - FP[safari20]) / 60.0 ))
+  printf "\n  Safari: about %.0f MB of real memory per extra tab (20 -> 80 tabs; Activity Monitor says %.0f MB)\n" $(( (REAL[safari80] - REAL[safari20]) / 60.0 )) $(( (FP[safari80] - FP[safari20]) / 60.0 ))
 fi
-[[ -n ${FP[chrome80]} && -n ${FP[chrome20]} ]] && printf "  Chrome: about %.0f MB per extra tab (20 -> 80 tabs)\n" $(( (FP[chrome80] - FP[chrome20]) / 60.0 ))
+[[ -n ${FP[chrome80]} && -n ${FP[chrome20]} ]] && printf "  Chrome: about %.0f MB of real memory per extra tab (Activity Monitor says %.0f MB)\n" $(( (REAL[chrome80] - REAL[chrome20]) / 60.0 )) $(( (FP[chrome80] - FP[chrome20]) / 60.0 ))
+print "  AM says = Activity Monitor's Memory column (squeezed memory counted at full size)."
+print "  REAL use = how much more of the Mac's RAM was in use than idle (squeezed memory at its squeezed size)."
 print ""
 print "Biggest apps over the whole run:"
 att_appmem_peaks "$CSV" 6
 g() { [[ -n ${FP[$1]} ]] && printf "%.1f" $(( FP[$1] / 1024.0 )) || printf -- "-"; }
 print ""
-att_log "New Tests" "App RAM: Safari 20 / 80 tabs" "$(g safari20) / $(g safari80)"
-[[ -n ${FP[chrome20]} ]] && att_log "New Tests" "App RAM: Chrome 20 / 80 tabs" "$(g chrome20) / $(g chrome80)"
+gr() { [[ -n ${REAL[$1]} && ${REAL[$1]} != 0 ]] && printf "%.1f" $(( REAL[$1] / 1024.0 )) || printf -- "-"; }
+att_log "New Tests" "App RAM: Safari 20 / 80 tabs" "$(gr safari20) / $(gr safari80) (AM says $(g safari20) / $(g safari80))"
+[[ -n ${FP[chrome20]} ]] && att_log "New Tests" "App RAM: Chrome 20 / 80 tabs" "$(gr chrome20) / $(gr chrome80) (AM says $(g chrome20) / $(g chrome80))"
 ga() { [[ -n ${ADD[$1]} ]] && printf "%.1f" $(( ADD[$1] / 1024.0 )) || printf -- "-"; }
 (( ${LOGIC_OK:-1} )) || { print "Note: Logic's project didn't open (first-launch window?), so Logic's number is left out. Open Logic once, rerun."; ADD[logic]=""; }
 print "'Mac adds' = how much more memory the whole Mac used with that app open than idle (the app plus macOS's video/audio helpers)."
