@@ -59,6 +59,12 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
         each app alone (Safari 20/80 tabs, Chrome 20/80, Numbers, Final Cut playing, Logic 600 tracks,
         Qwen 9B, 27B on 32GB+): how much memory it wants, how much macOS squeezed, swap, pressure.
           cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-appmem.zsh
+[ ] 17d. Real Day (~70 min each, hands-off after the first minute; queue names realday / realdaycreator).
+        Restart first. Everyday: Safari 20 tabs + YouTube playing, Chrome 20 tabs, Notes, Calendar, Numbers,
+        Photo Booth (camera = call stand-in). Creator: + Final Cut, Logic 600 tracks, Pixelmator Pro, Qwen 9B.
+        App switch every minute, YouTube dropped frames, old tabs, Qwen tok/s, FCP export at the end.
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-realday.zsh everyday
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-realday.zsh creator
 [ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
         Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
         Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh

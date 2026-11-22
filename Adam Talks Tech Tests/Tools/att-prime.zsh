@@ -30,6 +30,9 @@ att_prime_apps_for() {
     stacker|closer)  print -l "Safari" "Numbers" "Final Cut Pro" "LM Studio" ;;
     fcp-neural)      print -l "Final Cut Pro" ;;
     drawthings)      print -l "Draw Things" ;;
+    realday)         print -l "Safari" "Google Chrome" "Notes" "Calendar" "Numbers" "Photo Booth" ;;
+    realday-creator) print -l "Final Cut Pro" "Logic Pro" "Pixelmator Pro" "LM Studio" ;;
+    realdaycreator)  att_prime_apps_for realday realday-creator ;;
   esac; done
 }
 

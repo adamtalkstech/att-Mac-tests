@@ -50,7 +50,7 @@ RES="$ROOT/Results/$(scutil --get ComputerName 2>/dev/null)"
 typeset -A PAT; PAT=(bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
   xcode "Xcode/xcode-bench_*" blender "Blender/blender-standard_*" redautumn "Blender/blender-redautumn_*"
   qwen9b "LM Studio/*qwen9b*" qwen27b "LM Studio/*qwen27b*" gemma "LM Studio/*gemma*" ladder "LM Studio/*ladder*"
-  whisper "LM Studio/*whisper*" responsiveness "Memory/responsiveness_*.txt" appmem "Memory/appmem_2*.txt")
+  whisper "LM Studio/*whisper*" responsiveness "Memory/responsiveness_*.txt" appmem "Memory/appmem_2*.txt" realday "Memory/realday_everyday_*.txt" realdaycreator "Memory/realday_creator_*.txt")
 if [[ -n $GO ]]; then
   left=(); DONE_GO=()
   for t in ${=GO}; do
@@ -128,7 +128,7 @@ LINE="============================================================"
   # only remaining walk-away test was bandwidth looked like it didn't have it.
   (( ${#DONE_GO} )) && print "✓ Walk-away already done on this Mac: ${(j:, :)DONE_GO}"
   if [[ -n $GO ]]; then
-    typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c)
+    typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)
     print "WALK-AWAY TESTS (one command runs them all, hands-off):"
     for t in ${=GO}; do print "   · Step ${ST[$t]:-?} · $t"; done
     print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go'

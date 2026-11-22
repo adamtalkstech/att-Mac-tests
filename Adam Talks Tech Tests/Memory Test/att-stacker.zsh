@@ -13,7 +13,8 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || source "${0:A:h}/att-card.
 #    cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
 #    cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 #  Options in front:  SETTLE=600 (seconds everything sits open, default 10 min)
-#                     BIG=1 / BIG=0 (also load Qwen3.8 27B on top; default: only on 32GB+)
+#                     BIG=1 (also load Qwen3.8 27B on top). Default 0 since Nov 22: every Mac runs the
+#                     SAME pile, so the 16/24/32GB results compare directly. BIG=1 is its own extra run.
 #  Hands-off (Nov 20 v2): the script times Numbers itself, waits for Final Cut to
 #  open the library (clicks Update if asked), and clicks File > Share > Apple
 #  Devices 4K > Next > Save into the Export folder. One-time: allow Terminal in
@@ -33,7 +34,7 @@ while [[ $ROOT != / && ${ROOT:t} != "Adam Talks Tech Tests" ]]; do ROOT=${ROOT:h
 MACNAME=$(scutil --get ComputerName 2>/dev/null); MACNAME=${MACNAME:-$(hostname -s)}
 RAM_GB=$(( $(sysctl -n hw.memsize) / 1073741824 ))
 SETTLE=${SETTLE:-600}
-BIG=${BIG:-$(( RAM_GB >= 32 ? 1 : 0 ))}
+BIG=${BIG:-0}
 OUT="$ROOT/Results/$MACNAME/Memory"; mkdir -p "$OUT"
 STAMP=$(date +%Y-%m-%d_%H-%M)
 RES="$OUT/stacker_${MODE}_${STAMP}.txt"
@@ -179,7 +180,7 @@ step "done"; sleep 10
 # ---------- Stop the logger, collect the numbers ----------
 kill -TERM $LOGPID 2>/dev/null; wait $LOGPID 2>/dev/null
 att_appmem_stop
-CSV=$(ls -t "$OUT"/*.csv 2>/dev/null | grep -v '/ATT-' | head -1)
+CSV=$(ls -t "$OUT"/*.csv 2>/dev/null | grep -v '/ATT-' | grep -v '/appmem_' | head -1)
 val() { awk -F, -v k="$1" '$1==k{print $2}' "$CSV" 2>/dev/null | tail -1; }
 EXP=$(tail -1 "$ROOT/Results/$MACNAME/Exports/exports.csv" 2>/dev/null | sed -E 's/"[^"]*"//g' | awk -F, '{print $5}')   # drop quoted fields first (the test name has a comma)
 [[ $MODE == stacker ]] && "$LMS" unload --all >/dev/null 2>&1
@@ -189,7 +190,7 @@ WARM=""
 [[ $MODE == closer && -z $(print -l "$OUT"/stacker_closer_*.txt(N) | grep -v "$STAMP") ]] && WARM=1
 att_card_start "RAM: $MODE run (Safari, Final Cut, Numbers, LM Studio)${WARM:+  ·  WARM-UP (first closer on this Mac): don't log, restart and run the closer again}"
 {
-print "Mode:                 $MODE   (${RAM_GB}GB, settle ${SETTLE}s, 27B on top: $BIG)"
+print "Mode:                 $MODE   (${RAM_GB}GB, settle ${SETTLE}s, $( (( BIG )) && print 'EXTRA: 27B on top, not the standard pile' || print 'standard pile: same on every Mac'))"
 print "Final Cut 3-min export: ${EXP:-?} s $([[ $MODE == stacker ]] && print '(with everything open)')"
 print "Export check:         $EXPORT_NOTE"
 clear_export >/dev/null   # the export isn't needed once it's timed and checked
@@ -199,7 +200,7 @@ print "Peak compressed:      $(val 'Peak compressed GB') GB"
 print "Lowest memory free:   $(val 'Lowest memory free %')%"
 print "Time in yellow / red: $(val 'Seconds in yellow')s / $(val 'Seconds in red')s"
 print "SSD written:          $(val 'SSD written during test GB') GB"
-if [[ $MODE == stacker ]]; then
+if [[ $MODE == stacker ]] && (( ! BIG )); then   # the 27B extra run never overwrites the standard numbers
   _y=$(val 'Seconds in yellow'); _r=$(val 'Seconds in red'); _w=green; (( ${_y:-0} > 0 )) && _w=yellow; (( ${_r:-0} > 0 )) && _w=red
   att_log "New Tests" "Stacker: FCP 3-min 4K export" "${EXP:-?}"
   att_log "New Tests" "Stacker: swap added" "$(awk -v a="$(val 'Peak swap GB')" -v b="$(val 'Swap at start GB')" 'BEGIN{if(a=="")print "?"; else printf "%.1f", a-b}')"

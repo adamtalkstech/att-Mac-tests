@@ -3,6 +3,7 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+2026-11-22 15:10 Nov 22 2026 - NEW Step 17d Real Day (att-realday.zsh everyday|creator): an hour with everything open, app switch timed every minute, YouTube dropped frames, old tabs, Qwen tok/s, FCP export at the end; queue names realday / realdaycreator. Stacker: same pile on every Mac (27B only with BIG=1, never auto-logged); stacker card no longer picks up the app-memory CSV
 2026-11-22 14:40 Nov 22 2026 - Run This Next: per-test SINCE_<test>= so one test can be redone (Whisper after 6:45 AM, new Neural Engine-locked kit on P9 + OWC Envoy)
 2026-11-22 14:30 Nov 22 2026 - NEW Tools/att-prime.zsh: before walking away, the queue (and appmem, stacker, responsiveness on their own) opens every app the tests need once, triggers every 'Terminal wants to control' box and checks Safari JavaScript, so nothing stops mid-run. Remembered per Mac. NOPRIME=1 skips
 2026-11-22 14:15 Nov 22 2026 - Whisper: kit on the drives was built before the Neural Engine lock (Core ML could pick the GPU) -> rebuild on the Studio; locked kit on a drive replaces an old one on each Mac; ANE watts sampler added; 0 W on a locked kit no longer marks the run invalid; kit copies itself from the drive when run outside the queue
