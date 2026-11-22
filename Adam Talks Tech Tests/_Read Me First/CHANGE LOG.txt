@@ -3,6 +3,9 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 21 2026 (night)
+- att-responsiveness.zsh: runs the 0-80 tab climb TWICE by default with a
+  cooldown between, averages the scores, shows each run and the spread
+  (flags over 15%). RUNS=1 for a single run. Queue time 35 min.
 - Memory Test/att-responsiveness.zsh v1.0 (step 17b) rebuilt like the newer
   tests: no Return presses, checks Accessibility + Safari setting and stops
   with the fix, shared quit-apps + power check + cooldown, background CPU

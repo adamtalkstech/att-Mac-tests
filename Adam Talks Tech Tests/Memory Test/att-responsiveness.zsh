@@ -2,7 +2,7 @@
 # ATT Responsiveness Score, Run Order step 17b (v1.0, Nov 21 2026; rebuilt to match the newer tests)
 # One score for "how snappy does this Mac stay as you pile on a normal day?"
 #
-# Hands off, about 15 minutes (plus the cooldown). No Return presses.
+# Hands off, about 30 minutes (2 runs averaged; RUNS=1 for one). No Return presses.
 #   1. Checks Accessibility + Safari's Apple Events setting (stops with the fix if either is off).
 #   2. Same start as every test: quits other apps, power check, pauses Photos/Spotlight, cooldown.
 #   3. Opens Safari + a few built-in Apple apps, then 80 websites in steps: 0, 20, 40, 60, 80 tabs.
@@ -32,7 +32,7 @@ OUTDIR="$ROOT/Results/$MAC/Memory"; mkdir -p "$OUTDIR"
 STAMP=$(date +%Y-%m-%d_%H-%M-%S)
 CSV="$OUTDIR/responsiveness_$STAMP.csv"
 TXT="$OUTDIR/responsiveness_$STAMP.txt"
-BGLOG="$OUTDIR/.responsiveness_bg_$STAMP.txt"
+BGLOG="$OUTDIR/responsiveness_background_$STAMP.txt"
 
 SITES=(
 'https://www.apple.com'
@@ -194,92 +194,104 @@ for a in $WANT_APPS; do open -Ra "$a" 2>/dev/null && APPS+=("$a") || MISSING+=("
 # --- 2. Same clean start as every test (quits apps incl. Safari, power check, pause scanners, cooldown) ---
 ATT_KEEP="Claude,Screen Sharing" att_cooldown
 
-# --- 3. Open the test apps and a fresh Safari window ---
-for a in $APPS; do open -a "$a" 2>/dev/null; sleep 2; done
-osascript -e 'tell application "Safari" to activate' >/dev/null 2>&1; sleep 3
-osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1; sleep 1
-osascript -e 'tell application "Safari" to make new document with properties {URL:"https://www.apple.com"}' >/dev/null 2>&1
-print "Settling for 60 seconds..."; sleep 60
-
+RUNS=${RUNS:-2}   # Nov 21: runs the whole 0-80 tab climb twice by default (RUNS=1 for a quick one)
+sc() { local v=$1; (( v <= 0 )) && { print 0; return; }; local s=$(( INSTANT_MS * 1000 / v )); (( s > 1000 )) && s=1000; print $s; }
+print "stage_tabs,item,ms,ok,swap_used,memory_free,run" > "$CSV"
 att_watch_start "$BGLOG" "Safari|WebKit|Calculator|Chess|Dictionary|Font Book|Activity Monitor|TV|GarageBand|osascript|System Events|memory_pressure"
+typeset -a R_LOADED R_LIGHT R_SCORE R_AVG0 R_AVG80 R_WORST80 R_SLOWER R_SWAP R_LINES
+noanswer=0
 
-print "stage_tabs,item,ms,ok,swap_used,memory_free" > "$CSV"
-typeset -a stage_avg stage_worst stage_lines
-all_total=0; all_count=0; noanswer=0
-opened=1   # the apple.com tab is site 1
-
-for target in $STAGES; do
-  if (( target > 0 )); then
-    print "\nOpening tabs up to ${target}..."
-    while (( opened < target )); do (( opened++ )); open_tab "${SITES[$opened]}"; done
-    sleep 10
+for (( run=1; run<=RUNS; run++ )); do
+  print "\n################ RUN $run of $RUNS ################"
+  if (( run > 1 )); then
+    print "Resetting between runs: quit Safari + test apps, then cooldown again."
+    for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
+    sleep 10; att_cooldown --again
   fi
-  read swap free <<< "$(mem_vals)"
-  print "\n== ${target} tabs open (swap ${swap}, memory free ${free}) =="
-  st_total=0; st_count=0; st_worst=0
-  for a in $APPS "Safari"; do
-    read ms rc <<< "$(probe_app "$a")"
-    printf "  %-16s %6s ms%s\n" "$a" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
-    print "${target},\"${a}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free}" >> "$CSV"
-    if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
-    sleep 1
-  done
-  if (( opened >= 5 )); then
-    for n in 2 $(( opened / 2 )) $(( opened - 1 )); do
-      read ms rc <<< "$(probe_tab $n)"
-      printf "  %-16s %6s ms%s\n" "old tab #${n}" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
-      print "${target},\"tab ${n}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free}" >> "$CSV"
+  # Open the test apps and a fresh Safari window
+  for a in $APPS; do open -a "$a" 2>/dev/null; sleep 2; done
+  osascript -e 'tell application "Safari" to activate' >/dev/null 2>&1; sleep 3
+  osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1; sleep 1
+  osascript -e 'tell application "Safari" to make new document with properties {URL:"https://www.apple.com"}' >/dev/null 2>&1
+  print "Settling for 60 seconds..."; sleep 60
+
+  typeset -a stage_avg stage_worst; stage_avg=(); stage_worst=()
+  all_total=0; all_count=0; opened=1   # the apple.com tab is site 1
+  for target in $STAGES; do
+    if (( target > 0 )); then
+      print "\nOpening tabs up to ${target}..."
+      while (( opened < target )); do (( opened++ )); open_tab "${SITES[$opened]}"; done
+      sleep 10
+    fi
+    read swap free <<< "$(mem_vals)"
+    print "\n== run $run, ${target} tabs open (swap ${swap}, memory free ${free}) =="
+    st_total=0; st_count=0; st_worst=0
+    for a in $APPS "Safari"; do
+      read ms rc <<< "$(probe_app "$a")"
+      printf "  %-16s %6s ms%s\n" "$a" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
+      print "${target},\"${a}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run}" >> "$CSV"
       if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
       sleep 1
     done
+    if (( opened >= 5 )); then
+      for n in 2 $(( opened / 2 )) $(( opened - 1 )); do
+        read ms rc <<< "$(probe_tab $n)"
+        printf "  %-16s %6s ms%s\n" "old tab #${n}" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
+        print "${target},\"tab ${n}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run}" >> "$CSV"
+        if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
+        sleep 1
+      done
+    fi
+    if (( st_count > 0 )); then avg=$(( st_total / st_count )); else avg=0; fi
+    stage_avg+=($avg); stage_worst+=($st_worst)
+    (( all_total += st_total, all_count += st_count ))
+    print "  -> average ${avg} ms, worst ${st_worst} ms"
+  done
+  if (( all_count == 0 || stage_avg[1] == 0 || stage_avg[-1] == 0 )); then
+    print "!! Run $run had no usable timings; not counted."; continue
   fi
-  if (( st_count > 0 )); then
-    avg=$(( st_total / st_count ))
-  else
-    avg=0
-  fi
-  stage_avg+=($avg); stage_worst+=($st_worst)
-  stage_lines+=("$(printf '%3d tabs: avg %5d ms, worst %5d ms (swap %s, free %s)' $target $avg $st_worst $swap $free)")
-  (( all_total += st_total, all_count += st_count ))
-  print "  -> average ${avg} ms, worst ${st_worst} ms"
+  read swap free <<< "$(mem_vals)"
+  R_LOADED+=($(sc ${stage_avg[-1]})); R_LIGHT+=($(sc ${stage_avg[1]})); R_SCORE+=($(sc $(( all_total / all_count ))))
+  R_AVG0+=(${stage_avg[1]}); R_AVG80+=(${stage_avg[-1]}); R_WORST80+=(${stage_worst[-1]}); R_SWAP+=($swap)
+  R_SLOWER+=($(( (stage_avg[-1] - stage_avg[1]) * 100 / stage_avg[1] )))
+  R_LINES+=("$(printf 'Run %d: loaded %4d  light %4d | 0 tabs %4d ms, 80 tabs %5d ms, worst %5d ms | swap %s' $run ${R_LOADED[-1]} ${R_LIGHT[-1]} ${stage_avg[1]} ${stage_avg[-1]} ${stage_worst[-1]} $swap)")
 done
 
 att_watch_stop
-BGLINE=$(att_watch_report "$BGLOG"); rm -f "$BGLOG"
-
-# Leave the Mac clean: quit the test apps and Safari (80 tabs)
+BGLINE=$(att_watch_report "$BGLOG")
 for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
 
-# --- 5. Score + photo card ---
-sc() { local v=$1; (( v <= 0 )) && { print 0; return; }; local s=$(( INSTANT_MS * 1000 / v )); (( s > 1000 )) && s=1000; print $s; }
-if (( all_count == 0 || stage_avg[1] == 0 || stage_avg[-1] == 0 )); then
+# --- Score + photo card (average of the good runs) ---
+n=${#R_LOADED}
+if (( n == 0 )); then
   { att_card_start "Responsiveness (app switching, 0 to 80 tabs)"
     print "!! No usable timings (apps didn't answer). Check Accessibility for Terminal, restart, run again."
     att_card_end; } | tee "$TXT"
   exit 1
 fi
-overall=$(( all_total / all_count ))
-score=$(sc $overall); light=$(sc ${stage_avg[1]}); loaded=$(sc ${stage_avg[-1]})
-slower=$(( (stage_avg[-1] - stage_avg[1]) * 100 / stage_avg[1] ))
-read swap free <<< "$(mem_vals)"
+mean() { local s=0 v; for v in "$@"; do (( s += v )); done; print $(( s / $# )); }
+loaded=$(mean $R_LOADED); light=$(mean $R_LIGHT); score=$(mean $R_SCORE)
+avg0=$(mean $R_AVG0); avg80=$(mean $R_AVG80); worst80=${${(On)R_WORST80}[1]}; slower=$(mean $R_SLOWER)
+spread=0; (( n > 1 && loaded > 0 )) && spread=$(( (${${(On)R_LOADED}[1]} - ${${(on)R_LOADED}[1]}) * 100 / loaded ))
+swap=${R_SWAP[-1]}
 
-{ att_card_start "Responsiveness (app switching, 0 to 80 tabs)"
+{ att_card_start "Responsiveness (app switching, 0 to 80 tabs), ${n} run(s) averaged"
   print "LOADED SCORE (80 tabs): ${loaded}   <- headline (1000 = instant, higher is better)"
   print "Light score (0 tabs):   ${light}"
   print "Overall score:          ${score}"
   print "80 tabs vs none:        ${slower}% slower to switch"
-  print "Worst single wait (80): ${stage_worst[-1]} ms"
+  print "Worst single wait (80): ${worst80} ms"
+  (( n > 1 )) && print "Run-to-run spread:      ${spread}%$( (( spread > 15 )) && print '   !! over 15%: run it again')"
   print -r -- "---------------------------------------------------------------"
-  for l in $stage_lines; do print -r -- "$l"; done
+  for l in $R_LINES; do print -r -- "$l"; done
   print -r -- "---------------------------------------------------------------"
-  print "Swap at the end: ${swap}   Memory free: ${free}"
   (( noanswer )) && print "No answer (not scored): ${noanswer} checks"
   (( ${#MISSING} )) && print "Apps not installed: ${(j:, :)MISSING}"
   print -r -- "$BGLINE"
   print "SHEET: Responsiveness loaded / light / overall  ->  ${loaded} / ${light} / ${score}"
-  print "SHEET: Avg ms 0 tabs / 80 tabs / worst 80  ->  ${stage_avg[1]} / ${stage_avg[-1]} / ${stage_worst[-1]}"
-  print "SHEET: Swap end / slower %  ->  ${swap} / ${slower}%"
+  print "SHEET: Avg ms 0 tabs / 80 tabs / worst 80  ->  ${avg0} / ${avg80} / ${worst80}"
+  print "SHEET: Swap end / slower % / spread  ->  ${swap} / ${slower}% / ${spread}%"
   print "Saved: Results/$MAC/Memory/${TXT:t} (+ .csv)"
   att_card_end; } | tee "$TXT"
 
-print "loaded_score,${loaded},light_score,${light},slower_pct,${slower},score,${score},avg_ms,${overall},avg0,${stage_avg[1]},avg80,${stage_avg[-1]},worst80,${stage_worst[-1]},swap_end,${swap},free_end,${free}" >> "$CSV"
+print "runs,${n},loaded_score,${loaded},light_score,${light},score,${score},slower_pct,${slower},avg0,${avg0},avg80,${avg80},worst80,${worst80},spread_pct,${spread},swap_end,${swap}" >> "$CSV"
