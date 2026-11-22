@@ -71,6 +71,9 @@ print "================================================"
 
 print "\nPassword once (watts, cooldowns, cold model loads). Nothing else to type after this."
 sudo -v || { print "Need the password to run unattended."; exit 1; }
+# Nov 21: every test Mac on Central time, so card times, upload times and "already done" checks line up
+tz=$(readlink /etc/localtime 2>/dev/null | sed 's#.*/zoneinfo/##')
+[[ $tz != America/Chicago ]] && sudo -n systemsetup -settimezone America/Chicago >/dev/null 2>&1 && print "Set this Mac's time zone to Central (was ${tz:-unknown})."
 { trap - INT TERM; while true; do sudo -n true 2>/dev/null; sleep 50; done } &
 KEEP=$!
 caffeinate -dims -w $$ &

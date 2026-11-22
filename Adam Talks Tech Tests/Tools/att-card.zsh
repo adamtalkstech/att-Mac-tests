@@ -60,7 +60,7 @@ att_card_start() {
   print "MAC:   $mac"
   print "       $(att_mac_kind)"
   print "       $chip | ${ram}GB | macOS $os"
-  print "DATE:  $(date '+%b %d %Y  %I:%M %p')"
+  print "DATE:  $(date '+%b %d %Y  %I:%M %p %Z')"
   [[ -n $ATT_COOL_NOTE ]] && print "START: $ATT_COOL_NOTE"
   print -r -- "---------------------------------------------------------------"
 }
