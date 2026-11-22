@@ -195,7 +195,8 @@ else
   TOTAL=$(awk '{ s += $1 } END { printf "%.2f", s }' "$TMPR/frames.txt")
   FIRST5=$(head -5 "$TMPR/frames.txt" | awk '{ s += $1 } END { if (NR) printf "%.2f", s/NR }')
   LAST5=$(tail -5 "$TMPR/frames.txt" | awk '{ s += $1 } END { if (NR) printf "%.2f", s/NR }')
-  if (( FRAMES < 25 )); then echo "  !! Only $FRAMES of 25 frames rendered. Check: $TMPR/autumn.log" | tee -a "$LOG"; fi
+  if (( FRAMES < 25 )); then echo "  !! Only $FRAMES of 25 frames rendered. Blender's log saved next to the results (uploads too)." | tee -a "$LOG"
+    cp "$TMPR/autumn.log" "${LOG:r}_blender-log.txt" 2>/dev/null; tail -15 "$TMPR/autumn.log" | sed 's/^/     /' | tee -a "$LOG"; fi
   row "Red Autumn 1-25" $TOTAL "" ""
   att_card_start "Blender Red Autumn Forest, frames 1-25 (GPU)"
   {
