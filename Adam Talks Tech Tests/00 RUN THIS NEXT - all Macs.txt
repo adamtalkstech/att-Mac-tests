@@ -23,6 +23,10 @@ GO=bandwidth
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Step 15 · Cyberpunk · hands-on
 3. Step E6 · Lightroom rerun + 6K clips rerun · hands-on
+4. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
@@ -45,6 +49,10 @@ GO=sustained bandwidth
 3. Step 3 · Name it "M6 MINI 24GB 256GB" (if it still says adam3's Mac Mini)
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-name-this-mac.zsh
 4. Storage screenshot + free space · then it can ship
+5. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-MINI-24-512]]
 NAME=M6 MINI 24GB (24/512, yours)
@@ -64,6 +72,10 @@ GO=bandwidth
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Step 11 · HandBrake rerun · walk away, ~10 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+3. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
@@ -84,6 +96,10 @@ GO=bandwidth
 2. Step 10 · Sustained · walk away, ~30 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 3. Step 15 · Cyberpunk · hands-on · then it can ship
+4. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
@@ -103,10 +119,18 @@ GO=qwen27b sustained bandwidth
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+3. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M5PRO-MINI-UPGRADED]]
 NAME=M5 Pro Mac mini, upgraded GPU
 Nothing scheduled right now. Ask Claude.
+1. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
@@ -275,6 +299,10 @@ GO=blender redautumn handbrake sustained qwen9b bandwidth
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Steps 9, 9b, 11, 10, 14a · Blender, Red Autumn, HandBrake, sustained, Qwen 9B · walk away
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+3. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
+   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
+   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)
