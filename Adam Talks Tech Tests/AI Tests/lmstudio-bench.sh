@@ -760,6 +760,10 @@ test_whisper() {
     warn "No Whisper kit on this Mac or a plugged-in drive. Plug in P7 or P9 (they have it) and rerun: it copies itself over. Skipping."; return
   fi
   # Nov 22 (Adam: anything run on the wrong Whisper kit gets rerun): never run on an old, unlocked kit.
+  # First try to get the new kit (drive or download).
+  if ! locked "$WHISPER_DIR" && [[ -f "${SCRIPT_DIR:h}/Tools/att-whisper-kit.zsh" ]]; then
+    zsh "${SCRIPT_DIR:h}/Tools/att-whisper-kit.zsh" && WHISPER_DIR="$SCRIPT_DIR/whisper-test"
+  fi
   if ! locked "$WHISPER_DIR"; then
     warn "Old Whisper kit (not locked to the Neural Engine) and no new kit on a plugged-in drive. Old Whisper kit: not run."
     warn "Plug in the P9, OWC Envoy or LaCie (they have the Nov 22 kit) and run Whisper again. Nothing gets logged from this."

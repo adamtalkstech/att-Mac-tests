@@ -1,0 +1,5 @@
+whisper.cpp v1.9.5 (commit d1be6fd)
+Built Nov 22, 2026 on Adam’s Mac Studio (27.2.1), 
+Model: ggml-large-v3-turbo.bin + ggml-large-v3-turbo-encoder.mlmodelc (from huggingface.co/ggerganov/whisper.cpp)
+bin/whisper-cli-metal  = GPU (Metal) build
+bin/whisper-cli-coreml = Core ML build, forced to CPU + Neural Engine (MLComputeUnitsCPUAndNeuralEngine)

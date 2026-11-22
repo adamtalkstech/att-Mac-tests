@@ -37,5 +37,11 @@ fi
 rm -rf "$TMP"
 print "Updated $n script and instruction files in $DEST"
 print "Version: $(head -1 "$DEST/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null)"
+# Nov 22: get the Whisper kit locked to the Neural Engine if this Mac doesn't have it (copies from a drive, or
+# downloads 2.8 GB from Hugging Face in the background; the queue also does this before Whisper).
+if [[ -f "$DEST/Tools/att-whisper-kit.zsh" ]] && ! grep -q CPUAndNeuralEngine "$DEST/AI Tests/whisper-test/BUILD-INFO.txt" 2>/dev/null; then
+  mkdir -p "$HOME/.att"; nohup zsh "$DEST/Tools/att-whisper-kit.zsh" > "$HOME/.att/whisper-kit.log" 2>&1 &!
+  print "Getting the new Whisper kit in the background (log: ~/.att/whisper-kit.log)."
+fi
 # Show this Mac's next tests (00 RUN THIS NEXT) in TextEdit
 [[ -f "$DEST/Tools/att-next.zsh" ]] && { print ""; zsh "$DEST/Tools/att-next.zsh" >/dev/null 2>&1 && print "Opened this Mac's RUN THIS NEXT list in TextEdit."; }

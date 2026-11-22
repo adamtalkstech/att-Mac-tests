@@ -93,23 +93,10 @@ if (( ${#want} )); then
   zsh "$ROOT/AI Tests/att-models.zsh" get ${(u)want}
   (( ${RUN[(I)gemma]} )) && zsh "$ROOT/AI Tests/att-models.zsh" park gemma-3-4b-it-GGUF '*gemma-3-4b*'
 fi
-# Whisper (14f): the kit (1.6 GB) and the audio live on the drive. Copy them in once so the drive can still go.
+# Whisper (14f): make sure this Mac has the Nov 22 kit locked to the Neural Engine: from a plugged-in
+# drive if one has it, otherwise downloaded (Tools/att-whisper-kit.zsh). Nov 22 evening.
 if (( ${RUN[(I)whisper]} )); then
-  AI="$ROOT/AI Tests"
-  _locked() { grep -q CPUAndNeuralEngine "$1/BUILD-INFO.txt" 2>/dev/null; }
-  _drv=""; for v in /Volumes/*(N); do [[ -x "$v/Adam Talks Tech Tests/AI Tests/whisper-test/bin/whisper-cli-coreml" ]] && { _drv="$v/Adam Talks Tech Tests/AI Tests"; _locked "$_drv/whisper-test" && break; }; done
-  # Nov 22: also replace an old kit (built before the Neural Engine lock) when a drive has the locked one
-  [[ -n $_drv ]] && _locked "$_drv/whisper-test" && ! _locked "$AI/whisper-test" && rm -rf "$AI/whisper-test"
-  if [[ ! -x "$AI/whisper-test/bin/whisper-cli-coreml" || ! -s "$AI/Whisper test audio.wav" ]]; then
-    src=$_drv
-    if [[ -n $src ]]; then
-      print "\nCopying the Whisper kit from ${src#/Volumes/} (1.6 GB, once per Mac)..."
-      ditto "$src/whisper-test" "$AI/whisper-test" && ditto "$src/Whisper test audio.wav" "$AI/Whisper test audio.wav"
-      xattr -dr com.apple.quarantine "$AI/whisper-test" 2>/dev/null
-    else
-      print "!! Whisper kit not found on any plugged-in drive (P7/P9 have it). Whisper will be skipped."
-    fi
-  fi
+  print ""; zsh "$ROOT/Tools/att-whisper-kit.zsh" || print "!! Whisper kit isn't ready. Whisper will stop and say so (nothing gets logged)."
 fi
 # Copying models restarts LM Studio; close it again so it can't sit there during
 # the Blender/HandBrake tests (the AI tests open it themselves when they need it).

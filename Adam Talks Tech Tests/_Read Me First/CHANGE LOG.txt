@@ -3,6 +3,12 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Whisper kit without a drive (5:35 PM): the two whisper.cpp programs, BUILD-INFO and the test audio now come with
+  the scripts (AI Tests/whisper-kit). Tools/att-whisper-kit.zsh copies the locked kit from a drive, or downloads the
+  model + Neural Engine encoder (2.8 GB) from huggingface.co/ggerganov/whisper.cpp. Update Scripts starts it in the
+  background when a Mac has no locked kit; the queue and the Whisper test run it before Whisper.
+- Tools/Match all test drives.command: copies the main folder, games (not to the OWC), Mini Kit, Mini Kit FULL and
+  Air Kit onto every plugged-in test drive (newest wins, nothing deleted) and refreshes the scripts inside each kit.
 - Whisper (5:25 PM): never runs on an old, unlocked kit any more (stops and says to plug in the P9/OWC/LaCie);
   a stopped run doesn't count as done in Run This Next. Old-kit cells on the sheet are marked NOT CLEAN.
 - att-prime fix (5:20 PM): app lookup stopped at the first missing /Applications/*/ folder ("no matches found"),
