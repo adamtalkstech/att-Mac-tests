@@ -3,6 +3,7 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+2026-11-22 13:20 Nov 22 2026 - Responsiveness LOADED score rescaled: 1000 x (0-tab ms / 80-tab ms) = speed kept at 80 tabs (the old 250 ms scale hit 1000 on every Mac because ~230 ms is the AppleScript floor)
 2026-11-22 13:00 Nov 22 2026 - AUTO-LOGGING: cards print LOG lines (bandwidth, responsiveness, stacker, sustained, HandBrake, Draw Things, App RAM, Final Cut AI; LM Studio/Whisper use their existing sheet lines). The receiver (ATT-Upload.gs v2) writes them into the Mac's row (Mac Map tab), keeps the old value in the cell note, lists every write in Auto Log, and holds warm-up / !! / NOT CLEAN cards. Draw Things now saves its card as a .txt
 
 NOV 21 2026 (night)

@@ -294,3 +294,8 @@ function val_(v) { return /^-?\d+(\.\d+)?$/.test(v) ? Number(v) : cell_(v); }
 function testAutoLog() {
   Logger.log(JSON.stringify(parseLogLines_('LOG | New Tests | CPU memory bandwidth | 279.1\nNew Tests  BJ-BK (Whisper):\t12.3s / 48x\t9.1s / 66x / ANE 1.2 W')));
 }
+
+// Claude check (Nov 22): fake Mac ID, so nothing in the results tabs changes; adds one Auto Log line
+function testAutoLogLive() {
+  autoLog_({ mac: 'TEST (Claude check)', macid: '00000000', test: 'att-bandwidth.zsh' }, 'LOG | New Tests | CPU memory bandwidth, STREAM triad | 1.0', '');
+}

@@ -338,7 +338,9 @@ for (( run=1; run<=RUNS; run++ )); do
     continue
   fi
   R_DROP+=($drop); R_PRL+=($prl); R_PROBES+=($probes); R_PEAKP+=(${pk_lvl:-0}); R_PEAKSW+=(${pk_sw:-0}); R_PEAKCOMP+=($pk_comp_gb); R_RELAUNCH+=(${#relaunched})
-  R_LOADED+=($(sc ${stage_avg[-1]})); R_LIGHT+=($(sc ${stage_avg[1]})); R_SCORE+=($(sc $(( all_total / all_count ))))
+  # Nov 22 rescale: ~230 ms is AppleScript's own floor, so the old score (250 ms = 1000) maxed out on every
+  # Mac. LOADED is now how much of its own speed the Mac keeps at 80 tabs: 1000 x (0-tab ms / 80-tab ms).
+  R_LOADED+=($(( stage_avg[-1] > 0 ? (stage_avg[1] * 1000 / stage_avg[-1] > 1000 ? 1000 : stage_avg[1] * 1000 / stage_avg[-1]) : 0 ))); R_LIGHT+=($(sc ${stage_avg[1]})); R_SCORE+=($(sc $(( all_total / all_count ))))
   R_AVG0+=(${stage_avg[1]}); R_AVG80+=(${stage_avg[-1]}); R_WORST80+=(${stage_worst[-1]}); R_SWAP+=($swap)
   R_SLOWER+=($(( (stage_avg[-1] - stage_avg[1]) * 100 / stage_avg[1] )))
   R_LINES+=("$(printf 'Run %d: loaded %4d  light %4d | 0 tabs %4d ms, 80 tabs %5d ms, worst %5d ms' $run ${R_LOADED[-1]} ${R_LIGHT[-1]} ${stage_avg[1]} ${stage_avg[-1]} ${stage_worst[-1]})")
@@ -367,7 +369,7 @@ peakp=$(plev_name ${${(On)R_PEAKP}[1]}); peaksw=${${(On)R_PEAKSW}[1]}; peakcomp=
 relaunch_t=0; for v in $R_RELAUNCH; do (( relaunch_t += v )); done
 
 { att_card_start "Responsiveness (app switching, 0 to 80 tabs), ${n} run(s) averaged$( (( WARMUP )) && print ' after a warm-up')"
-  print "LOADED SCORE (80 tabs): ${loaded}   <- headline (1000 = instant, higher is better)"
+  print "LOADED SCORE (80 tabs): ${loaded}   <- headline: speed kept at 80 tabs (1000 = as fast as with no tabs)"
   print "Light score (0 tabs):   ${light}"
   print "Overall score:          ${score}"
   print "80 tabs vs none:        ${slower}% slower to switch"
