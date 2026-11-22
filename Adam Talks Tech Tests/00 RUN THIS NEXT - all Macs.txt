@@ -159,6 +159,9 @@ RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's char
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 Optional: Step 9 · Blender rerun (background slowed the CPU run)
+ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Tonight's runs were 6-8% apart run to run (laptop warming up). Same command:
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+
 
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
@@ -177,6 +180,9 @@ ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): HandBra
 5. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Tonight's runs were 6-8% apart run to run (laptop warming up). Same command:
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+
 
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
