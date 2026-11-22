@@ -1,0 +1,107 @@
+RUN THIS NEXT - every Mac's next tests (updated by Claude, pushed through GitHub)
+Updated: Nov 21 2026, 7:30 PM
+Update Scripts opens just THIS Mac's part in TextEdit. Step numbers = "00 START HERE - Run Order.txt".
+Laptops: Apple's charger straight into the Mac, no dock.
+Q = zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh   (paste the whole line below, not "Q")
+Stacker (17): restart first. Final Cut timeline must have "universal control on mac 3 min" open.
+  Closer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+  Stacker: cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+  First time on a Mac: the first closer is a warm-up (allow Terminal in Accessibility), restart, closer again.
+
+[[M6-MINI-16]]
+M6 MINI 16GB (16/512, yours)
+  1. Step 15 Cyberpunk (hands-on)
+  2. Lightroom rerun + 6K clips rerun (E6, hands-on)
+  3. Step 17 stacker: warm-up closer, restart, closer, restart, stacker
+
+[[M6-MINI-24-256]]
+M6 MINI 24GB 256GB (loaner, overdue). macOS updated to 27.2.1 on Nov 21.
+  1. Steps 14b + 10 (walk away, ~45 min):
+     QUEUE="qwen27b sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+  2. Step 3 name it "M6 MINI 24GB 256GB" if it still says adam3's Mac Mini
+  3. Step 17 stacker (check ~60GB free first: it copies the 45GB Final Cut library)
+  4. Storage screenshot + free space  -> then it can ship
+
+[[M6-MINI-24-512]]
+M6 MINI 24GB (24/512, yours)
+  1. Step 11 HandBrake rerun (background CPU hit the first one):
+     cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh
+  2. Send the step 8 Xcode card (it's in Results/M6 MINI 24GB/Queue/)
+  3. Step 17 stacker
+
+[[M6-MINI-32]]
+M6 MINI 32GB (loaner, overdue)
+  1. Step 10 sustained (walk away, ~30 min):
+     QUEUE="sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+  2. Step 17 stacker
+  3. Step 15 Cyberpunk  -> then it can ship
+
+[[M5PRO-MINI]]
+M5 Pro Mac mini (loaner, back Nov 30)
+  1. Steps 14b + 10 (walk away, ~45 min):
+     QUEUE="qwen27b sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+  2. Step 17 stacker
+
+[[M5PRO-MINI-UPGRADED]]
+M5 Pro Mac mini, upgraded GPU
+  Nothing scheduled right now. Ask Claude.
+
+[[MAX-14]]
+14" M5 Max PROLED (B&H loaner)
+  1. Step 14d ladder 8-bit: LM Studio guardrails OFF, then (set back to Relaxed after):
+     cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
+  2. Send the step 8 Xcode card (Results/.../Queue/queue_2026-11-21_08-04.txt)
+  3. Step 13 Logic: 256 buffer, then 32. Log: cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+  4. E6 Final Cut exports: 3-min Social 4K, 30-min Apple Devices 4K, 30-min Social 4K, magnetic mask, 6K clips
+     Timer: cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
+  5. Step 17 stacker (real closer next: the Nov 20 one was the warm-up)
+  6. Step 16 War Thunder, step 18 Draw Things
+  Optional: step 9 Blender CPU rerun (background hit the 2:42.56)
+
+[[MAX-16]]
+16" M5 Max PROLED (B&H loaner)
+  1. Step 17 stacker: FIRST hands-off test of the night (warm-up closer). Tell Claude if it clicks Share by itself.
+  2. Step 13 Logic: 256 buffer, then 32, log it
+  3. E6 Final Cut exports (same set as the 14")
+  4. Step 16 War Thunder, step 18 Draw Things
+
+[[M5PRO-MBP]]
+M5 Pro MacBook Pro (mini LED, B&H loaner)
+  1. Step 17 stacker
+  2. Step 16 War Thunder, step 18 Draw Things
+
+[[M6-MBP]]
+M6 MacBook Pro (B&H loaner)
+  1. Step 13 Logic at the 32 buffer
+  2. Step 17 stacker
+  3. Step 16 War Thunder, step 18 Draw Things
+
+[[M6-IMAC]]
+M6 iMac (B&H loaner)
+  1. Steps 14a + 14b + 14c (walk away, ~35 min):
+     QUEUE="qwen9b qwen27b gemma" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+  2. Internal SSD test
+  3. Step 13 Logic 256 + 32
+  4. Step 17 stacker, step 16 War Thunder, step 18 Draw Things
+
+[[PROLED-M5PRO]]
+M5 Pro PROLED MacBook Pro (yours)
+  1. Step 13 Logic at the 32 buffer
+  2. Step 17 stacker
+  3. Step 16 War Thunder, step 18 Draw Things
+
+[[AIR]]
+MacBook Air (yours, use the Air Kit)
+  1. Steps 9, 9b, 11, 10, 14a (walk away):
+     QUEUE="blender redautumn handbrake sustained qwen9b" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+  2. Step 17 stacker
+
+[[STUDIO-M5MAX]]
+Results uploader one-time setup (do this on whichever Studio you use, once):
+  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey   -> then the Apps Script steps in Commands > Upload results
+M5 Max Mac Studio (yours): later. Full queue + Puget + games when the loaners are done.
+
+[[STUDIO-M4MAX]]
+Results uploader one-time setup (do this on whichever Studio you use, once):
+  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey   -> then the Apps Script steps in Commands > Upload results
+M4 Max Mac Studio (daily driver): later, overnight queue when the loaners are done.

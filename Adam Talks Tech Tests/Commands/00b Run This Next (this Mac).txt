@@ -1,0 +1,2 @@
+Show THIS Mac's next tests in TextEdit (Update Scripts also does this):
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh

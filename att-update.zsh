@@ -29,3 +29,5 @@ cp "$TMP"/x/*/VERSION.txt "$DEST/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null
 rm -rf "$TMP"
 print "Updated $n script and instruction files in $DEST"
 print "Version: $(head -1 "$DEST/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null)"
+# Show this Mac's next tests (00 RUN THIS NEXT) in TextEdit
+[[ -f "$DEST/Tools/att-next.zsh" ]] && { print ""; zsh "$DEST/Tools/att-next.zsh" >/dev/null 2>&1 && print "Opened this Mac's RUN THIS NEXT list in TextEdit."; }
