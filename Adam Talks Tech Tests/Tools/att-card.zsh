@@ -94,8 +94,20 @@ att_quit_apps() {
     pgrep -xq "$h" || continue
     osascript -e "tell application \"$h\" to quit" >/dev/null 2>&1 && closed+=("$h")
   done
-  sleep 5
-  for n in $closed; do pgrep -xq "$n" && stuck+=("$n"); done
+  # Nov 21: wait up to 20 s for slow quitters, then force-quit the ones that never hold unsaved
+  # work (TV and the responsiveness test apps kept staying open and showing up on cards).
+  local w=0
+  while (( w < 20 )); do stuck=(); for n in $closed; do pgrep -xq "$n" && stuck+=("$n"); done
+    (( ${#stuck} )) || break; sleep 2; (( w += 2 )); done
+  local -a safe=("TV" "Music" "Podcasts" "News" "Stocks" "Weather" "Calculator" "Chess" "Dictionary" "Font Book"
+    "Activity Monitor" "Photo Booth" "Maps" "Clock" "Draw Things" "LM Studio" "DiffusionBee" "Safari" "Preview"
+    "App Store" "System Settings" "Steam" "Spotify" "Discord" "Slack" "Messages" "Mail" "Photos" "Calendar" "Reminders" ${ATT_HELPERS[@]})
+  local -a still=()
+  for n in $stuck; do
+    if (( ${safe[(Ie)$n]} )); then pkill -x "$n" 2>/dev/null; sleep 1; pgrep -xq "$n" && pkill -9 -x "$n" 2>/dev/null; print "Force-quit $n (wouldn't close; nothing to save)."
+    else still+=("$n"); fi
+  done
+  stuck=($still)
   (( ${#closed} )) && print "Closed other apps: ${(j:, :)${(@u)closed}}" || print "No other apps were open."
   (( ${#stuck} )) && { print "!! Still open (probably asking to save): ${(j:, :)stuck}. Deal with it, then the test continues."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }still open: ${(j:, :)stuck}"; }
   return 0

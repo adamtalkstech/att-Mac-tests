@@ -1,3 +1,4 @@
+2026-11-22 00:05 Nov 21 2026 - Every test: quitting apps waits up to 20 s, then force-quits apps that never have unsaved work (TV, Safari, Calculator, LM Studio, Draw Things...) instead of leaving them open
 2026-11-21 23:55 Nov 21 2026 - Run This Next: RAM tests (closer, stacker, responsiveness) first on every Mac; reruns for dock/odd results (14" Xcode, Red Autumn, Cinebench, Puget; 16" HandBrake); Studios get bandwidth + RAM tests
 2026-11-21 23:40 Nov 21 2026 - Run This Next lists each Mac's walk-away tests (with step numbers) and the go command at the top of its tests
 2026-11-21 23:25 Nov 21 2026 - Draw Things: progress lines show live in Terminal (Python output was buffered behind tee)
