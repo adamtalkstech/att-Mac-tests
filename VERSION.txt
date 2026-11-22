@@ -1,3 +1,4 @@
+2026-11-21 21:05 Nov 21 2026 - Stacker: catches Final Cut saving to Documents/Movies, times it there, logs it, moves it to Export; first-time prep sets the Export folder once
 2026-11-21 20:55 Nov 21 2026 - Red Autumn: when frames are missing, Blender's log is saved to Results (uploads) and its last lines print
 2026-11-21 20:50 Nov 21 2026 - Stacker: finds the Creator Studio Final Cut process (was stuck at 'final cut open')
 2026-11-21 20:45 Nov 21 2026 - Step 14e memory bandwidth (CPU STREAM + GPU Metal), in the queue as 'bandwidth'

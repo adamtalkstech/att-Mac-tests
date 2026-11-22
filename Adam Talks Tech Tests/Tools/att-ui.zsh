@@ -132,8 +132,19 @@ att_fcp_share() {
     delay 1.5
   end tell" >/dev/null 2>&1 || return 1
   SHARE_START=$EPOCHREALTIME
+  local mark=$(mktemp); touch "$mark"
   osascript -e "tell application \"System Events\" to tell process \"$app\" to keystroke return" >/dev/null 2>&1 || return 1
-  # Confirm it really started: a file shows up in the folder within 90 s
-  for i in {1..90}; do [[ -n $(print -l "$dir"/*(N.)) ]] && return 0; sleep 1; done
-  print "  Nothing showed up in the Export folder."; SHARE_START=""; return 1
+  # Confirm it really started: a file shows up within 90 s. Final Cut sometimes ignores the
+  # Go-to-folder step and saves to its last/default folder (Documents or Movies), so look there too.
+  ATT_EXPORT_DIR="$dir"
+  local d f
+  for i in {1..90}; do
+    [[ -n $(print -l "$dir"/*(N.)) ]] && { rm -f "$mark"; return 0; }
+    for d in $HOME/Documents $HOME/Movies $HOME/Desktop; do
+      f=$(find "$d" -maxdepth 1 -type f -newer "$mark" \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.m4v' \) 2>/dev/null | head -1)
+      [[ -n $f ]] && { ATT_EXPORT_DIR=$d; ATT_EXPORT_FILE=$f; print "  Final Cut saved to ${d:t} instead of Export: timing it there."; rm -f "$mark"; return 0; }
+    done
+    sleep 1
+  done
+  rm -f "$mark"; print "  Nothing showed up in Export, Documents or Movies."; SHARE_START=""; return 1
 }

@@ -95,7 +95,20 @@ fcp_ready() { if (( UIOK )); then att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; else
 fcp_export() {   # $1 label for the export log
   if (( UIOK )) && att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
     print "  Script clicked Share > Apple Devices 4K > Save. Timing it."
-    zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" START=$SHARE_START
+    if [[ ${ATT_EXPORT_DIR:-$ROOT/Export} == $ROOT/Export ]]; then
+      zsh "$ROOT/Tools/att-export-timer.zsh" "" "$1" START=$SHARE_START
+    else
+      # Saved outside Export: time that one file until it stops growing, then move it into Export
+      local sz=-1 n same=0
+      while (( same < 30 )); do n=$(stat -f %z "$ATT_EXPORT_FILE" 2>/dev/null || echo 0)
+        if (( n == sz && n > 0 )); then (( same++ )); else same=0; sz=$n; fi; sleep 1; done
+      local secs=$(( EPOCHREALTIME - SHARE_START - 30 ))
+      printf "  Export time: %.1f s (file stopped growing; saved in %s)\n" $secs "${ATT_EXPORT_DIR:t}"
+      mv "$ATT_EXPORT_FILE" "$ROOT/Export/" 2>/dev/null
+      local xc="$ROOT/Results/$MACNAME/Exports/exports.csv"; mkdir -p "${xc:h}"
+      [[ -f $xc ]] || print "Date,Time,Mac,Test,Export seconds,First file to last (s),Files,MB,Start mode,Folder,macOS" > "$xc"
+      printf '%s,%s,"%s","%s",%.1f,,1,%d,script (saved to %s),"%s",%s\n' "$(date +%F)" "$(date +%T)" "$MACNAME" "$1" $secs $(( sz / 1048576 )) "${ATT_EXPORT_DIR:t}" "$ROOT/Export" "$(sw_vers -productVersion)" >> "$xc"
+    fi
   else
     att_say "Final Cut needs you. Share the 3 minute 4K project, Apple Devices 4K, to the Export folder."
     print "  In Final Cut: Share the 3-min 4K project to Adam Talks Tech Tests/Export (Apple Devices 4K)."
