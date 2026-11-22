@@ -125,12 +125,20 @@ mem_vals() {
 }
 ms_since() { printf '%.0f' $(( (EPOCHREALTIME - $1) * 1000 )) }
 
-probe_app() {   # bring the app to front, then ask for its front window; a busy app can't answer until ready
-  local app="$1" t0 rc
+probe_app() {   # bring the app to front, then ask it how many windows it has; a busy app can't answer until ready
+  # Nov 21 fix: the old check asked for the FRONT WINDOW's name, which fails in ~250 ms when an app
+  # has no window open (closed, minimized, or behind Safari's 80 tabs) -> every app "no answer"
+  # at 80 tabs on the M5 Pro MBP. Counting windows answers even with zero, so only a real
+  # failure (app not running, Accessibility off) counts as no answer; one retry, reason logged.
+  local app="$1" t0 rc err try
   t0=$EPOCHREALTIME
   osascript -e "tell application \"System Events\" to set frontmost of process \"$app\" to true" >/dev/null 2>&1
-  osascript -e "tell application \"System Events\" to tell process \"$app\" to get name of front window" >/dev/null 2>&1
-  rc=$?
+  for try in 1 2; do
+    err=$(osascript -e "tell application \"System Events\" to tell process \"$app\" to count windows" 2>&1 >/dev/null)
+    rc=$?; (( rc == 0 )) && break
+    pgrep -xq "$app" || { open -a "$app" 2>/dev/null; sleep 2; }
+  done
+  (( rc )) && print -r -- "$(date +%H:%M:%S) $app: ${err//$'\n'/ }" >> "$OUTDIR/responsiveness_noanswer_$STAMP.txt"
   print "$(ms_since $t0) $rc"
 }
 
@@ -244,6 +252,8 @@ for (( run=1; run<=RUNS; run++ )); do
       done
     fi
     if (( st_count > 0 )); then avg=$(( st_total / st_count )); else avg=0; fi
+    st_checks=$(( ${#APPS} + 1 + (opened >= 5 ? 3 : 0) ))
+    (( st_count * 2 < st_checks )) && { print "  !! most checks didn't answer at ${target} tabs: run $run not counted"; avg=0; }
     stage_avg+=($avg); stage_worst+=($st_worst)
     (( all_total += st_total, all_count += st_count ))
     print "  -> average ${avg} ms, worst ${st_worst} ms"
