@@ -2,6 +2,14 @@ ATT MAC TESTS - CHANGE LOG
 Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
+NOV 21 2026 (night)
+- Memory Test/att-responsiveness.zsh v1.0 (step 17b) rebuilt like the newer
+  tests: no Return presses, checks Accessibility + Safari setting and stops
+  with the fix, shared quit-apps + power check + cooldown, background CPU
+  watch, skips apps that aren't installed, quits Safari/test apps at the end,
+  card with STEP + SHEET lines, .txt + .csv in Results/<Mac>/Memory (uploads).
+- Tools/att-queue.zsh: 'responsiveness' can go in QUEUE= (step 17b, ~20 min).
+
 NOV 16 2026 (night)
 - NEW Puget Test/att-puget.zsh v1: save / load Puget assets (assets +
   benchmarks folders) between the LaCie and each Mac, apply the press
