@@ -26,6 +26,14 @@ ditto "$SRC" "$DEST" || { print "Copy failed."; exit 1; }
 find "$DEST" \( -name '*.sh' -o -name '*.zsh' -o -name '*.command' \) -exec chmod +x {} + 2>/dev/null
 xattr -dr com.apple.quarantine "$DEST" 2>/dev/null
 cp "$TMP"/x/*/VERSION.txt "$DEST/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null
+# Nov 21: keep plugged-in test drives current too (scripts and text only, a few MB), so a Mac that
+# copies the folder off a drive starts with today's scripts. Skip with ATT_NODRIVES=1.
+if [[ -z $ATT_NODRIVES ]]; then
+  for v in /Volumes/*/"Adam Talks Tech Tests"(N/); do
+    [[ $v == $DEST ]] && continue
+    ditto "$SRC" "$v" 2>/dev/null && cp "$TMP"/x/*/VERSION.txt "$v/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null && print "Also updated the scripts on ${v:h:t}"
+  done
+fi
 rm -rf "$TMP"
 print "Updated $n script and instruction files in $DEST"
 print "Version: $(head -1 "$DEST/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null)"

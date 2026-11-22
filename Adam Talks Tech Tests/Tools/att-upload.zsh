@@ -153,7 +153,9 @@ send_batch() {
   if (( size > 0 && size <= MAXZIP )); then zipb64=$(base64 -i "$tmp/results.zip" | tr -d '\n')
   else note="zip too big (${size} bytes), logs not sent: copy Results/$resname from a drive"; fi
   [[ $resname != $ATT_MAC && $resname != . ]] && note="${note:+$note; }from Results/$resname on this Mac (older name, or copied from a drive)"
+  # newest .txt is the card; if a test only wrote CSVs (Draw Things) use the newest .csv instead
   local newest=$(cd "$dir" && ls -t ${(M)files:#*.txt} 2>/dev/null | head -1) summary=""
+  [[ -z $newest ]] && newest=$(cd "$dir" && ls -t ${(M)files:#*.csv} 2>/dev/null | grep -v 'runs_log\|cooldowns' | head -1)
   [[ -n $newest ]] && summary=$(head -c 40000 "$dir/$newest" | base64 | tr -d '\n')
   print -rn -- "{\"kind\":\"result\",\"mac\":\"$(clean "$ATT_MAC")\",\"macid\":\"$ATT_MACID\",\"test\":\"$(clean "$label")\",\"mackind\":\"$(clean "$ATT_KIND")\",\"when\":\"$(date '+%Y-%m-%d %H:%M:%S %Z')\",\"files\":${#files},\"note\":\"$(clean "$note")\",\"summary_file\":\"$(clean "$resname/${newest#./}")\",\"summary_b64\":\"$summary\",\"zip_b64\":\"$zipb64\"}" > $tmp/body.json
   print "Uploading ${#files} result file(s) from Results/$resname to the Mac Tests sheet + Drive..."
