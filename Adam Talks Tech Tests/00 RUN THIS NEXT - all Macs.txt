@@ -113,7 +113,9 @@ NAME=14" M5 Max PROLED (B&H loaner)
 SINCE=2026-11-21 22:00
 GO=xcode redautumn bandwidth
 RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's charger (the 'Max scored lower' line depends on it), Step 12 Puget Resolve / Premiere / Photoshop / Lightroom on the charger (Nov 20 runs were on a dock). Xcode and Red Autumn reruns are in the walk-away line.
-1. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
+1. Step 14d · Ladder 8-bit · LM Studio > Settings > Model loading guardrails = OFF first (back to Relaxed after)
+   cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
+2. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
@@ -122,9 +124,6 @@ RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's char
       First time: Safari > Settings > Advanced > "Show features for web developers",
       then Settings > Developer > "Allow JavaScript from Apple Events".
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 14d · Ladder 8-bit · walk away, ~15 min
-   First: LM Studio > Settings > Model loading guardrails = OFF (set back to Relaxed after)
-   cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
 3. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 4. Step E6 · Final Cut exports · hands-on · 3-min Social 4K, 30-min Apple Devices 4K,
@@ -142,7 +141,7 @@ Optional: Step 9 · Blender rerun (background slowed the CPU run)
 NAME=16" M5 Max PROLED (B&H loaner)
 GO=handbrake bandwidth
 RERUNS (Nov 21): HandBrake on Apple's charger is in the walk-away line (the Nov 20 run may have been on a dock).
-1. Step 17b · Responsiveness · closer + stacker DONE Nov 21. Restart first, then:
+1. Step 17b · Responsiveness RERUN (first run's memory readout was broken, fixed) · closer + stacker DONE Nov 21. Restart first, then:
    cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
@@ -205,6 +204,8 @@ GO=bandwidth
 
 [[M6-IMAC]]
 NAME=M6 iMac (B&H loaner)
+SINCE=2026-11-21 22:05
+FIRST: open LM Studio once (the Nov 21 LM Studio runs failed: it wasn't set up), quit it, then run the walk-away line.
 GO=qwen9b qwen27b gemma bandwidth
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
