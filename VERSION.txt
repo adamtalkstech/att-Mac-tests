@@ -1,3 +1,4 @@
+2026-11-21 20:25 Nov 21 2026 - RUN THIS NEXT hides Step 0/1 once done (shows a checkmark instead)
 2026-11-21 20:20 Nov 21 2026 - RUN THIS NEXT reformatted: Step 0 update, Step 1 upload, numbered tests with their command under each
 2026-11-21 20:12 Nov 21 2026 - RUN THIS NEXT starts with Step 0: the exact Update Scripts line
 2026-11-21 20:10 Nov 21 2026 - att-upload all sets the Mac up first if needed: one line per Mac

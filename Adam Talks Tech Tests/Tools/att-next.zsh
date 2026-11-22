@@ -41,11 +41,19 @@ LINE="============================================================"
   print " ${name:-Mac} ($model) · ${chip#Apple } · ${ram}GB · ${disk:-?} SSD"
   print "$LINE"
   print ""
-  print "STEP 0 · UPDATE SCRIPTS · every time you sit down at this Mac"
-  print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"'
-  print ""
-  print "STEP 1 · UPLOAD RESULTS · once per Mac (test drive with the key plugged in)"
-  print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all'
+  vfile="$ROOT/_Read Me First/SCRIPTS VERSION.txt"
+  if [[ -f $vfile ]] && (( $(date +%s) - $(stat -f %m "$vfile" 2>/dev/null || echo 0) < 43200 )); then
+    print "✓ Scripts updated $(stat -f '%Sm' -t '%b %d %I:%M %p' "$vfile")"
+  else
+    print "STEP 0 · UPDATE SCRIPTS (not updated in the last 12 hours)"
+    print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"'
+  fi
+  if [[ -s $HOME/.att/upload.conf && -f $HOME/.att/upload-last ]]; then
+    print "✓ Uploads set up (last upload $(stat -f '%Sm' -t '%b %d %I:%M %p' $HOME/.att/upload-last))"
+  else
+    print "STEP 1 · UPLOAD RESULTS · once on this Mac (test drive with the key plugged in)"
+    print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all'
+  fi
   print ""
   print -r -- "------------------------------------------------------------"
   print " THIS MAC'S TESTS (in order)"
