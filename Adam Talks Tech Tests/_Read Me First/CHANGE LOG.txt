@@ -3,6 +3,8 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- att-prime fix (5:20 PM): app lookup stopped at the first missing /Applications/*/ folder ("no matches found"),
+  so no app got its first-launch / permission prompt before walking away. Fixed.
 - NEW step 20 att-ssd-internal.zsh (SSD Test folder, queue name ssdint): the Mac's own SSD with no Homebrew/fio.
   att_ssd.c built with clang (cache off via F_NOCACHE): sequential 5GB 1MB x8 best of 3, random 4K QD1/QD32 30 s,
   sustained write up to 50GB with per-second CSV + slowdown point, one 25GB file copy (ditto --noclone). Keeps 25GB

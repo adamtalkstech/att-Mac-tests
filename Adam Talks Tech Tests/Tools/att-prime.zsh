@@ -15,7 +15,7 @@ ATT_PRIMED=$HOME/.att/primed.txt
 att_app_path() {   # app name -> .app path (empty if not installed)
   local n=$1 p
   for p in "/Applications/$n.app" "/System/Applications/$n.app" "/System/Applications/Utilities/$n.app" \
-           "/System/Cryptexes/App/System/Applications/$n.app" /Applications/*/"$n.app" "$HOME/Applications/$n.app"; do
+           "/System/Cryptexes/App/System/Applications/$n.app" /Applications/*/"$n.app"(N) "$HOME/Applications/$n.app"; do
     [[ -d $p ]] && { print -r -- "$p"; return; }
   done
   [[ $n == "Final Cut Pro" ]] && { p=$(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut*'" 2>/dev/null | grep '\.app$' | grep -v '^/Volumes' | head -1); [[ -n $p ]] && print -r -- "$p"; }
