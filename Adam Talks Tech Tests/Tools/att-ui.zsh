@@ -87,11 +87,21 @@ att_fcp_share() {
   SHARE_START=""
   open -a "$app"; sleep 2
   app=$(att_fcp_proc "$app")
+  # Nov 21 fix: under the stacker's load Final Cut is slow to put focus on the timeline, so the
+  # Share item read DISABLED one second after Cmd-2. Retry for up to ~60 s: raise the main window,
+  # Cmd-1 then Cmd-2 (browser, then timeline), wait, check again.
+  local try
+  for try in {1..12}; do
   r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
     set frontmost to true
+    try
+      perform action \"AXRaise\" of window 1
+    end try
     delay 1
+    keystroke \"1\" using command down
+    delay 0.5
     keystroke \"2\" using command down
-    delay 1
+    delay 2
     set target to missing value
     repeat with mi in menu items of menu 1 of menu item \"Share\" of menu \"File\" of menu bar 1
       try
@@ -103,6 +113,9 @@ att_fcp_share() {
     click target
     return \"OK\"
   end tell" 2>&1)
+  [[ $r == OK || $r == NODEST ]] && break
+  print "  Share menu: $r (Final Cut still busy, try $try of 12)"; sleep 3
+  done
   [[ $r == OK ]] || { print "  Share menu: $r"; return 1; }
   # Share window: click Next
   for i in {1..40}; do
