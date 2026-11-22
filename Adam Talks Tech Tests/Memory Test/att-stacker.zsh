@@ -135,6 +135,7 @@ print "================================================================"
 # Hands-off: Terminal clicks Final Cut / reads Numbers itself (asks for permission once, now)
 source "$ROOT/Tools/att-ui.zsh"; UIOK=0
 (( ${MANUAL:-0} )) || { att_ui_setup && UIOK=1; }
+source "$ROOT/Tools/att-prime.zsh"; [[ -n $ATT_NOSYNC ]] || att_prime stacker
 (( UIOK )) && print "Hands-off mode: you don't need to touch anything until the card prints." \
            || print "Manual mode: you'll press Return for Numbers / Final Cut and click Share."
 

@@ -235,6 +235,8 @@ if ! osascript -e 'tell application "System Events" to tell process "Finder" to 
   fi
   print "\n   Got it."
 fi
+# Nov 22: first launches + "Terminal wants to control" boxes for the 7 apps now (queue already did this)
+[[ -n $ATT_NOSYNC ]] || { source "$ROOT/Tools/att-prime.zsh"; att_prime responsiveness; }
 osascript -e 'tell application "Safari"' -e 'make new document with properties {URL:"about:blank"}' -e 'end tell' >/dev/null 2>&1
 sleep 4
 t=$(osascript -e 'tell application "Safari" to do JavaScript "(1+1).toString()" in current tab of front window' 2>&1)

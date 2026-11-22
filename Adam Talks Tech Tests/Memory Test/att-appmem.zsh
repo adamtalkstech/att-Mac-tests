@@ -72,6 +72,7 @@ print "Apps: Safari$([[ -n $CHROME ]] && print ', Chrome'), Numbers, ${FCP_NAME:
 print "Hands-off, about 25 min. Don't use the Mac."
 print "=================================================================="
 source "$ROOT/Tools/att-ui.zsh"; UIOK=0; att_ui_setup && UIOK=1
+source "$ROOT/Tools/att-prime.zsh"; [[ -n $ATT_NOSYNC ]] || att_prime appmem   # the queue already primed
 att_cooldown
 "$LMS" unload --all >/dev/null 2>&1
 osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1; quit_hard Safari

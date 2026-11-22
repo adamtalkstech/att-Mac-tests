@@ -117,6 +117,8 @@ if pgrep -xq "LM Studio"; then
   osascript -e 'quit app "LM Studio"' >/dev/null 2>&1; sleep 5
   pgrep -xq "LM Studio" && pkill -x "LM Studio" 2>/dev/null
 fi
+# Nov 22: every first-launch / "Terminal wants to control" prompt now, not halfway through the queue
+source "$TOOLS/att-prime.zsh"; att_prime $RUN
 afplay /System/Library/Sounds/Glass.aiff 2>/dev/null
 print "\n>>> All set. You can unplug the drive and walk away. Don't use this Mac until it's done. <<<\n"
 

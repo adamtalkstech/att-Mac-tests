@@ -3,6 +3,7 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+2026-11-22 14:30 Nov 22 2026 - NEW Tools/att-prime.zsh: before walking away, the queue (and appmem, stacker, responsiveness on their own) opens every app the tests need once, triggers every 'Terminal wants to control' box and checks Safari JavaScript, so nothing stops mid-run. Remembered per Mac. NOPRIME=1 skips
 2026-11-22 14:15 Nov 22 2026 - Whisper: kit on the drives was built before the Neural Engine lock (Core ML could pick the GPU) -> rebuild on the Studio; locked kit on a drive replaces an old one on each Mac; ANE watts sampler added; 0 W on a locked kit no longer marks the run invalid; kit copies itself from the drive when run outside the queue
 2026-11-22 14:00 Nov 22 2026 - Logic logger v1.1: records sample rate, Process Buffer Range, Multithreading; optional 64/128 buffer passes; auto-logs Logic Tracks + @32. READ ME has a shareable 'repeat it' section
 2026-11-22 13:45 Nov 22 2026 - Step 19 v1.2: times the Magnetic Mask Analyze button (where the AI work happens), not an export. 3 runs, saved analysis cleared before each and restored after
