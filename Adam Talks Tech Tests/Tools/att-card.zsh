@@ -205,8 +205,8 @@ att_upload_results() {
 att_refresh_next() {
   [[ -f "$ATT_TOOLS_DIR/att-next.zsh" ]] || return 0
   [[ ${ZSH_ARGZERO:t} == att-next.zsh || ${ZSH_ARGZERO:t} == att-update.zsh ]] && return 0
-  if [[ -n $ATT_NOSYNC ]]; then NOOPEN=1 zsh "$ATT_TOOLS_DIR/att-next.zsh" >/dev/null 2>&1
-  else zsh "$ATT_TOOLS_DIR/att-next.zsh" >/dev/null 2>&1; fi
+  # rewrite the file only: popping TextEdit open here would cover the card you need to photo
+  NOOPEN=1 zsh "$ATT_TOOLS_DIR/att-next.zsh" >/dev/null 2>&1
   return 0
 }
 trap 'att_resume_bg; att_sync_results; att_upload_results; att_refresh_next' EXIT
