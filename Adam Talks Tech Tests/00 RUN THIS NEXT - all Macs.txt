@@ -1,5 +1,6 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 21 2026, 9:45 PM
+Updated: Nov 21 2026, 10:10 PM
+SINCE=2026-11-21 17:00
 PRIORITY on every Mac (Nov 21): the RAM tests first (Step 17 closer, stacker, 17b responsiveness),
 plus Step 14e bandwidth + any reruns in each Mac's walk-away line:
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
@@ -25,7 +26,7 @@ GO=bandwidth
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
-GO=qwen27b sustained bandwidth
+GO=sustained bandwidth
 1. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -109,6 +110,7 @@ Nothing scheduled right now. Ask Claude.
 
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
+SINCE=2026-11-21 22:00
 GO=xcode redautumn bandwidth
 RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's charger (the 'Max scored lower' line depends on it), Step 12 Puget Resolve / Premiere / Photoshop / Lightroom on the charger (Nov 20 runs were on a dock). Xcode and Red Autumn reruns are in the walk-away line.
 1. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)

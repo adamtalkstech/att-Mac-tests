@@ -33,6 +33,25 @@ sec() { awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on' "$ALL"; }
 NAME=$( [[ -n $key ]] && sec | awk '/^NAME=/ {sub(/^NAME=/,""); print; exit}')
 GO=$( [[ -n $key ]] && sec | awk '/^GO=/ {sub(/^GO=/,""); print; exit}')
 UPD=$(sed -n 2p "$ALL")
+# Nov 21: drop walk-away tests this Mac already finished after the SINCE= time (top of the all-Macs
+# file, or a SINCE= line in this Mac's section), so it stops asking for them again.
+SINCE=$( [[ -n $key ]] && sec | awk '/^SINCE=/ {sub(/^SINCE=/,""); print; exit}')
+[[ -z $SINCE ]] && SINCE=$(awk '/^SINCE=/ {sub(/^SINCE=/,""); print; exit}' "$ALL")
+SINCE_S=$(date -j -f "%Y-%m-%d %H:%M" "$SINCE" +%s 2>/dev/null || echo 0)
+newer() { local m; m=$(stat -f %m "$REPLY" 2>/dev/null || echo 0); (( m > SINCE_S )); }
+RES="$ROOT/Results/$(scutil --get ComputerName 2>/dev/null)"
+typeset -A PAT; PAT=(bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
+  xcode "Xcode/xcode-bench_*" blender "Blender/blender-standard_*" redautumn "Blender/blender-redautumn_*"
+  qwen9b "LM Studio/*qwen9b*" qwen27b "LM Studio/*qwen27b*" gemma "LM Studio/*gemma*" ladder "LM Studio/*ladder*"
+  whisper "LM Studio/*whisper*" responsiveness "Memory/responsiveness_*.txt")
+if [[ -n $GO ]]; then
+  left=(); DONE_GO=()
+  for t in ${=GO}; do
+    hit=( "$RES"/${~PAT[$t]:-NOMATCH}(N+newer) )
+    (( ${#hit} )) && DONE_GO+=($t) || left+=($t)
+  done
+  GO="${(j: :)left}"
+fi
 LINE="============================================================"
 {
   print "$LINE"
@@ -61,6 +80,7 @@ LINE="============================================================"
   print ""
   # Nov 21: the walk-away tests (GO=) weren't listed anywhere you could see them, so a Mac whose
   # only remaining walk-away test was bandwidth looked like it didn't have it.
+  (( ${#DONE_GO} )) && print "✓ Walk-away already done on this Mac: ${(j:, :)DONE_GO}"
   if [[ -n $GO ]]; then
     typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4 bandwidth 14e responsiveness 17b)
     print "WALK-AWAY TESTS (one command runs them all, hands-off):"
@@ -69,7 +89,7 @@ LINE="============================================================"
     print ""
   fi
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
-    sec | grep -v '^NAME=\|^GO=' | awk 'NR>1 && /^[0-9A-Z]/ && prev!="" {print ""} {print; prev=$0}'
+    sec | grep -v '^NAME=\|^GO=\|^SINCE=' | awk 'NR>1 && /^[0-9A-Z]/ && prev!="" {print ""} {print; prev=$0}'
   else
     print "Couldn't tell which Mac this is. Ask Claude, or read 00 RUN THIS NEXT - all Macs.txt."
   fi
