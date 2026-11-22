@@ -1,3 +1,4 @@
+2026-11-21 22:35 Nov 21 2026 - Responsiveness (17b): RAM extras - pressure color + peak, tabs macOS dropped, old tabs that reloaded, peak swap/compressed, app relaunches
 2026-11-21 22:15 Nov 21 2026 - Responsiveness (17b): closes all Safari tabs/windows and quits test apps at the end (and between runs)
 2026-11-21 22:10 Nov 21 2026 - Responsiveness (17b): app check counts windows (no false "no answer" at 80 tabs), one retry, failures logged, a run where most checks fail is not counted
 2026-11-21 22:00 Nov 21 2026 - Responsiveness (17b): 3 runs, run 1 is a warm-up (not counted), runs 2-3 averaged

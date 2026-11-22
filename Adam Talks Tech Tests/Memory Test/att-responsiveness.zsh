@@ -117,12 +117,26 @@ SITES=(
 'https://www.rtings.com'
 )
 
-mem_vals() {
-  local swap free
+PAGE=$(sysctl -n hw.pagesize 2>/dev/null || print 16384)
+plev_name() { case $1 in 1) print green;; 2) print yellow;; 4) print red;; *) print "?";; esac; }
+comp_gb() { vm_stat 2>/dev/null | awk -v p=$PAGE '/occupied by compressor/ {gsub(/\./,"",$NF); printf "%.1f", $NF*p/1e9}'; }
+mem_vals() {   # swap used, free %, pressure color (Activity Monitor's graph), compressed GB
+  local swap free lvl
   swap=$(sysctl -n vm.swapusage | awk '{print $6}')
   free=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{print $2}')
-  print -r -- "${swap:-?} ${free:-?}"
+  lvl=$(sysctl -n kern.memorystatus_vm_pressure_level 2>/dev/null)
+  print -r -- "${swap:-?} ${free:-?} $(plev_name $lvl) $(comp_gb)GB"
 }
+# Every 5 s during a run: pressure level, swap MB, compressor pages -> peaks for the card
+mem_sampler_start() {
+  : > "$1"
+  ( while true; do
+      print "$(sysctl -n kern.memorystatus_vm_pressure_level 2>/dev/null) $(sysctl -n vm.swapusage | awk '{v=$6; u=substr(v,length(v)); sub(/[MG]$/,"",v); if(u=="G") v*=1024; printf "%d", v}') $(vm_stat | awk '/occupied by compressor/ {gsub(/\./,"",$NF); print $NF}')"
+      sleep 5
+    done ) &!
+  MEMPID=$!
+}
+mem_sampler_stop() { [[ -n $MEMPID ]] && kill $MEMPID 2>/dev/null; MEMPID=""; }
 ms_since() { printf '%.0f' $(( (EPOCHREALTIME - $1) * 1000 )) }
 
 probe_app() {   # bring the app to front, then ask it how many windows it has; a busy app can't answer until ready
@@ -161,12 +175,12 @@ on run argv
     activate
     set w to front window
     set current tab of w to tab ((item 1 of argv) as integer) of w
-    return do JavaScript "document.readyState" in current tab of w
+    return do JavaScript "var r=window.__att?'kept':'reloaded'; window.__att=1; r" in current tab of w
   end tell
 end run
 OSA
 )
-  print "$(ms_since $t0) $([[ -n "$r" ]] && print 0 || print 1)"
+  print "$(ms_since $t0) $([[ -n "$r" ]] && print 0 || print 1) $([[ $r == kept ]] && print 0 || print 1)"
 }
 
 open_tab() {
@@ -182,6 +196,25 @@ OSA
     sleep 0.5
     [[ "$(osascript -e 'tell application "Safari" to do JavaScript "document.readyState" in current tab of front window' 2>/dev/null)" == "complete" ]] && break
   done
+  mark_tab
+}
+mark_tab() { osascript -e 'tell application "Safari" to do JavaScript "window.__att=1" in current tab of front window' >/dev/null 2>&1; }
+# End of a run: how many of the open tabs lost their marker (macOS dropped them to free RAM)
+count_dropped_tabs() {
+  osascript <<'OSA' 2>/dev/null
+tell application "Safari"
+  set d to 0
+  repeat with t in tabs of front window
+    try
+      set r to do JavaScript "window.__att?'1':'0'" in t
+      if r is not "1" then set d to d + 1
+    on error
+      set d to d + 1
+    end try
+  end repeat
+  return d
+end tell
+OSA
 }
 
 print "ATT Responsiveness Score (step 17b) on $MAC"
@@ -215,9 +248,13 @@ ATT_KEEP="Claude,Screen Sharing" att_cooldown
 RUNS=${RUNS:-3}   # Nov 21: 3 climbs by default; run 1 is a warm-up (first launch of apps), runs 2-3 averaged
 WARMUP=${WARMUP:-1}; (( RUNS < 2 )) && WARMUP=0   # WARMUP=0 counts every run; RUNS=1 = one counted run
 sc() { local v=$1; (( v <= 0 )) && { print 0; return; }; local s=$(( INSTANT_MS * 1000 / v )); (( s > 1000 )) && s=1000; print $s; }
-print "stage_tabs,item,ms,ok,swap_used,memory_free,run" > "$CSV"
+print "stage_tabs,item,ms,ok,swap_used,memory_free,run,pressure,compressed,tab_reloaded" > "$CSV"
+MEMLOG="$OUTDIR/responsiveness_memory_$STAMP.txt"; MEMTMP="${TMPDIR:-/tmp}/att-resp-mem.$$"
+trap 'mem_sampler_stop; att_watch_stop; att_resume_bg; att_sync_results; att_upload_results' EXIT
+trap 'mem_sampler_stop; att_watch_stop; att_resume_bg; att_sync_results; att_upload_results; exit 130' INT TERM HUP
 att_watch_start "$BGLOG" "Safari|WebKit|Calculator|Chess|Dictionary|Font Book|Activity Monitor|TV|GarageBand|osascript|System Events|memory_pressure"
-typeset -a R_LOADED R_LIGHT R_SCORE R_AVG0 R_AVG80 R_WORST80 R_SLOWER R_SWAP R_LINES
+typeset -a R_LOADED R_LIGHT R_SCORE R_AVG0 R_AVG80 R_WORST80 R_SLOWER R_SWAP R_LINES R_DROP R_PRL R_PROBES R_PEAKP R_PEAKSW R_PEAKCOMP R_RELAUNCH
+typeset -A APID
 noanswer=0
 
 for (( run=1; run<=RUNS; run++ )); do
@@ -233,6 +270,10 @@ for (( run=1; run<=RUNS; run++ )); do
   osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1; sleep 1
   osascript -e 'tell application "Safari" to make new document with properties {URL:"https://www.apple.com"}' >/dev/null 2>&1
   print "Settling for 60 seconds..."; sleep 60
+  mark_tab
+  for a in $APPS "Safari"; do APID[$a]=$(pgrep -xn "$a"); done
+  mem_sampler_start "$MEMTMP"
+  prl=0; probes=0
 
   typeset -a stage_avg stage_worst; stage_avg=(); stage_worst=()
   all_total=0; all_count=0; opened=1   # the apple.com tab is site 1
@@ -242,21 +283,22 @@ for (( run=1; run<=RUNS; run++ )); do
       while (( opened < target )); do (( opened++ )); open_tab "${SITES[$opened]}"; done
       sleep 10
     fi
-    read swap free <<< "$(mem_vals)"
-    print "\n== run $run, ${target} tabs open (swap ${swap}, memory free ${free}) =="
+    read swap free plev comp <<< "$(mem_vals)"
+    print "\n== run $run, ${target} tabs open (pressure ${plev}, swap ${swap}, compressed ${comp}, free ${free}) =="
     st_total=0; st_count=0; st_worst=0
     for a in $APPS "Safari"; do
       read ms rc <<< "$(probe_app "$a")"
       printf "  %-16s %6s ms%s\n" "$a" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
-      print "${target},\"${a}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run}" >> "$CSV"
+      print "${target},\"${a}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run},${plev},${comp}," >> "$CSV"
       if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
       sleep 1
     done
     if (( opened >= 5 )); then
       for n in 2 $(( opened / 2 )) $(( opened - 1 )); do
-        read ms rc <<< "$(probe_tab $n)"
-        printf "  %-16s %6s ms%s\n" "old tab #${n}" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')"
-        print "${target},\"tab ${n}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run}" >> "$CSV"
+        read ms rc rl <<< "$(probe_tab $n)"
+        (( probes++ )); (( rc == 0 && rl == 1 )) && (( prl++ ))
+        printf "  %-16s %6s ms%s%s\n" "old tab #${n}" $ms "$([[ $rc == 0 ]] || print '  (no answer, not scored)')" "$( (( rc == 0 && rl == 1 )) && print '  (had to RELOAD)')"
+        print "${target},\"tab ${n}\",${ms},$([[ $rc == 0 ]] && print yes || print no),${swap},${free},${run},${plev},${comp},$( (( rc == 0 && rl == 1 )) && print yes || print no)" >> "$CSV"
         if [[ $rc == 0 ]]; then (( st_total += ms, st_count++ )); (( ms > st_worst )) && st_worst=$ms; else (( noanswer++ )); fi
         sleep 1
       done
@@ -268,6 +310,15 @@ for (( run=1; run<=RUNS; run++ )); do
     (( all_total += st_total, all_count += st_count ))
     print "  -> average ${avg} ms, worst ${st_worst} ms"
   done
+  # Memory extras for this run
+  mem_sampler_stop
+  drop=$(count_dropped_tabs); drop=${drop:-0}
+  relaunched=()
+  for a in $APPS "Safari"; do now=$(pgrep -xn "$a"); [[ -n ${APID[$a]} && $now != ${APID[$a]} ]] && relaunched+=("$a"); done
+  read pk_lvl pk_sw pk_comp <<< "$(awk 'BEGIN{l=0;s=0;c=0} {if($1>l)l=$1; if($2>s)s=$2; if($3>c)c=$3} END{print l, s, c}' "$MEMTMP")"
+  { print "# run $run (pressure level 1/2/4, swap MB, compressor pages)"; cat "$MEMTMP"; } >> "$MEMLOG" 2>/dev/null
+  pk_comp_gb=$(awk -v c=${pk_comp:-0} -v p=$PAGE 'BEGIN{printf "%.1f", c*p/1e9}')
+  print "  memory: peak pressure $(plev_name $pk_lvl), peak swap ${pk_sw:-0} MB, peak compressed ${pk_comp_gb} GB, tabs dropped ${drop} of ${opened}, old tabs reloaded ${prl} of ${probes}, apps relaunched ${#relaunched}"
   if (( all_count == 0 || stage_avg[1] == 0 || stage_avg[-1] == 0 )); then
     print "!! Run $run had no usable timings; not counted."; continue
   fi
@@ -276,10 +327,12 @@ for (( run=1; run<=RUNS; run++ )); do
     R_LINES+=("$(printf 'Run 1: warm-up, not counted (loaded %d, 80 tabs %d ms)' $(sc ${stage_avg[-1]}) ${stage_avg[-1]})")
     continue
   fi
+  R_DROP+=($drop); R_PRL+=($prl); R_PROBES+=($probes); R_PEAKP+=(${pk_lvl:-0}); R_PEAKSW+=(${pk_sw:-0}); R_PEAKCOMP+=($pk_comp_gb); R_RELAUNCH+=(${#relaunched})
   R_LOADED+=($(sc ${stage_avg[-1]})); R_LIGHT+=($(sc ${stage_avg[1]})); R_SCORE+=($(sc $(( all_total / all_count ))))
   R_AVG0+=(${stage_avg[1]}); R_AVG80+=(${stage_avg[-1]}); R_WORST80+=(${stage_worst[-1]}); R_SWAP+=($swap)
   R_SLOWER+=($(( (stage_avg[-1] - stage_avg[1]) * 100 / stage_avg[1] )))
-  R_LINES+=("$(printf 'Run %d: loaded %4d  light %4d | 0 tabs %4d ms, 80 tabs %5d ms, worst %5d ms | swap %s' $run ${R_LOADED[-1]} ${R_LIGHT[-1]} ${stage_avg[1]} ${stage_avg[-1]} ${stage_worst[-1]} $swap)")
+  R_LINES+=("$(printf 'Run %d: loaded %4d  light %4d | 0 tabs %4d ms, 80 tabs %5d ms, worst %5d ms' $run ${R_LOADED[-1]} ${R_LIGHT[-1]} ${stage_avg[1]} ${stage_avg[-1]} ${stage_worst[-1]})")
+  R_LINES+=("$(printf '       memory: %s peak, swap %d MB, compressed %s GB, %d tabs dropped, %d/%d old tabs reloaded, %d apps relaunched' $(plev_name $pk_lvl) ${pk_sw:-0} $pk_comp_gb $drop $prl $probes ${#relaunched})")
 done
 
 att_watch_stop
@@ -299,6 +352,9 @@ loaded=$(mean $R_LOADED); light=$(mean $R_LIGHT); score=$(mean $R_SCORE)
 avg0=$(mean $R_AVG0); avg80=$(mean $R_AVG80); worst80=${${(On)R_WORST80}[1]}; slower=$(mean $R_SLOWER)
 spread=0; (( n > 1 && loaded > 0 )) && spread=$(( (${${(On)R_LOADED}[1]} - ${${(on)R_LOADED}[1]}) * 100 / loaded ))
 swap=${R_SWAP[-1]}
+dropped=$(mean $R_DROP); prl_t=0; pr_t=0; for v in $R_PRL; do (( prl_t += v )); done; for v in $R_PROBES; do (( pr_t += v )); done
+peakp=$(plev_name ${${(On)R_PEAKP}[1]}); peaksw=${${(On)R_PEAKSW}[1]}; peakcomp=${${(On)R_PEAKCOMP}[1]}
+relaunch_t=0; for v in $R_RELAUNCH; do (( relaunch_t += v )); done
 
 { att_card_start "Responsiveness (app switching, 0 to 80 tabs), ${n} run(s) averaged$( (( WARMUP )) && print ' after a warm-up')"
   print "LOADED SCORE (80 tabs): ${loaded}   <- headline (1000 = instant, higher is better)"
@@ -306,6 +362,9 @@ swap=${R_SWAP[-1]}
   print "Overall score:          ${score}"
   print "80 tabs vs none:        ${slower}% slower to switch"
   print "Worst single wait (80): ${worst80} ms"
+  print "Memory pressure peak:   ${peakp}   (Activity Monitor's graph color)"
+  print "Tabs macOS dropped:     ${dropped} of 80 (avg per run)   Old tabs that reloaded: ${prl_t} of ${pr_t}"
+  print "Peak swap / compressed: ${peaksw} MB / ${peakcomp} GB   Apps relaunched: ${relaunch_t}"
   (( n > 1 )) && print "Run-to-run spread:      ${spread}%$( (( spread > 15 )) && print '   !! over 15%: run it again')"
   print -r -- "---------------------------------------------------------------"
   for l in $R_LINES; do print -r -- "$l"; done
@@ -316,7 +375,9 @@ swap=${R_SWAP[-1]}
   print "SHEET: Responsiveness loaded / light / overall  ->  ${loaded} / ${light} / ${score}"
   print "SHEET: Avg ms 0 tabs / 80 tabs / worst 80  ->  ${avg0} / ${avg80} / ${worst80}"
   print "SHEET: Swap end / slower % / spread  ->  ${swap} / ${slower}% / ${spread}%"
+  print "SHEET: Pressure peak / tabs dropped / old tabs reloaded  ->  ${peakp} / ${dropped} / ${prl_t} of ${pr_t}"
+  print "SHEET: Peak swap MB / peak compressed GB / apps relaunched  ->  ${peaksw} / ${peakcomp} / ${relaunch_t}"
   print "Saved: Results/$MAC/Memory/${TXT:t} (+ .csv)"
   att_card_end; } | tee "$TXT"
 
-print "runs,${n},loaded_score,${loaded},light_score,${light},score,${score},slower_pct,${slower},avg0,${avg0},avg80,${avg80},worst80,${worst80},spread_pct,${spread},swap_end,${swap}" >> "$CSV"
+print "runs,${n},loaded_score,${loaded},light_score,${light},score,${score},slower_pct,${slower},avg0,${avg0},avg80,${avg80},worst80,${worst80},spread_pct,${spread},swap_end,${swap},pressure_peak,${peakp},tabs_dropped,${dropped},old_tabs_reloaded,${prl_t}/${pr_t},peak_swap_mb,${peaksw},peak_compressed_gb,${peakcomp},apps_relaunched,${relaunch_t}" >> "$CSV"

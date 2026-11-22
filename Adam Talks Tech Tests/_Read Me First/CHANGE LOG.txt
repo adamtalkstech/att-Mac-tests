@@ -3,6 +3,12 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 21 2026 (night)
+- att-responsiveness.zsh RAM extras (for the RAM videos): memory pressure
+  color per step + peak (green/yellow/red like Activity Monitor), tabs macOS
+  dropped to free RAM (marker check on all 80 tabs at the end of each run),
+  old tabs that had to reload when clicked, peak swap + compressed memory
+  (sampled every 5 s, saved to responsiveness_memory_*.txt), and apps macOS
+  quit and relaunched. All on the card + 2 new SHEET lines + CSV.
 - att-responsiveness.zsh: FIX app check. It asked for each app's front
   window name, which fails when the window is gone/behind Safari, so at 80
   tabs every app read 'no answer' and the score came from 3 tabs only
