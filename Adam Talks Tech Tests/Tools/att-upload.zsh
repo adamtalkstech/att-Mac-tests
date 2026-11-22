@@ -196,10 +196,11 @@ case $1 in
   now) load_conf || { say "This Mac isn't set up yet. Run:  zsh \"$TOOLS/att-upload.zsh\" setup   (test drive plugged in)"; exit 1; }; cmd_auto "manual upload" ;;
   all)   # first gather the Puget CSVs that app runs left in Puget's own folder
     [[ -f "$ROOT/Puget Test/att-puget.zsh" ]] && ( cd "$ROOT/Puget Test" && NOUPLOAD=1 zsh att-puget.zsh collect >/dev/null 2>&1 ) && say "Gathered the Puget CSVs into Results first."
-    load_conf || { say "This Mac isn't set up yet, so nothing was sent. Run:  zsh \"$TOOLS/att-upload.zsh\" setup   (test drive plugged in), then all again."; exit 1; }
+    load_conf || { say "Setting this Mac up first..."; cmd_setup; load_conf || exit 1; }
     ATT_UPLOAD_ALL=1 cmd_auto "full backfill"; say "Done. Check the Raw Results tab." ;;
   save-to-drive) cmd_save_to_drive ;;
   forget) cmd_forget ;;
   auto) cmd_auto "${2:-test}" ;;
+  "") if load_conf; then sed -n 2,30p "$0"; else say "Not set up yet: running setup + sending everything (same as: att-upload.zsh all)."; "$0" all; fi ;;
   *) sed -n 2,30p "$0" ;;
 esac

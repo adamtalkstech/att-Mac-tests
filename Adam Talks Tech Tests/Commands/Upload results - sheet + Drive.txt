@@ -1,3 +1,6 @@
+ONE LINE per Mac (test drive with the key plugged in): sets it up AND sends everything:
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all
+
 UPLOAD RESULTS: every test sends its new result files (cards, CSVs, logs) to the
 Mac Tests sheet (Raw Results tab) + Google Drive (ATT Test Results/<Mac>/).
 Signed with a secret key; the key is never in GitHub. Does nothing until set up.
