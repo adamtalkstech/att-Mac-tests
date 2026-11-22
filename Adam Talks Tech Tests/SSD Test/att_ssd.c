@@ -5,6 +5,7 @@
 //   att_ssd rand <file> <seconds> <qd>          -> "RAND qd read_MBps write_MBps"  (file from seq)
 //   att_ssd sus  <file> <GB>                    -> "S sec MBps GBdone" every second, then "SUSDONE secs"
 //   att_ssd make <file> <MB>                    -> writes a file of random data (copy test source)
+//   att_ssd copy <src> <dst>                    -> "COPY seconds" real read+write copy, 8MB blocks (APFS can't clone it)
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,6 +53,9 @@ int main(int c, char **v){
     double r=randpass(v[2],secs,qd,0); sleep(3); double w=randpass(v[2],secs,qd,1); printf("RAND %d %.1f %.1f\n", qd, r, w); return 0; }
   if(!strcmp(v[1],"make")){ long long mb=atoll(v[3]); int fd=openf(v[2],O_WRONLY|O_CREAT|O_TRUNC); char *b=abuf(8*MB);
     for(long long o=0;o<mb;o+=8){ if(write(fd,b,8*MB)!=8*MB){ perror("make"); return 1; } } fsync(fd); close(fd); return 0; }
+  if(!strcmp(v[1],"copy")){ if(c<4) return 1; int in=openf(v[2],O_RDONLY), out=openf(v[3],O_WRONLY|O_CREAT|O_TRUNC); char *b=abuf(8*MB);
+    double t0=now(); ssize_t r; while((r=read(in,b,8*MB))>0){ if(write(out,b,r)!=r){ perror("copy"); return 1; } }
+    fsync(out); close(in); close(out); printf("COPY %.1f\n", now()-t0); return 0; }
   if(!strcmp(v[1],"sus")){ long long gb=atoll(v[3]); int fd=openf(v[2],O_WRONLY|O_CREAT|O_TRUNC); char *b=abuf(8*MB);
     long long total=gb*1024, done=0, lastdone=0; double t0=now(), last=t0; int sec=0;
     while(done<total){ if(write(fd,b,8*MB)!=8*MB){ perror("sus"); return 1; } done+=8; double t=now();

@@ -45,8 +45,9 @@ read SAVG FIRST CLIFF_GB AFTER LAST60 <<< "$(awk -F, 'NR>1 { n++; v[n]=$2; g[n]=
     printf "%.0f %.0f %s %s %.0f\n", s/n, f, cg, af, l/k }' "$CSV")"
 sleep 60; print "4/4 Copy one ${CP} GB file on the same drive (real copy, not a clone)..."
 $BIN make "$W/copy-src.bin" $(( CP * 1024 )); mkdir -p "$W/dest"; sleep 20
-T0=$EPOCHREALTIME; ditto --noclone "$W/copy-src.bin" "$W/dest/copy-src.bin" 2>/dev/null || cp -X "$W/copy-src.bin" "$W/dest/"; sync
-CPT=$(awk -v a=$T0 -v b=$EPOCHREALTIME 'BEGIN{printf "%.1f", b-a}')
+# Nov 22 fix: Finder-style copies (cp, ditto) are APFS clones on the same drive and finish in 0 s, so the copy is
+# done by the tester itself: every byte read from the SSD and written back, cache off.
+read _ CPT <<< "$($BIN copy "$W/copy-src.bin" "$W/dest/copy-src.bin")"
 cleanup; att_resume_bg
 F="$OUT/ssd-internal_$(date +%Y-%m-%d_%H-%M).txt"
 { att_card_start "Internal SSD, no clicking (Step 20)"

@@ -3,6 +3,8 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Internal SSD fix (6:05 PM): the 25GB copy read 0.0 s on the iMac (cp/ditto made an APFS clone). The tester now
+  does the copy itself (att_ssd copy: every byte read and written, cache off).
 - Internal SSD fix (5:45 PM): a smaller-than-25GB copy no longer holds the whole card (the iMac's good
   sequential / random / sustained numbers were held because its copy was 24 GB). Only the copy is left off.
 - Whisper kit without a drive (5:35 PM): the two whisper.cpp programs, BUILD-INFO and the test audio now come with
