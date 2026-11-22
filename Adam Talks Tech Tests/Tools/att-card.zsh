@@ -36,6 +36,7 @@ att_step_for() {
     att-responsiveness.zsh) print 17b ;;
     att-appmem.zsh) print 17c ;;
     att-drawthings.zsh) print 18 ;;
+    att-fcp-neural.zsh) print 19 ;;
     att-tabtest.zsh) print E5 ;;
     att-export-timer.zsh) print E6 ;;
     att-versions.zsh) print 4 ;;
