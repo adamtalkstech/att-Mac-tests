@@ -59,6 +59,15 @@ LINE="============================================================"
   print " THIS MAC'S TESTS (in order)"
   print -r -- "------------------------------------------------------------"
   print ""
+  # Nov 21: the walk-away tests (GO=) weren't listed anywhere you could see them, so a Mac whose
+  # only remaining walk-away test was bandwidth looked like it didn't have it.
+  if [[ -n $GO ]]; then
+    typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4 bandwidth 14e responsiveness 17b)
+    print "WALK-AWAY TESTS (one command runs them all, hands-off):"
+    for t in ${=GO}; do print "   · Step ${ST[$t]:-?} · $t"; done
+    print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go'
+    print ""
+  fi
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
     sec | grep -v '^NAME=\|^GO=' | awk 'NR>1 && /^[0-9A-Z]/ && prev!="" {print ""} {print; prev=$0}'
   else
