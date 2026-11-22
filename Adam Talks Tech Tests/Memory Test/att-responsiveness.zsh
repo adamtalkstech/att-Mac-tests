@@ -142,6 +142,16 @@ probe_app() {   # bring the app to front, then ask it how many windows it has; a
   print "$(ms_since $t0) $rc"
 }
 
+close_test_apps() {   # Nov 21: close all 80 tabs first (Safari can ask before quitting with many
+  # tabs, and reopens them next launch), then quit Safari + the test apps; force-quit stragglers
+  local a
+  osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1
+  for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
+  sleep 5
+  for a in $APPS "Safari"; do pgrep -xq "$a" && { print "  $a didn't quit, forcing it"; pkill -x "$a" 2>/dev/null; }; done
+  return 0
+}
+
 probe_tab() {   # switch Safari to tab N and time until the page answers
   local n="$1" t0 r
   t0=$EPOCHREALTIME
@@ -214,7 +224,7 @@ for (( run=1; run<=RUNS; run++ )); do
   print "\n################ RUN $run of $RUNS$( (( run == 1 && WARMUP )) && print ' (warm-up, not counted)') ################"
   if (( run > 1 )); then
     print "Resetting between runs: quit Safari + test apps, then cooldown again."
-    for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
+    close_test_apps
     sleep 10; att_cooldown --again
   fi
   # Open the test apps and a fresh Safari window
@@ -274,7 +284,7 @@ done
 
 att_watch_stop
 BGLINE=$(att_watch_report "$BGLOG")
-for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
+close_test_apps
 
 # --- Score + photo card (average of the good runs) ---
 n=${#R_LOADED}
