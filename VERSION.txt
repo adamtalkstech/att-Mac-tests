@@ -1,3 +1,4 @@
+2026-11-22 01:25 Nov 21 2026 - Run This Next: BEFORE YOU START box checks macOS version, Accessibility, Full Disk Access, Xcode tools, LM Studio, Blender, Final Cut, Numbers, Draw Things, free space and charger, and lists only what is missing
 2026-11-22 01:10 Nov 21 2026 - Run This Next: walk-away tests already done on that Mac (result newer than SINCE=) drop off the list automatically
 2026-11-22 01:00 Nov 21 2026 - Responsiveness: FIX memory sampler (wrote to the screen instead of its log, so pressure / peak swap / compressed read ? / 0 / 0)
 2026-11-22 00:45 Nov 21 2026 - Draw Things save: copies only the Z-Image Turbo files, to every plugged-in test drive, no prompt

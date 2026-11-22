@@ -63,6 +63,9 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
 D. ONE AT A TIME  (same tests as the queue, if you'd rather run just one)
    Every command also has its own file in the Commands folder (one per step, easy to copy).
    THIS Mac's next tests: "00 RUN THIS NEXT (this Mac).txt" (Update Scripts opens it in TextEdit).
+   Its "BEFORE YOU START" box lists anything this Mac still needs first: macOS version, Terminal
+   permissions (Accessibility, Full Disk Access), Xcode tools, LM Studio / Blender / Final Cut /
+   Numbers / Draw Things installed, free space, charger. Nothing listed = ready.
    Show it again any time:  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh
    Results upload to the Mac Tests sheet + Drive by themselves once a Mac is set up
    (Commands > Upload results). Before a loaner ships: att-upload.zsh forget

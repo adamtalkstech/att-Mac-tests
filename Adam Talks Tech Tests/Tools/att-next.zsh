@@ -73,6 +73,39 @@ LINE="============================================================"
     print "STEP 1 · UPLOAD RESULTS · once on this Mac (test drive with the key plugged in)"
     print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all'
   fi
+  # Nov 21: BEFORE YOU START - what this Mac still needs before the tests will work.
+  # Only problems are listed; nothing shows when the Mac is ready.
+  fix=()
+  want=$(head -1 "$TOOLS/target-macos.txt" 2>/dev/null | tr -d '[:space:]'); have=$(sw_vers -productVersion 2>/dev/null)
+  [[ -n $want && $have != $want ]] && fix+=("macOS is $have: update to $want first (System Settings > General > Software Update), or results won't match the other Macs")
+  osascript -e 'tell application "System Events" to get name of first process' >/dev/null 2>&1 || \
+    fix+=("Terminal can't control apps: System Settings > Privacy & Security > Accessibility > Terminal ON, then Cmd-Q Terminal (stacker, responsiveness, Final Cut, Numbers)")
+  xcode-select -p >/dev/null 2>&1 || fix+=("Xcode Command Line Tools missing: run  xcode-select --install  (bandwidth test, Final Cut click helper, Python)")
+  [[ -x $HOME/.lmstudio/bin/lms ]] || fix+=("LM Studio not set up: install LM Studio 0.4.28, open it once, quit it (Qwen, Gemma, ladder, stacker)")
+  [[ -x /Applications/Blender.app/Contents/MacOS/Blender ]] || fix+=("Blender missing in Applications (Blender, Red Autumn, sustained): Tools/att-install-apps.zsh")
+  [[ -n $(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut*'" 2>/dev/null | grep -m1 '\.app$') || -n $(print -l /Applications/Final\ Cut*.app(N)) ]] || \
+    fix+=("Final Cut Pro (Creator Studio) missing: needed for the stacker/closer")
+  [[ -d /Applications/Numbers.app ]] || fix+=("Numbers missing: free in the App Store (stacker/closer)")
+  dtc="$HOME/Library/Containers/com.liuliu.draw-things/Data/Documents"
+  if [[ -z $(mdfind "kMDItemCFBundleIdentifier == 'com.liuliu.draw-things'" 2>/dev/null | grep -m1 '\.app$') ]]; then
+    fix+=("Draw Things missing: free in the Mac App Store, open it once, Settings > API Server ON (HTTP, 7860)")
+  elif [[ -d $dtc ]] && ! ls "$dtc" >/dev/null 2>&1; then
+    fix+=("Terminal can't see Draw Things' files: Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal")
+  fi
+  freeg=$(df -g "$HOME" 2>/dev/null | awk 'NR==2{print $4}')
+  [[ -n $freeg ]] && (( freeg < 60 )) && fix+=("Only ${freeg} GB free: the stacker copies a 45 GB Final Cut library. Free space with Tools/att-get.zsh free")
+  if pmset -g batt 2>/dev/null | grep -q InternalBattery; then
+    pmset -g batt | head -1 | grep -q "AC Power" || fix+=("On battery: plug Apple's charger straight into the Mac (no dock), on a desk, not the couch")
+  fi
+  if (( ${#fix} )); then
+    print ""
+    print -r -- "------------------------------------------------------------"
+    print " BEFORE YOU START · this Mac still needs:"
+    print -r -- "------------------------------------------------------------"
+    for f in $fix; do print -r -- " ! $f"; done
+  else
+    print "✓ Apps, permissions, macOS and free space look ready"
+  fi
   print ""
   print -r -- "------------------------------------------------------------"
   print " THIS MAC'S TESTS (in order)"
@@ -97,7 +130,7 @@ LINE="============================================================"
   print -r -- "------------------------------------------------------------"
   print " GOOD TO KNOW"
   print -r -- "------------------------------------------------------------"
-  print " · Laptops: Apple's charger straight into the Mac, no dock."
+  print " · Laptops: Apple's charger straight into the Mac, no dock, on a desk (not the couch)."
   print " · Paste each command as ONE line. Step numbers match 00 START HERE - Run Order.txt."
   print " · Loaners: before shipping, run  att-upload.zsh forget"
 } > "$OUT"
