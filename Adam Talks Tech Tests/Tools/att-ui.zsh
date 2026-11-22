@@ -6,6 +6,7 @@
 # (att_ui_setup asks once, at the START of a test, never in the middle).
 zmodload zsh/datetime
 
+ATT_UI_DIR=${${(%):-%x}:A:h}   # this file's folder (Tools)
 att_say() { print "  ** $*"; say -v Samantha "$*" >/dev/null 2>&1 & }
 
 att_ui_setup() {   # call before the timed part. Returns 0 when UI control works.
@@ -104,8 +105,12 @@ att_fcp_open_project() {
     tell application \"System Events\" to keystroke \"2\" using command down" >/dev/null 2>&1
   sleep 2
   att_fcp_has_project "$1" && { print "  Project is open in the timeline."; return 0; }
-  # Try: browser search field -> project name -> open the match
+  # Opening a library doesn't open its project (Adam, Nov 21), so: filter the browser to the
+  # project name, find it on screen, and double-click it (Tools/att-click.swift, built once).
+  local clk=$HOME/.att/att-click pos
+  [[ -x $clk ]] || { mkdir -p ${clk:h}; swiftc -O "$ATT_UI_DIR/att-click.swift" -o "$clk" 2>/dev/null; }
   osascript -e "tell application \"System Events\" to tell process \"$app\"
+    set frontmost to true
     keystroke \"1\" using command down
     delay 1
     try
@@ -114,19 +119,22 @@ att_fcp_open_project() {
       set value of f to \"$name\"
       keystroke return
     end try
-    delay 2
-    try
-      set hits to (UI elements of (entire contents of window 1) whose (description contains \"$name\" or name contains \"$name\" or value contains \"$name\"))
-      repeat with h in hits
-        try
-          perform action \"AXOpen\" of h
-          exit repeat
-        end try
-      end repeat
-    end try
   end tell" >/dev/null 2>&1
-  sleep 4
-  att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline."; return 0; }
+  sleep 3
+  pos=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
+    set hits to (UI elements of (entire contents of window 1) whose (role is not \"AXTextField\") and (name is \"$name\" or value is \"$name\" or description is \"$name\"))
+    if (count of hits) = 0 then return \"\"
+    set h to item 1 of hits
+    set {px, py} to position of h
+    set {sx, sy} to size of h
+    return ((px + sx / 2) as integer as text) & \" \" & ((py + sy / 2) as integer as text)
+  end tell" 2>/dev/null)
+  if [[ -n $pos && -x $clk ]]; then
+    "$clk" ${=pos} 2; sleep 4
+    att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline (double-clicked it)."; return 0; }
+  fi
+  [[ -x $clk ]] || print "  (Couldn't build the click helper: needs Xcode or the Command Line Tools.)"
+  [[ -z $pos ]] && print "  (Couldn't find '$name' in the Final Cut browser.)"
   whence att_say >/dev/null && att_say "Final Cut needs you once. Double click the project, $name."
   print "  ** Final Cut has no project in the timeline. Double-click '$name' in the Final Cut browser now."
   print "     (Nothing is being timed yet; the test carries on by itself once it's open.)"

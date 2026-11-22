@@ -1,3 +1,4 @@
+2026-11-21 23:15 Nov 21 2026 - Stacker/closer: opens the 3-min project itself (filters the Final Cut browser to it and double-clicks it with Tools/att-click.swift), since opening the library leaves no project in the timeline
 2026-11-21 23:00 Nov 21 2026 - Stacker/closer: makes sure the 3-min project is open in the timeline right after Final Cut opens (opens it itself, else asks once BEFORE the timed part)
 2026-11-21 22:50 Nov 21 2026 - Stacker: Final Cut Share retries up to ~60 s when the menu is DISABLED under load (was 1 try)
 2026-11-21 22:35 Nov 21 2026 - Responsiveness (17b): RAM extras - pressure color + peak, tabs macOS dropped, old tabs that reloaded, peak swap/compressed, app relaunches
