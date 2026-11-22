@@ -13,6 +13,10 @@ NAME=M6 MINI 16GB (16/512, yours)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
@@ -29,6 +33,10 @@ GO=qwen27b sustained
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 4. Storage screenshot + free space · then it can ship
 
 [[M6-MINI-24-512]]
@@ -44,6 +52,10 @@ GO=handbrake
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
@@ -58,6 +70,10 @@ GO=sustained
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 3. Step 15 · Cyberpunk · hands-on · then it can ship
 
 [[M5PRO-MINI]]
@@ -73,6 +89,10 @@ GO=qwen27b sustained
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 
 [[M5PRO-MINI-UPGRADED]]
 NAME=M5 Pro Mac mini, upgraded GPU
@@ -93,6 +113,10 @@ NAME=14" M5 Max PROLED (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 5. Step 16 · War Thunder · hands-on
 6. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
@@ -111,6 +135,10 @@ NAME=16" M5 Max PROLED (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 3. Step E6 · Final Cut exports · hands-on · same set as the 14":
@@ -130,6 +158,10 @@ NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Step 16 · War Thunder · hands-on
 3. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
@@ -147,6 +179,10 @@ NAME=M6 MacBook Pro (B&H loaner)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 3. Step 16 · War Thunder · hands-on
 4. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
@@ -170,6 +206,10 @@ GO=qwen9b qwen27b gemma
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 5. Step 16 · War Thunder · hands-on
 6. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
@@ -187,6 +227,10 @@ NAME=M5 Pro PROLED MacBook Pro (yours)
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 3. Step 16 · War Thunder · hands-on
 4. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
@@ -205,6 +249,10 @@ GO=blender redautumn handbrake sustained qwen9b
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   d) Step 17b · Responsiveness (felt speed) · hands-off, ~10 min · restart first.
+      First time: Safari > Settings > Advanced > "Show features for web developers",
+      then Settings > Developer > "Allow JavaScript from Apple Events".
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)

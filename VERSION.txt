@@ -1,3 +1,4 @@
+2026-11-21 20:40 Nov 21 2026 - Step 17b Responsiveness (felt speed) added after the stacker
 2026-11-21 20:35 Nov 21 2026 - Stacker finds Final Cut Pro by name/path too (Creator Studio version)
 2026-11-21 20:30 Nov 21 2026 - RUN THIS NEXT: stacker commands right under every stacker step
 2026-11-21 20:25 Nov 21 2026 - RUN THIS NEXT hides Step 0/1 once done (shows a checkmark instead)
