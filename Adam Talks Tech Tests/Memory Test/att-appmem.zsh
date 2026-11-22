@@ -2,7 +2,7 @@
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || { att_card_start() { print "\n===== $* ====="; }; att_card_end() { :; }; att_cooldown() { :; }; att_quit_apps() { :; }; }
 source "${0:A:h:h}/Tools/att-appmem.zsh"
 # =============================================================================
-#  att-appmem.zsh  -  Step 17c  App RAM appetite  (v1.0, Nov 21 2026)
+#  att-appmem.zsh  -  Step 17c  App RAM appetite  (v1.2, Nov 22 2026)
 # =============================================================================
 #  How much memory each app WANTS, one app at a time, nothing else open:
 #    Safari 20 tabs -> 80 tabs, Chrome 20 -> 80 tabs (if installed), Numbers workbook,
@@ -30,7 +30,7 @@ STAMP=$(date +%Y-%m-%d_%H-%M)
 CSV="$OUT/appmem_${STAMP}.csv"; RES="$OUT/appmem_${STAMP}.txt"; PH="$OUT/.appmem_${STAMP}.phases"
 
 SITES=("${(@f)$(sed -n "/^SITES=(/,/^)/p" "$HERE/att-tabtest.zsh" | grep -o "https://[^']*")}")
-WB=""; for f in "$HERE/ATT Stack Test Workbook v1.2.numbers" "$HERE/ATT Stack Test Workbook v1.numbers"; do [[ -e $f ]] && { WB=$f; break; }; done
+WB=""; for f in "$HERE/ATT Stack Test Workbook v1.1.numbers" "$HERE/ATT Stack Test Workbook v1.numbers"; do [[ -e $f ]] && { WB=$f; break; }; done
 LIB="$ROOT/Final Cut Test/Test Library rev.fcpbundle"; FCP_PROJECT="${FCP_PROJECT:-universal control on mac 3 min}"
 FCP_APP=$(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut*'" 2>/dev/null | grep '\.app$' | grep -v '^/Volumes' | head -1)
 [[ -z $FCP_APP ]] && FCP_APP=$(print -l /Applications/*Final*Cut*.app(N) /Applications/*/*Final*Cut*.app(N) | head -1)
