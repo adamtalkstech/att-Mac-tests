@@ -63,6 +63,6 @@ F="$OUT/ssd-internal_$(date +%Y-%m-%d_%H-%M).txt"
   att_log "New Tests" "Internal SSD: random 4K" "${R1} / ${W1} | ${R32} / ${W32}"
   att_log "New Tests" "Internal SSD: sustained write" "${SAVG} | $([[ $CLIFF_GB == - ]] && print "no slowdown" || print "slows to ${AFTER} after ${CLIFF_GB} GB") | last min ${LAST60} ($SUS GB)"
   if (( CP == 25 )); then att_log "New Tests" "25GB file copy time" "${CPT} s"
-  else print "!! Copy was only ${CP} GB (low free space), so it isn't logged next to the 25 GB copies."; fi
+  else print "Note: the copy was only ${CP} GB (not enough free space for 25), so only the copy is left off the sheet."; fi
   att_card_end; } | tee "$F"
 whence att_upload_results >/dev/null && att_upload_results

@@ -3,6 +3,8 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Internal SSD fix (5:45 PM): a smaller-than-25GB copy no longer holds the whole card (the iMac's good
+  sequential / random / sustained numbers were held because its copy was 24 GB). Only the copy is left off.
 - Whisper kit without a drive (5:35 PM): the two whisper.cpp programs, BUILD-INFO and the test audio now come with
   the scripts (AI Tests/whisper-kit). Tools/att-whisper-kit.zsh copies the locked kit from a drive, or downloads the
   model + Neural Engine encoder (2.8 GB) from huggingface.co/ggerganov/whisper.cpp. Update Scripts starts it in the
