@@ -1,5 +1,5 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 11:00 AM
+Updated: Nov 22 2026, 10:40 AM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
@@ -149,6 +149,7 @@ Draw Things first time: install it (Mac App Store), open once, Settings > API Se
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
 ROWS=MR:31 NT:16
+REDO=cinebench puget-resolve puget-premiere puget-ps puget-lr
 (Ladder 8-bit DONE Nov 21 10 PM: swaps, never answers. Set LM Studio guardrails back to Relaxed.)
 SINCE=2026-11-21 22:00
 GO=sheet whisper appmem
@@ -203,6 +204,7 @@ ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Ton
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 ROWS=MR:19 NT:14
+REDO=puget-resolve
 SINCE=2026-11-21 22:05
 SINCE_responsiveness=2026-11-22 09:10
 REDO Step 17b Responsiveness: the Nov 21 desk run had one bad run (80-tab switches 819 ms, worst 2.5 s) next to a normal one (242 ms). Restart first.
@@ -289,6 +291,7 @@ GO=sheet qwen9b qwen27b gemma bandwidth whisper appmem realday
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
 ROWS=MR:34 NT:18
+REDO=puget-resolve
 GO=sheet bandwidth whisper appmem
 RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fps, which pulls the AI score down):
    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
