@@ -62,8 +62,8 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
 [ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
         Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
         Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-[ ] 19. Final Cut AI - Magnetic Mask (Neural Engine), ~10 min, hands-off. Uses the "magnetic" project
-        (18-sec clip) already in Test Library rev; times the export with the mask worked out fresh vs saved:
+[ ] 19. Final Cut AI - Magnetic Mask Analyze (Neural Engine), ~8 min, hands-off. Uses the "magnetic" project
+        (18-sec clip) already in Test Library rev; clears the saved analysis, clicks Analyze, times it (3 runs):
           cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
 
 ==================================================================
