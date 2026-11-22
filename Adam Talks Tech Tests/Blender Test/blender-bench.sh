@@ -134,6 +134,8 @@ render() {
 }
 
 fmt() { awk -v s="$1" 'BEGIN { if (s=="FAILED") print s; else printf "%d:%05.2f (%.2fs)", int(s/60), s-int(s/60)*60, s }'; }
+# Sheet style (Nov 22 auto-log): 13.09 / 1m 2.87s
+msfmt() { awk -v s="$1" 'BEGIN { if (s=="FAILED"||s=="") print ""; else if (s<60) printf "%.2f", s; else printf "%dm %.2fs", int(s/60), s-int(s/60)*60 }'; }
 
 {
 echo "================ ATT Blender Benchmark v1.3 ($MODE) ================"
@@ -178,6 +180,12 @@ if [[ $MODE == standard ]]; then
   echo "Classroom GPU:   run 1 $(fmt $CG1) | run 2 $(fmt $CG2) | run 3 $(fmt $CG3)"
   echo "Barbershop GPU:  run 1 $(fmt $BG1) | run 2 $(fmt $BG2) | run 3 $(fmt $BG3)"
   echo "Classroom CPU:   $(fmt $CC)"
+  if whence att_log >/dev/null; then   # Nov 22 auto-log, same cells as before (BE-BK)
+    att_log "Main Results" "Blender Render GPU Classroom Scene" "$(msfmt $CG1)"; att_log "Main Results" "Classroom 2nd Pass" "$(msfmt $CG2)"
+    att_log "Main Results" "Classroom 3rd pass" "$(msfmt $CG3)"; att_log "Main Results" "Classroom CPU" "$(msfmt $CC)"
+    att_log "Main Results" "Blender Render GPU Barbershop Scene" "$(msfmt $BG1)"; att_log "Main Results" "Blender Render GPU Barbershop Scene second try" "$(msfmt $BG2)"
+    att_log "Main Results" "Barbershop 3rd pass" "$(msfmt $BG3)"
+  fi
   } | tee -a "$LOG"
 else
   echo "\nRed Autumn warm-up: frame 1 (compiles the GPU code, bonus single-frame number)..." | tee -a "$LOG"
@@ -206,6 +214,7 @@ else
   echo "Mac: $MACNAME | $MODEL | ${CHIP} | ${RAM}GB | macOS $OSV | $BV"
   echo "Frame 1 (warm-up): $(fmt $WF)"
   echo "Frames 1-25:       $(fmt $TOTAL)"
+  (( FRAMES == 25 )) && whence att_log >/dev/null && att_log "Main Results" "Blender Red Autumn 25 frames" "$(msfmt $TOTAL)"
   } | tee -a "$LOG"
 fi
 

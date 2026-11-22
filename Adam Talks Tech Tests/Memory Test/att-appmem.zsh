@@ -110,7 +110,10 @@ if want finalcut && [[ -n $FCP_APP && -e $LIB ]]; then
 elif want finalcut; then print "  (Final Cut or the Final Cut Test library isn't on this Mac: skipped. The stacker copies the library over.)"; fi
 if want logic && [[ -n $LOGIC_APP && -n $LOGIC_PRJ ]]; then
   phase logic '^Logic' "Logic (600-track benchmark project)"; open -a "$LOGIC_APP" "$LOGIC_PRJ"
-  sleep 60; hold; phase_end; quit_hard "${${LOGIC_APP:t}%.app}"; between
+  sleep 60; hold
+  # Nov 22: on Macs where Logic was never opened, its first-launch window stopped the project from loading (0.4 GB)
+  osascript -e "tell application \"System Events\" to get name of every window of process \"${${LOGIC_APP:t}%.app}\"" 2>/dev/null | grep -q "NewLogicBenchmark" && LOGIC_OK=1 || LOGIC_OK=0
+  phase_end; quit_hard "${${LOGIC_APP:t}%.app}"; between
 fi
 if want qwen && [[ -x $LMS ]]; then
   Q9=$(key_for 'qwen3\.5-9b-mlx-4bit'); [[ -z $Q9 ]] && Q9=$(key_for 'qwen3\.5-9b')
@@ -129,6 +132,9 @@ print -r -- "done" > /tmp/att-step; sleep 6
 att_appmem_stop
 
 # ---------- Card ----------
+tot_peak() {   # $1 step label -> MB: highest whole-Mac total (every app + system) during that step
+  awk -F, -v st="$1" 'NR>1 && $2==st { t[$1]+=$(NF-2) } END { m=0; for (k in t) if (t[k]>m) m=t[k]; printf "%.0f", m }' "$CSV"; }
+tot_avg() { awk -F, -v st="$1" 'NR>1 && $2==st { t[$1]+=$(NF-2) } END { n=0; s=0; for (k in t) { s+=t[k]; n++ } printf "%.0f", n ? s/n : 0 }' "$CSV"; }
 peak_of() {   # $1 step label, $2 app regex -> "footprintMB compressedMB" at the moment the total was highest
   awk -F, -v st="$1" -v re="$2" 'NR>1 && $2==st { a=$3; for (i=4; i<=NF-3; i++) a=a "," $i; gsub(/"/,"",a)
       if (a ~ re) { f[$1]+=$(NF-2); c[$1]+=$(NF-1) } }
@@ -140,12 +146,14 @@ att_card_start "RAM: App appetite, one app at a time (Step 17c)"
 print "Each app alone. Footprint = Activity Monitor 'Memory' (what the app wants)."
 print "Compressed = the part macOS squeezed to make it fit. Swap/pressure = whole Mac."
 print ""
-printf "  %-46s %8s %10s %8s %s\n" "App / workload" "wants" "compressed" "swap" "pressure"
+IDLE_T=$(tot_avg "idle (nothing open)"); typeset -A ADD
+printf "  %-46s %8s %10s %9s %8s %s\n" "App / workload" "wants" "compressed" "Mac adds" "swap" "pressure"
 while IFS='~' read -r k re label sw0; do
   [[ $k == END || $k == idle ]] && continue
   read -r f c <<< "$(peak_of "$label" "$re")"; FP[$k]=$f; CP[$k]=$c
   endl=$(grep "^END~$k~" "$PH" | tail -1); sw1=$(print -r -- "$endl" | cut -d'~' -f3); pl=$(print -r -- "$endl" | cut -d'~' -f4)
-  printf "  %-46s %5.1f GB %7.1f GB %+6.1f GB %s\n" "${label:0:46}" $(( f / 1024.0 )) $(( c / 1024.0 )) $(( ${sw1:-0} - ${sw0:-0} )) "$pl"
+  a=$(( $(tot_peak "$label") - IDLE_T )); (( a < 0 )) && a=0; ADD[$k]=$a
+  printf "  %-46s %5.1f GB %7.1f GB %6.1f GB %+6.1f GB %s\n" "${label:0:46}" $(( f / 1024.0 )) $(( c / 1024.0 )) $(( a / 1024.0 )) $(( ${sw1:-0} - ${sw0:-0} )) "$pl"
   (( c > MAXC )) && MAXC=$c; (( ${sw1:-0} - ${sw0:-0} > MAXSW )) && MAXSW=$(( ${sw1:-0} - ${sw0:-0} ))
   [[ $pl == red ]] && WORST=red; [[ $pl == yellow && $WORST == green ]] && WORST=yellow
 done < "$PH"
@@ -160,7 +168,10 @@ g() { [[ -n ${FP[$1]} ]] && printf "%.1f" $(( FP[$1] / 1024.0 )) || printf -- "-
 print ""
 att_log "New Tests" "App RAM: Safari 20 / 80 tabs" "$(g safari20) / $(g safari80)"
 [[ -n ${FP[chrome20]} ]] && att_log "New Tests" "App RAM: Chrome 20 / 80 tabs" "$(g chrome20) / $(g chrome80)"
-att_log "New Tests" "App RAM: Final Cut / Logic / Numbers" "$(g finalcut) / $(g logic) / $(g numbers)"
+ga() { [[ -n ${ADD[$1]} ]] && printf "%.1f" $(( ADD[$1] / 1024.0 )) || printf -- "-"; }
+(( ${LOGIC_OK:-1} )) || { print "Note: Logic's project didn't open (first-launch window?), so Logic's number is left out. Open Logic once, rerun."; ADD[logic]=""; }
+print "'Mac adds' = how much more memory the whole Mac used with that app open than idle (the app plus macOS's video/audio helpers)."
+att_log "New Tests" "App RAM: Final Cut / Logic / Numbers" "$(ga finalcut) / $(ga logic) / $(ga numbers)"
 att_log "New Tests" "App RAM: Qwen 9B / 27B" "$(g qwen9b) / $(g qwen27b)"
 att_log "New Tests" "App RAM: most compressed" "$(printf %.1f $(( MAXC / 1024.0 ))) / $(printf %.1f $MAXSW) / $WORST"
 print "\nEvery 5-second sample: ${CSV:t}"

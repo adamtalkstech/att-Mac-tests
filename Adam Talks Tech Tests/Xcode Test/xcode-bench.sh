@@ -182,6 +182,11 @@ att_card_start "Xcode build (XcodeBenchmark, 3 clean builds)"
   echo "                    Best $W_BEST  Average $W_AVG"
   echo "Xcode reported:     Run1 ${XCT[1]}  Run2 ${XCT[2]}  Run3 ${XCT[3]}"
   echo "                    Best $X_BEST  Average $X_AVG  (leaderboard style: ${X_ROUND} sec)"
+  if whence att_log >/dev/null && [[ -n ${WALL[3]} ]]; then
+    att_log "Main Results" "Xcode 27 build test (best)" "$W_BEST"
+    att_log "Main Results" "Xcode 27 Run 1" "${WALL[1]}"; att_log "Main Results" "Xcode 27 Run 2" "${WALL[2]}"; att_log "Main Results" "Xcode 27 Run 3" "${WALL[3]}"
+    att_log "Main Results" "Xcode 27 Average" "$W_AVG"
+  fi
 } | tee "$RESULTS"
 att_card_end
 
