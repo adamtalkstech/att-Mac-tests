@@ -3,6 +3,7 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Run This Next: desktop redo for the M5 Pro Mac mini, the upgraded M5 Pro mini and the M5 Max Mac Studio (full walk-away set incl. responsiveness, plus Geekbench, Cinebench, Blackmagic RAW, Puget, Logic, step 19, War Thunder, Draw Things, stacker) so they match the M5 Pro / M5 Max laptops.
 2026-11-22 15:55 Nov 22 2026 - Responsiveness: run-to-run spread was always 0% (bug), so a bad run never got flagged; fixed. Run This Next: SINCE_<test>= now works for hand-run steps too (closer, stacker, responsiveness, drawthings)
 2026-11-22 15:40 Nov 22 2026 - App RAM 17c v1.1: 'Mac adds' column (whole-Mac memory vs idle, catches Final Cut's video helpers the app-only number missed); Logic left out when its project didn't open. Xcode, Blender standard and Red Autumn now auto-log into Main Results
 2026-11-22 15:10 Nov 22 2026 - NEW Step 17d Real Day (att-realday.zsh everyday|creator): an hour with everything open, app switch timed every minute, YouTube dropped frames, old tabs, Qwen tok/s, FCP export at the end; queue names realday / realdaycreator. Stacker: same pile on every Mac (27B only with BIG=1, never auto-logged); stacker card no longer picks up the app-memory CSV

@@ -1,5 +1,5 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 8:50 AM
+Updated: Nov 22 2026, 10:25 AM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
@@ -111,35 +111,52 @@ GO=bandwidth whisper appmem realday realdaycreator
 
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
-GO=qwen27b sustained bandwidth whisper appmem
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
+DESKTOP REDO (Nov 22): full set again on 27.2.1 so it matches the M5 Pro laptops. Old Oct/early-Nov numbers stay until each rerun lands.
+SINCE=2026-11-22 10:00
+GO=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness
+FIRST: Update Scripts, macOS 27.2.1 (same as the laptops), auto-updates off, restart, 15 min idle, version card (att-versions.zsh).
+   Leave Lightroom and Puget off while another Mac is running Lightroom.
+WALK-AWAY (~4 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+HAND-RUN (one at a time, run att-ready.zsh "<app>" before each, send Claude the photo):
+   Step 5 Geekbench 7 CPU + GPU (OpenCL + Metal) and Geekbench AI (Neural, CPU, GPU)
+   Step 7 Cinebench 2026 GPU + CPU multi + single
+   Step 6 Blackmagic RAW Speed Test (8K + 4K, CPU + Metal) and Blackmagic Disk Speed + AJA
+   Step 13 Logic · 256 buffer, then 32, then log it:
+      cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+   Step 19 Final Cut Magnetic Mask Analyze · hands-off ~8 min:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
+   Step 16 War Thunder · Step 18 Draw Things:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+   Step 17 Stacker (restart before each): closer, then stacker
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+   Step 12 Puget Bench for DaVinci Resolve rerun (Standard):
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
+   Step 15 Cyberpunk only if the macOS changed since its Nov runs.
 
 [[M5PRO-MINI-UPGRADED]]
 NAME=M5 Pro Mac mini, upgraded GPU
-GO=bandwidth whisper appmem
-RERUN: Step 12 Puget Bench for DaVinci Resolve (its Super Scale read 3.65 fps, under the ~5 fps rerun line):
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"1. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+DESKTOP REDO (Nov 22): full set on 27.2.1. Its Cinebench CPU multi (4,949, under the base mini's 6,990) is wrong: redo first.
+SINCE=2026-11-22 10:00
+GO=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness
+FIRST: Update Scripts, macOS 27.2.1 (same as the laptops), auto-updates off, restart, 15 min idle, version card (att-versions.zsh).
+   Leave Lightroom and Puget off while another Mac is running Lightroom.
+WALK-AWAY (~4 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+HAND-RUN (one at a time, run att-ready.zsh "<app>" before each, send Claude the photo):
+   Step 5 Geekbench 7 CPU + GPU (OpenCL + Metal) and Geekbench AI (Neural, CPU, GPU)
+   Step 7 Cinebench 2026 GPU + CPU multi + single
+   Step 6 Blackmagic RAW Speed Test (8K + 4K, CPU + Metal) and Blackmagic Disk Speed + AJA
+   Step 13 Logic · 256 buffer, then 32, then log it:
+      cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+   Step 19 Final Cut Magnetic Mask Analyze · hands-off ~8 min:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
+   Step 16 War Thunder · Step 18 Draw Things:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+   Step 17 Stacker (restart before each): closer, then stacker
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   Step 12 Puget Bench, all 5 (Resolve rerun + Premiere Pro, After Effects (log run 2), Photoshop, Lightroom Classic):
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"   (then each app)
 
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
@@ -326,15 +343,32 @@ GO=blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)
-GO=bandwidth whisper appmem
-TRY FIRST HERE: Step 19 Final Cut Magnetic Mask Analyze (Neural Engine) · hands-off ~8 min · send Claude the card:
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
-Also Step 17c App RAM here first: on 36GB nothing gets squeezed, so it shows what each app really wants.
+DESKTOP REDO (Nov 22): its Main Results are from October. Full set on 27.2.1 so it lines up with the 14" and 16" M5 Max.
+SINCE=2026-11-22 10:00
+GO=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness ladder
+FIRST: Update Scripts, macOS 27.2.1 (same as the laptops), auto-updates off, restart, 15 min idle, version card (att-versions.zsh).
+   Leave Lightroom and Puget off while another Mac is running Lightroom.
+WALK-AWAY (~4.5 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+HAND-RUN (one at a time, run att-ready.zsh "<app>" before each, send Claude the photo):
+   Step 5 Geekbench 7 CPU + GPU (OpenCL + Metal) and Geekbench AI (Neural, CPU, GPU)
+   Step 7 Cinebench 2026 GPU + CPU multi + single
+   Step 6 Blackmagic RAW Speed Test (8K + 4K, CPU + Metal) and Blackmagic Disk Speed + AJA
+   Step 13 Logic · 256 buffer, then 32, then log it:
+      cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+   Step 19 Final Cut Magnetic Mask Analyze · hands-off ~8 min:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
+   Step 16 War Thunder · Step 18 Draw Things:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+   Step 17 Stacker (restart before each): closer, then stacker
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   Step 12 Puget Bench, all 5 (Resolve, Premiere Pro, After Effects (log run 2), Photoshop, Lightroom Classic)
+   Step E6 Final Cut exports (3-min Social 4K, 30-min Apple Devices 4K, 30-min Social 4K, 6K clips) + Lightroom Classic exports/denoise
+   Step 15 Cyberpunk (it has none)
 DRIVES · put the upload key on each test drive (the Studio has the key):
    zsh /tmp/att-upload.zsh save-to-drive
    [ ] LaCie   [ ] PRO-G40 (when free)   [ ] Extreme Pro   [ ] P7   [ ] OWC
    Don't lend a drive that has the key file on it.
-Tests (Nov 21, new tests on every Mac): walk-away line runs bandwidth; then Step 17 closer + stacker and Step 17b responsiveness (same commands as the other Macs' lists).
 
 [[STUDIO-M4MAX]]
 NAME=M4 Max Mac Studio (daily driver)
