@@ -185,17 +185,23 @@ fi
 echo "This will QUIT every open app except: ${(j:, :)KEEP}"
 echo "Save any open work first. Press Return to continue, or Control-C to cancel."
 read -r
-for a in ${(s:, :)$(osascript -e 'tell application "System Events" to get name of every process whose background only is false')}; do
-  (( ${KEEP[(Ie)$a]} )) && continue
-  osascript -e "tell application \"${a}\" to quit" >/dev/null 2>&1 &
-done
-wait; sleep 5
+# Nov 21: quit by app ID (works when the app's name differs from its process name, e.g. the
+# Creator Studio Final Cut), using the same routine as every other test.
+if whence att_quit_apps >/dev/null; then
+  ATT_KEEP="${(j:,:)KEEP}" att_quit_apps
+else
+  for id in ${(f)"$(osascript -e 'tell application "System Events" to get bundle identifier of every process whose background only is false' | tr ',' '\n' | sed 's/^ *//')"}; do
+    [[ -z $id || $id == "missing value" || $id == com.apple.Terminal || $id == com.apple.finder || $id == com.apple.Safari ]] && continue
+    osascript -e "tell application id \"$id\" to quit" >/dev/null 2>&1
+  done
+fi
+sleep 5
 left=()
-for a in ${(s:, :)$(osascript -e 'tell application "System Events" to get name of every process whose background only is false')}; do
+for a in ${(f)"$(osascript -e 'tell application "System Events" to get name of every process whose background only is false' | tr ',' '\n' | sed 's/^ *//')"}; do
   (( ${KEEP[(Ie)$a]} )) || left+=("$a")
 done
 if (( ${#left} > 0 )); then
-  echo "Still open: ${(j:, :)left}. Close those by hand, then press Return."; read -r
+  echo "Still open: ${(j:, :)left}. Quit those (Cmd-Q), then press Return."; read -r
 fi
 
 # --- Quit background helper apps (menu bar / sync apps that keep running with no window) ---
