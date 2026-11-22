@@ -53,6 +53,8 @@ att_card_start() {
   print "#################### PHOTO THIS FOR CLAUDE ####################"
   print "TEST:  $*"
   [[ -n $ATT_STEP ]] && print "STEP:  Run Order step $ATT_STEP"
+  local want=$(head -1 "$ATT_TOOLS_DIR/target-macos.txt" 2>/dev/null | tr -d '[:space:]') have=$(sw_vers -productVersion 2>/dev/null)
+  [[ -n $want && -n $have && $have != $want ]] && print "!!     macOS $have is NOT the batch version $want: update this Mac before logging"
   print "MAC:   $mac"
   print "       $(att_mac_kind)"
   print "       $chip | ${ram}GB | macOS $os"
@@ -208,18 +210,21 @@ att_cooldown() {
   att_power_check
   att_pause_bg
   [[ $NOCOOL == 1 ]] && { print "Cooldown check skipped (NOCOOL=1)."; return 0; }
-  local rest=${COOL:-0} need=${QUIET:-60} quiet=0 waited=0 lvl load name
+  local rest=${COOL:-0} need=${QUIET:-60} quiet=0 waited=0 lvl load name kmh
   (( again )) && rest=0
   # Refresh the password from THIS shell during the rest and the wait (Nov 21 fix): a keep-alive
   # running in a background subshell doesn't always count on macOS, so the password expired
   # during the 10-min rest and sustained asked again mid-test.
   if (( rest > 0 )); then print "Resting ${rest}s before the test (COOL=$rest)..."
     local slept=0; while (( slept < rest )); do sleep 30; (( slept += 30 )); sudo -n -v 2>/dev/null; done; fi
-  print -n "Cooldown check: waiting for Nominal heat + ${need}s of idle CPU"
+  print -n "Cooldown check: waiting for Nominal heat + ${need}s of idle CPU (and macOS's extension checker quiet)"
   while (( waited < 600 )); do
     lvl=$(notifyutil -g com.apple.system.thermalpressurelevel 2>/dev/null | awk '{print $NF}')
     load=$(ps -A -o %cpu= | awk '{s+=$1} END {printf "%d", s}')
-    if [[ ${lvl:-0} == 0 ]] && (( load < 150 )); then (( quiet += 5 )); else quiet=0; fi
+    # macOS's extension checker (kernelmanager_helper / kernelmanagerd) slowed many runs on Nov 21:
+    # wait until it's quiet too (under 10% of a core), not just total load.
+    kmh=$(ps -A -o %cpu=,comm= | awk '/kernelmanager/ {s+=$1} END {printf "%d", s}')
+    if [[ ${lvl:-0} == 0 ]] && (( load < 150 && kmh < 10 )); then (( quiet += 5 )); else quiet=0; fi
     (( quiet >= need )) && { print "\nCool and idle. Starting (waited ${waited}s)."; ATT_COOL_NOTE="${ATT_COOL_NOTE:+$ATT_COOL_NOTE; }cooldown ok after ${waited}s"; att_cool_log $waited ok; return 0; }
     print -n "."; sleep 5; (( waited += 5 )); (( waited % 30 == 0 )) && sudo -n -v 2>/dev/null
     # Every minute it's still waiting, say what's busy so it's not a mystery

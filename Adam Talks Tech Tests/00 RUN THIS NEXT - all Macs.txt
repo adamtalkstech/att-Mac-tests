@@ -6,15 +6,18 @@ Q = zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh   (paste the who
 Stacker (17): restart first. Final Cut timeline must have "universal control on mac 3 min" open.
   Closer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
   Stacker: cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-  First time on a Mac: the first closer is a warm-up (allow Terminal in Accessibility), restart, closer again.
+  First time on a Mac (5-min prep, no warm-up run): open Final Cut (let it update the library) and the
+  Numbers stack workbook once, quit both, allow Terminal in Accessibility, restart, then the closer.
+GO: on any Mac, "zsh ~/Downloads/\"Adam Talks Tech Tests\"/Tools/att-next.zsh go" starts that Mac's walk-away tests.
 
 [[M6-MINI-16]]
 M6 MINI 16GB (16/512, yours)
   1. Step 15 Cyberpunk (hands-on)
   2. Lightroom rerun + 6K clips rerun (E6, hands-on)
-  3. Step 17 stacker: warm-up closer, restart, closer, restart, stacker
+  3. Step 17 stacker: 5-min prep, restart, closer, restart, stacker
 
 [[M6-MINI-24-256]]
+GO=qwen27b sustained
 M6 MINI 24GB 256GB (loaner, overdue). macOS updated to 27.2.1 on Nov 21.
   1. Steps 14b + 10 (walk away, ~45 min):
      QUEUE="qwen27b sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
@@ -23,6 +26,7 @@ M6 MINI 24GB 256GB (loaner, overdue). macOS updated to 27.2.1 on Nov 21.
   4. Storage screenshot + free space  -> then it can ship
 
 [[M6-MINI-24-512]]
+GO=handbrake
 M6 MINI 24GB (24/512, yours)
   1. Step 11 HandBrake rerun (background CPU hit the first one):
      cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh
@@ -30,6 +34,7 @@ M6 MINI 24GB (24/512, yours)
   3. Step 17 stacker
 
 [[M6-MINI-32]]
+GO=sustained
 M6 MINI 32GB (loaner, overdue)
   1. Step 10 sustained (walk away, ~30 min):
      QUEUE="sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
@@ -37,6 +42,7 @@ M6 MINI 32GB (loaner, overdue)
   3. Step 15 Cyberpunk  -> then it can ship
 
 [[M5PRO-MINI]]
+GO=qwen27b sustained
 M5 Pro Mac mini (loaner, back Nov 30)
   1. Steps 14b + 10 (walk away, ~45 min):
      QUEUE="qwen27b sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
@@ -60,7 +66,7 @@ M5 Pro Mac mini, upgraded GPU
 
 [[MAX-16]]
 16" M5 Max PROLED (B&H loaner)
-  1. Step 17 stacker: FIRST hands-off test of the night (warm-up closer). Tell Claude if it clicks Share by itself.
+  1. Step 17 stacker: FIRST hands-off test of the night (prep, restart, closer). Tell Claude if it clicks Share by itself.
   2. Step 13 Logic: 256 buffer, then 32, log it
   3. E6 Final Cut exports (same set as the 14")
   4. Step 16 War Thunder, step 18 Draw Things
@@ -77,6 +83,7 @@ M6 MacBook Pro (B&H loaner)
   3. Step 16 War Thunder, step 18 Draw Things
 
 [[M6-IMAC]]
+GO=qwen9b qwen27b gemma
 M6 iMac (B&H loaner)
   1. Steps 14a + 14b + 14c (walk away, ~35 min):
      QUEUE="qwen9b qwen27b gemma" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
@@ -91,6 +98,7 @@ M5 Pro PROLED MacBook Pro (yours)
   3. Step 16 War Thunder, step 18 Draw Things
 
 [[AIR]]
+GO=blender redautumn handbrake sustained qwen9b
 MacBook Air (yours, use the Air Kit)
   1. Steps 9, 9b, 11, 10, 14a (walk away):
      QUEUE="blender redautumn handbrake sustained qwen9b" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh

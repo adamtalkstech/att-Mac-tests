@@ -34,7 +34,7 @@ esac
   print "$(head -2 "$ALL" | tail -1)"
   print ""
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
-    awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on' "$ALL"
+    awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on && !/^GO=/' "$ALL"
     print ""
     awk '/^\[\[/ {exit} NR>2' "$ALL"
   else
@@ -42,6 +42,13 @@ esac
     print ""; sed 's/^\[\[.*\]\]$//' "$ALL"
   fi
 } > "$OUT"
+GO=$( [[ -n $key ]] && awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on && /^GO=/ {sub(/^GO=/,""); print; exit}' "$ALL")
+if [[ $1 == go ]]; then
+  [[ -n $GO ]] || { print "Nothing walk-away is scheduled for this Mac right now (see its list)."; exit 0; }
+  print "Starting this Mac's walk-away tests: $GO"
+  QUEUE="$GO" exec zsh "$TOOLS/att-queue.zsh"
+fi
+[[ -n $GO ]] && print "\nWALK-AWAY: zsh ~/Downloads/\"Adam Talks Tech Tests\"/Tools/att-next.zsh go   (runs: $GO)" >> "$OUT"
 cat "$OUT"
 [[ -z $NOOPEN ]] && open -a TextEdit "$OUT" 2>/dev/null
 exit 0

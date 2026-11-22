@@ -49,7 +49,9 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
 [ ] 17. RAM closer vs stacker (hands-off once started; ~25 min each):
           Restart, then:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
           Restart, then:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-        First time on a Mac: the first closer is a warm-up (don't log it), restart, closer again.
+        First time on a Mac (5 min instead of a warm-up run): open Final Cut (let it update the
+        Test Library, leave "universal control on mac 3 min" in the timeline) and the Numbers
+        stack workbook once, quit both, allow Terminal in Accessibility, restart, then the closer.
 [ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
         Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
         Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh

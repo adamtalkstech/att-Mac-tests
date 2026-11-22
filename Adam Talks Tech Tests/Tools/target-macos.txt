@@ -1,0 +1,2 @@
+27.2.1
+# Every test Mac should be on this macOS. Cards warn when a Mac isn't. Claude updates it.
