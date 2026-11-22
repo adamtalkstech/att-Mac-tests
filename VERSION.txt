@@ -1,3 +1,4 @@
+2026-11-22 00:30 Nov 21 2026 - Draw Things: no Return presses; waits for the API server and model by itself and says out loud if it needs you
 2026-11-22 00:20 Nov 21 2026 - NEW Tools/att-trim.zsh: park big rarely used folders in "ATT Spare (not copied)" on the same drive (no deleting); att-models finds parked models. M5 Pro MBP bandwidth marked done
 2026-11-22 00:05 Nov 21 2026 - Every test: quitting apps waits up to 20 s, then force-quits apps that never have unsaved work (TV, Safari, Calculator, LM Studio, Draw Things...) instead of leaving them open
 2026-11-21 23:55 Nov 21 2026 - Run This Next: RAM tests (closer, stacker, responsiveness) first on every Mac; reruns for dock/odd results (14" Xcode, Red Autumn, Cinebench, Puget; 16" HandBrake); Studios get bandwidth + RAM tests

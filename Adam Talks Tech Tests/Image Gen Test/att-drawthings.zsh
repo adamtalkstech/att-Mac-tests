@@ -107,16 +107,21 @@ fi
 defaults write com.liuliu.draw-things NSAppSleepDisabled -bool YES 2>/dev/null
 open -a "$APP"; sleep 5
 api_ok() { curl -sf -m 5 "$URL/" >/dev/null 2>&1; }
-until api_ok; do
-  print "\nTurn on Draw Things' API server: Settings > API Server: ON, HTTP, port 7860."
-  print -n "Press Return when it's on (Ctrl-C to stop). "; read -r
-done
+# Nov 21: no Return presses. It waits and checks every 3 s, and says out loud what it needs.
+whence att_say >/dev/null || att_say() { print "  ** $*"; say "$*" >/dev/null 2>&1 & }
+for i in {1..10}; do api_ok && break; sleep 3; done   # the setting usually sticks, give it a moment
+if ! api_ok; then
+  att_say "Draw Things needs its API server turned on."
+  print "Settings > API Server: ON, HTTP, port 7860. The test starts by itself once it's on."
+  until api_ok; do sleep 3; done; print "API server is on."
+fi
 # grep only: calling /usr/bin/python3 on a Mac without developer tools pops an install box mid-test
 cur_model() { curl -sf -m 10 "$URL/" | grep -o '"model" *: *"[^"]*"' | head -1 | sed -E 's/.*: *"([^"]*)"/\1/'; }
-until [[ ${(L)$(cur_model)} == *z_image* ]]; do
-  print "\nDraw Things has \"$(cur_model)\" selected. Pick Z-Image Turbo as the model."
-  print -n "Press Return when it's selected. "; read -r
-done
+if [[ ${(L)$(cur_model)} != *z_image* ]]; then
+  att_say "Pick Z Image Turbo as the model in Draw Things."
+  print "Draw Things has \"$(cur_model)\" selected. Pick Z-Image Turbo; the test starts by itself."
+  until [[ ${(L)$(cur_model)} == *z_image* ]]; do sleep 3; done
+fi
 print "Model: $(cur_model)"
 
 # 4. Python: the kit's own (on the drive copy) or the Mac's
@@ -140,10 +145,8 @@ if ! api_ok; then
   print "Draw Things isn't answering. Reopening it..."
   open -a "$APP"
   for i in {1..24}; do api_ok && break; sleep 5; done
-  until api_ok; do
-    print -n "Turn the API Server back on in Draw Things (HTTP, 7860), then press Return. "; read -r
-  done
-  until [[ ${(L)$(cur_model)} == *z_image* ]]; do print -n "Pick Z-Image Turbo as the model, then press Return. "; read -r; done
+  api_ok || { att_say "Turn the Draw Things API server back on."; until api_ok; do sleep 3; done; }
+  [[ ${(L)$(cur_model)} == *z_image* ]] || { att_say "Pick Z Image Turbo again."; until [[ ${(L)$(cur_model)} == *z_image* ]]; do sleep 3; done; }
 fi
 LOG="$ATT_RESULTS_DIR/.drawthings_$(date +%Y%m%d-%H%M%S).out"; mkdir -p "$ATT_RESULTS_DIR"
 cd "$KIT" && PYTHONUNBUFFERED=1 "${PY[@]}" att_drawthings_bench.py --tests "${TESTS:-standard,stress}" 2>&1 | tee "$LOG"
