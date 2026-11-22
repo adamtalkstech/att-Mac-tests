@@ -1,5 +1,5 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 11:05 AM
+Updated: Nov 22 2026, 6:00 PM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
@@ -44,29 +44,17 @@ GO=sheet bandwidth whisper appmem realday realdaycreator
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
 ROWS=MR:29 NT:5
-GO=sheet sustained bandwidth whisper appmem realday realdaycreator
-1. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Step 3 · Name it "M6 MINI 24GB 256GB" (if it still says adam3's Mac Mini)
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-name-this-mac.zsh
-4. Storage screenshot + free space · then it can ship
-5. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+GO=sheet realday realdaycreator
+SKIPT=puget-resolve puget-premiere puget-ae puget-ps puget-lr lightroom
+Nov 22 evening: the list above comes straight from the sheet. Puget and Lightroom are left out (256GB is too tight
+for their files). The walk-away line runs what's missing: Red Autumn, HandBrake, Qwen 9B, Gemma (new method),
+Whisper (new kit), responsiveness, App RAM v1.2, Cinebench, internal SSD, then Real Day.
+Low space: the internal SSD test needs 40 GB free and the stacker copies a 45 GB library. Check free space first.
+Stacker first time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min",
+   do ONE File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once,
+   quit both, restart, closer; restart, stacker (cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker).
+Draw Things first time: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+Before it ships: storage screenshot + free space, att-upload.zsh forget.
 
 [[M6-MINI-24-512]]
 NAME=M6 MINI 24GB (24/512, yours)
