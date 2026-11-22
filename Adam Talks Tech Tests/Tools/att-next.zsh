@@ -49,7 +49,7 @@ since_for() { local v; v=$( [[ -n $key ]] && sec | awk -v k="SINCE_$1=" 'index($
   [[ -z $v ]] && v=$(awk -v k="SINCE_$1=" 'index($0,k)==1 {print substr($0,length(k)+1); exit}' "$ALL")
   [[ -n $v ]] && date -j -f "%Y-%m-%d %H:%M %z" "$v -0600" +%s 2>/dev/null; }
 RES="$ROOT/Results/$(scutil --get ComputerName 2>/dev/null)"
-typeset -A PAT; PAT=(cinebench "Cinebench/cinebench_*.txt" bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
+typeset -A PAT; PAT=(ssdint "SSD/ssd-internal_*.txt" cinebench "Cinebench/cinebench_*.txt" bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
   xcode "Xcode/xcode-bench_*" blender "Blender/blender-standard_*" redautumn "Blender/blender-redautumn_*"
   qwen9b "LM Studio/*qwen9b*" qwen27b "LM Studio/*qwen27b*" gemma "LM Studio/*gemma*" ladder "LM Studio/*ladder*"
   whisper "LM Studio/*whisper*" responsiveness "Memory/responsiveness_*.txt" appmem "Memory/appmem_2*.txt" realday "Memory/realday_everyday_*.txt" realdaycreator "Memory/realday_creator_*.txt")
@@ -90,10 +90,10 @@ if [[ -n $SH_ROWS ]]; then
 fi
 if [[ " $GO " == *" sheet "* ]]; then
   # offline with no saved copy: fall back to every walk-away test (finished ones still drop out below)
-  [[ $SH_NOTE == *"no internet"* ]] && SH_WALK=(cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness)
+  [[ $SH_NOTE == *"no internet"* ]] && SH_WALK=(ssdint cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness)
   g2=(); for t in ${=GO}; do [[ $t == sheet ]] && g2+=($SH_WALK) || g2+=($t); done
   g2=(${(u)g2}); g3=()   # no repeats, in the queue's usual order
-  for t in cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder bandwidth whisper appmem responsiveness realday realdaycreator; do
+  for t in ssdint cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder bandwidth whisper appmem responsiveness realday realdaycreator; do
     (( ${g2[(Ie)$t]} )) && g3+=($t); done
   for t in $g2; do (( ${g3[(Ie)$t]} )) || g3+=($t); done
   GO="${(j: :)g3}"
@@ -175,7 +175,7 @@ LINE="============================================================"
   # only remaining walk-away test was bandwidth looked like it didn't have it.
   (( ${#DONE_GO} )) && print "✓ Walk-away already done on this Mac: ${(j:, :)DONE_GO}"
   if [[ -n $GO ]]; then
-    typeset -A ST; ST=(cinebench 7 xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)
+    typeset -A ST; ST=(ssdint 20 cinebench 7 xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)
     print "WALK-AWAY TESTS (one command runs them all, hands-off):"
     for t in ${=GO}; do print "   · Step ${ST[$t]:-?} · $t"; done
     print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go'

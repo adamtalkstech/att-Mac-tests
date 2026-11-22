@@ -76,6 +76,10 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
 [ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
         Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
         Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+[ ] 20. Internal SSD, no clicking (~15-20 min, also in the queue as "ssdint"). Sequential, random 4K,
+        a sustained write up to 50GB and a 25GB file copy, cache off. Needs Xcode tools, not Homebrew:
+          cd ~/Downloads/"Adam Talks Tech Tests"/"SSD Test" && zsh att-ssd-internal.zsh
+        (External drives still use att-ssd-test.zsh, which needs fio.)
 [ ] 19. Final Cut AI - Magnetic Mask Analyze (Neural Engine), ~8 min, hands-off. Uses the "magnetic" project
         (18-sec clip) already in Test Library rev; clears the saved analysis, clicks Analyze, times it (3 runs):
           cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh

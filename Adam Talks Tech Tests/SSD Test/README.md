@@ -1,5 +1,7 @@
 # ATT SSD Test Suite v1.0
 
+**The Mac's own (internal) SSD:** use `att-ssd-internal.zsh` instead (Run Order step 20, Nov 22 2026). No Homebrew or fio; it builds a small tester with the Xcode tools, runs hands-off in about 15-20 minutes and logs into the Mac Tests sheet. This README is for external drives.
+
 You run one script from Terminal. It runs the same tests with the same settings on every drive and saves the results to a CSV.
 
 ## One-time setup (per Mac)

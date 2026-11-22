@@ -9,6 +9,7 @@ NOV 22 AFTERNOON/TONIGHT:
  * Keep P9 or the OWC Envoy plugged in for the first minute of each walk-away run (it copies the new
    Whisper kit), and stay for that first minute: it opens each app once and you click Allow / OK.
  * Redo on every Mac: 14f Whisper (new Neural Engine kit) and 17c App RAM (Final Cut/Logic now counted right).
+ * NEW step 20 Internal SSD (no clicking, ~15-20 min) is in every Mac's walk-away line from the sheet.
  * NEW RAM tests: 17e macOS by itself (idle RAM, Apple Intelligence on/off, GPU memory cap) and 17f what each
    display costs. Real Day now logs SSD writes per hour. Both show in each Mac's list from the sheet.
  * NEW 17d Real Day on the M6 minis, iMac and M6 MacBook Pro (about 70-80 min each, walk-away).
@@ -282,7 +283,7 @@ GO=sheet qwen9b qwen27b gemma bandwidth whisper appmem realday
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Steps 14a + 14b + 14c · Qwen 9B, Qwen 27B, Gemma · walk away, ~35 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Internal SSD test · ask Claude for the line (needs fio)
+3. Step 20 · Internal SSD: now in the walk-away line (no fio needed)
 4. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 5. Step 16 · War Thunder · hands-on

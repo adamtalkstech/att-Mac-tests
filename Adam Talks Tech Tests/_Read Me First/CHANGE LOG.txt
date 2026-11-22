@@ -3,6 +3,10 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- NEW step 20 att-ssd-internal.zsh (SSD Test folder, queue name ssdint): the Mac's own SSD with no Homebrew/fio.
+  att_ssd.c built with clang (cache off via F_NOCACHE): sequential 5GB 1MB x8 best of 3, random 4K QD1/QD32 30 s,
+  sustained write up to 50GB with per-second CSV + slowdown point, one 25GB file copy (ditto --noclone). Keeps 25GB
+  free; smaller copies are held from the sheet. Auto-logs to New Tests AJ + CN-CP. Rebuilds the lost --internal mode.
 - Site /mac-tests (page 202, 11:02 AM): Blender Classroom/Barbershop GPU now use the 2nd run (1st includes the shader
   compile); LM Studio writing/summarizing only compare the current Gemma GGUF method (2,033 / 91 tokens); Cinebench
   2026 multi, single and GPU added; Puget Lightroom note fixed (minis ran LR 16 too). Sheet: 14" M5 Max dock Cinebench

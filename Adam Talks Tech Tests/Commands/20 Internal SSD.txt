@@ -1,0 +1,5 @@
+STEP 20 · Internal SSD · walk-away, ~15-20 min, no Homebrew needed
+Sequential write/read, random 4K (QD1 + QD32), sustained write up to 50GB, one 25GB file copy. Auto-logs.
+cd ~/Downloads/"Adam Talks Tech Tests"/"SSD Test" && zsh att-ssd-internal.zsh
+In the walk-away queue:  QUEUE="ssdint" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+Needs at least 40 GB free. Everything it writes is deleted at the end.

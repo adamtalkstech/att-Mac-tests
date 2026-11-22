@@ -12,7 +12,7 @@
 #                 + ladder (32GB+). Draw Things is NOT in the queue: run step 18 by hand.
 #  Pick your own:  QUEUE="sustained qwen27b gemma" zsh att-queue.zsh
 #  Leave some out: SKIP="xcode blender" zsh att-queue.zsh
-#  Also possible:  ladder whisper cinebench (Cinebench 2026, step 7, no clicking)
+#  Also possible:  ladder whisper cinebench (Cinebench 2026, step 7, no clicking) ssdint (internal SSD, step 20)
 #
 #  DRIVE: only needed for the first 1-2 minutes. It copies the AI models it will
 #  need onto the Mac first, then says "you can unplug the drive". If a drive is
@@ -33,15 +33,15 @@ KIND=$(att_mac_kind 2>/dev/null)
 STAMP=$(date +%Y-%m-%d_%H-%M)
 QDIR="$ROOT/Results/$MAC/Queue"; mkdir -p "$QDIR"
 LOG="$QDIR/queue_${STAMP}.log"; SUMMARY="$QDIR/queue_${STAMP}.txt"
-typeset -A QSTEP; QSTEP=(cinebench 7 xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)   # Run Order steps
+typeset -A QSTEP; QSTEP=(ssdint 20 cinebench 7 xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)   # Run Order steps
 
 typeset -A DIR CMD MINS
-DIR=(cinebench "Tools" xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrake "HandBrake Test" sustained "Blender Test"
+DIR=(ssdint "SSD Test" cinebench "Tools" xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrake "HandBrake Test" sustained "Blender Test"
      qwen9b "AI Tests" qwen27b "AI Tests" gemma "AI Tests" ladder "AI Tests" whisper "AI Tests" bandwidth "Bandwidth Test" responsiveness "Memory Test" appmem "Memory Test" realday "Memory Test" realdaycreator "Memory Test")
-CMD=(cinebench "att-cinebench.zsh" xcode "xcode-bench.sh" blender "blender-bench.sh" redautumn "blender-bench.sh redautumn" handbrake "handbrake-bench.zsh"
+CMD=(ssdint "att-ssd-internal.zsh" cinebench "att-cinebench.zsh" xcode "xcode-bench.sh" blender "blender-bench.sh" redautumn "blender-bench.sh redautumn" handbrake "handbrake-bench.zsh"
      sustained "sustained-test.sh" qwen9b "lmstudio-bench.sh qwen9b" qwen27b "lmstudio-bench.sh qwen27b" gemma "lmstudio-bench.sh gemma"
      ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper" bandwidth "att-bandwidth.zsh" responsiveness "att-responsiveness.zsh" appmem "att-appmem.zsh" realday "att-realday.zsh everyday" realdaycreator "att-realday.zsh creator")
-MINS=(cinebench 15 xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 10 bandwidth 4 responsiveness 50 appmem 25 realday 70 realdaycreator 80)
+MINS=(ssdint 20 cinebench 15 xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 10 bandwidth 4 responsiveness 50 appmem 25 realday 70 realdaycreator 80)
 
 if [[ -n $QUEUE ]]; then LIST=(${=QUEUE})
 else
