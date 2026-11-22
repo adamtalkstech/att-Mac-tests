@@ -364,7 +364,8 @@ fi
 mean() { local s=0 v; for v in "$@"; do (( s += v )); done; print $(( s / $# )); }
 loaded=$(mean $R_LOADED); light=$(mean $R_LIGHT); score=$(mean $R_SCORE)
 avg0=$(mean $R_AVG0); avg80=$(mean $R_AVG80); worst80=${${(On)R_WORST80}[1]}; slower=$(mean $R_SLOWER)
-spread=0; (( n > 1 && loaded > 0 )) && spread=$(( (${${(On)R_LOADED}[1]} - ${${(on)R_LOADED}[1]}) * 100 / loaded ))
+# Nov 22 fix: the nested sort inside $(( )) read the first CHARACTER, so spread always came out 0
+spread=0; _hi=(${(On)R_LOADED}); _lo=(${(on)R_LOADED}); (( n > 1 && loaded > 0 )) && spread=$(( (_hi[1] - _lo[1]) * 100 / loaded ))
 swap=${R_SWAP[-1]}
 dropped=$(mean $R_DROP); prl_t=0; pr_t=0; for v in $R_PRL; do (( prl_t += v )); done; for v in $R_PROBES; do (( pr_t += v )); done
 peakp=$(plev_name ${${(On)R_PEAKP}[1]}); peaksw=${${(On)R_PEAKSW}[1]}; peakcomp=${${(On)R_PEAKCOMP}[1]}

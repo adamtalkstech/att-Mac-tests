@@ -196,6 +196,8 @@ ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Ton
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 SINCE=2026-11-21 22:05
+SINCE_responsiveness=2026-11-22 09:10
+REDO Step 17b Responsiveness: the Nov 21 desk run had one bad run (80-tab switches 819 ms, worst 2.5 s) next to a normal one (242 ms). Restart first.
 ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): bandwidth in the walk-away line, Draw Things redo below.
 GO=bandwidth whisper appmem
 RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fps, which pulls the AI score down):
