@@ -5,7 +5,14 @@ Updated: Nov 21 2026, 8:15 PM
 NAME=M6 MINI 16GB (16/512, yours)
 1. Step 15 · Cyberpunk · hands-on
 2. Step E6 · Lightroom rerun + 6K clips rerun · hands-on
-3. Step 17 · Stacker · see STACKER below
+3. Step 17 · Stacker · hands-off, ~25 min per run
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
@@ -15,6 +22,13 @@ GO=qwen27b sustained
 2. Step 3 · Name it "M6 MINI 24GB 256GB" (if it still says adam3's Mac Mini)
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-name-this-mac.zsh
 3. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 4. Storage screenshot + free space · then it can ship
 
 [[M6-MINI-24-512]]
@@ -23,6 +37,13 @@ GO=handbrake
 1. Step 11 · HandBrake rerun · walk away, ~10 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
@@ -30,6 +51,13 @@ GO=sustained
 1. Step 10 · Sustained · walk away, ~30 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 3. Step 15 · Cyberpunk · hands-on · then it can ship
 
 [[M5PRO-MINI]]
@@ -38,6 +66,13 @@ GO=qwen27b sustained
 1. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 
 [[M5PRO-MINI-UPGRADED]]
 NAME=M5 Pro Mac mini, upgraded GPU
@@ -54,6 +89,10 @@ NAME=14" M5 Max PROLED (B&H loaner)
    30-min Social 4K, Magnetic Mask, 6K clips. Time each export with:
    cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
 4. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 5. Step 16 · War Thunder · hands-on
 6. Step 18 · Draw Things · hands-on
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
@@ -62,6 +101,13 @@ Optional: Step 9 · Blender rerun (background slowed the CPU run)
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
 1. Step 17 · Stacker · first hands-off stacker of the night. Tell Claude if it clicks Share by itself.
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 3. Step E6 · Final Cut exports · hands-on · same set as the 14":
@@ -73,6 +119,13 @@ NAME=16" M5 Max PROLED (B&H loaner)
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 1. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 2. Step 16 · War Thunder · hands-on
 3. Step 18 · Draw Things · hands-on
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
@@ -82,6 +135,13 @@ NAME=M6 MacBook Pro (B&H loaner)
 1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 2. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 3. Step 16 · War Thunder · hands-on
 4. Step 18 · Draw Things · hands-on
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
@@ -95,6 +155,13 @@ GO=qwen9b qwen27b gemma
 3. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 4. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 5. Step 16 · War Thunder · hands-on
 6. Step 18 · Draw Things · hands-on
 
@@ -103,6 +170,13 @@ NAME=M5 Pro PROLED MacBook Pro (yours)
 1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 2. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 3. Step 16 · War Thunder · hands-on
 4. Step 18 · Draw Things · hands-on
 
@@ -112,6 +186,13 @@ GO=blender redautumn handbrake sustained qwen9b
 1. Steps 9, 9b, 11, 10, 14a · Blender, Red Autumn, HandBrake, sustained, Qwen 9B · walk away
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
+   a) First time on this Mac: open Final Cut (let it update the library, leave
+      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
+   b) Restart, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+   c) Restart again, then:
+      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)

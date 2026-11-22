@@ -70,11 +70,6 @@ LINE="============================================================"
   print -r -- "------------------------------------------------------------"
   print " · Laptops: Apple's charger straight into the Mac, no dock."
   print " · Paste each command as ONE line. Step numbers match 00 START HERE - Run Order.txt."
-  print " · STACKER (step 17): restart before each run. Final Cut's timeline must have"
-  print "   \"universal control on mac 3 min\" open. First time on a Mac: open Final Cut and"
-  print "   the Numbers workbook once, quit both, allow Terminal in Accessibility, restart."
-  print -r -- '     Closer:   cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer'
-  print -r -- '     Stacker:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker'
   print " · Loaners: before shipping, run  att-upload.zsh forget"
 } > "$OUT"
 if [[ $1 == go ]]; then
