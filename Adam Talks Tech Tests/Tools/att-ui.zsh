@@ -81,6 +81,59 @@ att_fcp_wait() {
   print "  Final Cut didn't settle in 10 min, carrying on."; return 1
 }
 
+# Is a project open in Final Cut's timeline? (= File > Share > Apple Devices 4K is enabled)
+att_fcp_has_project() {
+  local app=$(att_fcp_proc "$1")
+  [[ $(osascript -e "tell application \"System Events\" to tell process \"$app\"
+    try
+      repeat with mi in menu items of menu 1 of menu item \"Share\" of menu \"File\" of menu bar 1
+        if (name of mi) starts with \"Apple Devices 4K\" then return (enabled of mi) as text
+      end repeat
+    end try
+    return \"false\"
+  end tell" 2>/dev/null) == true ]]
+}
+# Make sure project $2 is open in the timeline BEFORE anything is timed (Nov 21: Final Cut reopened the
+# library with no project in the timeline, so Share was greyed out at export time). Tries to open it
+# itself (browser search + AXOpen); if that doesn't work, asks you once, right now, and waits.
+att_fcp_open_project() {
+  local name=$2 app i
+  app=$(att_fcp_proc "$1")
+  osascript -e "tell application \"System Events\" to tell process \"$app\" to set frontmost to true
+    delay 0.5
+    tell application \"System Events\" to keystroke \"2\" using command down" >/dev/null 2>&1
+  sleep 2
+  att_fcp_has_project "$1" && { print "  Project is open in the timeline."; return 0; }
+  # Try: browser search field -> project name -> open the match
+  osascript -e "tell application \"System Events\" to tell process \"$app\"
+    keystroke \"1\" using command down
+    delay 1
+    try
+      set f to first text field of (entire contents of window 1) whose subrole is \"AXSearchField\"
+      set focused of f to true
+      set value of f to \"$name\"
+      keystroke return
+    end try
+    delay 2
+    try
+      set hits to (UI elements of (entire contents of window 1) whose (description contains \"$name\" or name contains \"$name\" or value contains \"$name\"))
+      repeat with h in hits
+        try
+          perform action \"AXOpen\" of h
+          exit repeat
+        end try
+      end repeat
+    end try
+  end tell" >/dev/null 2>&1
+  sleep 4
+  att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline."; return 0; }
+  whence att_say >/dev/null && att_say "Final Cut needs you once. Double click the project, $name."
+  print "  ** Final Cut has no project in the timeline. Double-click '$name' in the Final Cut browser now."
+  print "     (Nothing is being timed yet; the test carries on by itself once it's open.)"
+  for i in {1..300}; do att_fcp_has_project "$1" && { print "  Got it, project open."; return 0; }; sleep 2; done
+  print "  Still no project after 10 min, carrying on."; return 1
+}
+
 # Share the timeline with Apple Devices 4K into folder $2. Sets SHARE_START (epoch) on success.
 att_fcp_share() {
   local app=$1 dir=$2 r i

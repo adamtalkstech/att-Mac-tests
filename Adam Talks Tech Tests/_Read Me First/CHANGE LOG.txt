@@ -3,6 +3,12 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 21 2026 (night)
+- Stacker/closer: Final Cut sometimes reopens the library with NO project in
+  the timeline, so File > Share was greyed out at export time and it fell
+  back to asking you. Now, right after Final Cut opens (before anything is
+  timed), it checks Share is available; if not it tries to open
+  'universal control on mac 3 min' itself, and if that fails it asks you to
+  double-click it then and waits. Share also retries ~60 s under load.
 - att-responsiveness.zsh RAM extras (for the RAM videos): memory pressure
   color per step + peak (green/yellow/red like Activity Monitor), tabs macOS
   dropped to free RAM (marker check on all 80 tabs at the end of each run),

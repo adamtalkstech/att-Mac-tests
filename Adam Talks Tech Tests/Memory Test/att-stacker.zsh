@@ -40,6 +40,7 @@ RES="$OUT/stacker_${MODE}_${STAMP}.txt"
 
 # ---------- Files ----------
 LIB="$ROOT/Final Cut Test/Test Library rev.fcpbundle"
+FCP_PROJECT="${FCP_PROJECT:-universal control on mac 3 min}"   # the project that gets exported
 WB=""; for f in "$HERE/ATT Stack Test Workbook v1.1.numbers" "$HERE/ATT Stack Test Workbook v1.numbers"; do [[ -e $f ]] && { WB=$f; break; }; done
 SITES=("${(@f)$(sed -n "/^SITES=(/,/^)/p" "$HERE/att-tabtest.zsh" | grep -o "https://[^']*")}")
 LMS=$(command -v lms 2>/dev/null); [[ -z $LMS ]] && LMS="$HOME/.lmstudio/bin/lms"
@@ -94,7 +95,7 @@ numbers_ready() {
   if (( UIOK )) && NUM_S=$(att_numbers_wait 600); then print "  Numbers open: ${NUM_S}s (timed by the script)"
   else NUM_S=$(timed "When the Numbers Dashboard has filled in:"); fi
 }
-fcp_ready() { if (( UIOK )); then att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; else ask "$1"; fi; }
+fcp_ready() { if (( UIOK )); then att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; att_fcp_open_project "$FCP_NAME" "$FCP_PROJECT"; else ask "$1"; fi; }
 fcp_export() {   # $1 label for the export log
   if (( UIOK )) && att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
     print "  Script clicked Share > Apple Devices 4K > Save. Timing it."
