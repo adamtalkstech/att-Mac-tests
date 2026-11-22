@@ -153,7 +153,8 @@ RERUNS (Nov 21): HandBrake on Apple's charger is in the walk-away line (the Nov 
 
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
-GO=bandwidth
+(Step 14e bandwidth DONE Nov 21: 261.7 CPU / 279.1 GPU GB/s, run twice.)
+GO=
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K

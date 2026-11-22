@@ -100,7 +100,8 @@ all_sources() {
   for d in "$_HERE/LM Studio Models"(N/) \
            /Volumes/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/) \
            /Volumes/*/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/) \
-           /Volumes/*/*/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/); do
+           /Volumes/*/*/*/"$NAME"/"AI Tests"/"LM Studio Models"(N/) \
+           /Volumes/*/"ATT Spare (not copied)"/"AI Tests"/"LM Studio Models"(N/); do
     print -r -- "$d"
   done
 }
