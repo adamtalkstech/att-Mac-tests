@@ -27,14 +27,17 @@ drive_dirs() { local d; for d in /Volumes/*/"$NAME"/"Image Gen Test"/"Draw Thing
   /Volumes/*/*/"$NAME"/"Image Gen Test"/"Draw Things Models"(N/) /Volumes/*/*/*/"$NAME"/"Image Gen Test"/"Draw Things Models"(N/); do print -r -- "$d"; done; }
 
 if [[ ${1:-} == save ]]; then
+  # Nov 21: copies ONLY the Z-Image Turbo files, to EVERY plugged-in test drive, no questions.
   [[ -d $DT_MODELS ]] || { print "No Draw Things models on this Mac."; exit 1; }
-  dest=$(for d in /Volumes/*/"$NAME"/"Image Gen Test"(N/); do print -r -- "$d"; break; done)
-  [[ -n $dest ]] || { print "Plug in a test drive first."; exit 1; }
-  dest="$dest/Draw Things Models"; mkdir -p "$dest"
-  print "Files in Draw Things' model folder:"; ls -lh "$DT_MODELS" | awk 'NR>1{print "  "$5"  "$9}'
-  print -n "Copy ALL of these to $dest ? (download only Z-Image Turbo on this Mac first) (y/n) "; read -r yn
-  [[ $yn == [yY]* ]] || exit 0
-  ditto "$DT_MODELS" "$dest" && print "Saved. Other Macs copy it in by themselves."
+  files=("$DT_MODELS"/${~MATCH}(N.))
+  (( ${#files} )) || { print "Z-Image Turbo isn't downloaded in Draw Things on this Mac."; exit 1; }
+  print "Z-Image Turbo files: ${#files} ($(du -ch $files | tail -1 | cut -f1))"
+  n=0
+  for v in /Volumes/*/"$NAME"(N/); do
+    dest="$v/Image Gen Test/Draw Things Models"; mkdir -p "$dest"
+    print "  -> ${v:h:t}"; for f in $files; do [[ -s "$dest/${f:t}" && $(stat -f %z "$f") == $(stat -f %z "$dest/${f:t}") ]] || ditto "$f" "$dest/${f:t}"; done; (( n++ ))
+  done
+  (( n )) && print "Saved to $n drive(s). Other Macs copy it in by themselves." || print "Plug in a test drive first."
   exit 0
 fi
 
