@@ -134,12 +134,11 @@ Nothing scheduled right now. Ask Claude.
 
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
+(Ladder 8-bit DONE Nov 21 10 PM: swaps, never answers. Set LM Studio guardrails back to Relaxed.)
 SINCE=2026-11-21 22:00
 GO=xcode redautumn bandwidth
 RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's charger (the 'Max scored lower' line depends on it), Step 12 Puget Resolve / Premiere / Photoshop / Lightroom on the charger (Nov 20 runs were on a dock). Xcode and Red Autumn reruns are in the walk-away line.
-1. Step 14d · Ladder 8-bit · LM Studio > Settings > Model loading guardrails = OFF first (back to Relaxed after)
-   cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
-2. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
+1. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
    c) Restart again, then:
@@ -148,13 +147,13 @@ RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's char
       First time: Safari > Settings > Advanced > "Show features for web developers",
       then Settings > Developer > "Allow JavaScript from Apple Events".
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-3. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
+2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-4. Step E6 · Final Cut exports · hands-on · 3-min Social 4K, 30-min Apple Devices 4K,
+3. Step E6 · Final Cut exports · hands-on · 3-min Social 4K, 30-min Apple Devices 4K,
    30-min Social 4K, Magnetic Mask, 6K clips. Time each export with:
    cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
-5. Step 16 · War Thunder · hands-on
-6. Step 18 · Draw Things · hands-on
+4. Step 16 · War Thunder · hands-on
+5. Step 18 · Draw Things · hands-on
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
    First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
