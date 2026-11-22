@@ -33,15 +33,15 @@ KIND=$(att_mac_kind 2>/dev/null)
 STAMP=$(date +%Y-%m-%d_%H-%M)
 QDIR="$ROOT/Results/$MAC/Queue"; mkdir -p "$QDIR"
 LOG="$QDIR/queue_${STAMP}.log"; SUMMARY="$QDIR/queue_${STAMP}.txt"
-typeset -A QSTEP; QSTEP=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4)   # Run Order steps
+typeset -A QSTEP; QSTEP=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4 bandwidth 14e)   # Run Order steps
 
 typeset -A DIR CMD MINS
 DIR=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrake "HandBrake Test" sustained "Blender Test"
-     qwen9b "AI Tests" qwen27b "AI Tests" gemma "AI Tests" ladder "AI Tests" whisper "AI Tests")
+     qwen9b "AI Tests" qwen27b "AI Tests" gemma "AI Tests" ladder "AI Tests" whisper "AI Tests" bandwidth "Bandwidth Test")
 CMD=(xcode "xcode-bench.sh" blender "blender-bench.sh" redautumn "blender-bench.sh redautumn" handbrake "handbrake-bench.zsh"
      sustained "sustained-test.sh" qwen9b "lmstudio-bench.sh qwen9b" qwen27b "lmstudio-bench.sh qwen27b" gemma "lmstudio-bench.sh gemma"
-     ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper")
-MINS=(xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 8)
+     ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper" bandwidth "att-bandwidth.zsh")
+MINS=(xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 8 bandwidth 4)
 
 if [[ -n $QUEUE ]]; then LIST=(${=QUEUE})
 else

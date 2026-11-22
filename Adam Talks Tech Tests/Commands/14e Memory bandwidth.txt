@@ -1,0 +1,5 @@
+Step 14e, memory bandwidth (CPU STREAM + GPU Metal GB/s, ~3 min, walk away):
+cd ~/Downloads/"Adam Talks Tech Tests"/"Bandwidth Test" && zsh att-bandwidth.zsh
+
+In the queue it's called: bandwidth   e.g. QUEUE="bandwidth" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+Needs Xcode Command Line Tools (xcode-select --install).

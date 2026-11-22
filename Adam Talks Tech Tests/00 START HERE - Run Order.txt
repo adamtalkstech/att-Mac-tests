@@ -76,6 +76,7 @@ D. ONE AT A TIME  (same tests as the queue, if you'd rather run just one)
   14b Qwen 27B     cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh qwen27b
   14c Gemma        cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
   14d Ladder       cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder     (32GB+)
+  14e Bandwidth    cd ~/Downloads/"Adam Talks Tech Tests"/"Bandwidth Test" && zsh att-bandwidth.zsh   (CPU + GPU GB/s, ~3 min)
 
 ==================================================================
 E. EXTRAS  (only when a video needs them)

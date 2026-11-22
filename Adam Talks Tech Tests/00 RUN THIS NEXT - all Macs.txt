@@ -1,8 +1,11 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 21 2026, 8:15 PM
+Updated: Nov 21 2026, 8:45 PM
+NEW on every Mac: Step 14e memory bandwidth (~3 min) is in each Mac's walk-away line:
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 
 [[M6-MINI-16]]
 NAME=M6 MINI 16GB (16/512, yours)
+GO=bandwidth
 1. Step 15 · Cyberpunk · hands-on
 2. Step E6 · Lightroom rerun + 6K clips rerun · hands-on
 3. Step 17 · Stacker · hands-off, ~25 min per run
@@ -20,7 +23,7 @@ NAME=M6 MINI 16GB (16/512, yours)
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
-GO=qwen27b sustained
+GO=qwen27b sustained bandwidth
 1. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 3 · Name it "M6 MINI 24GB 256GB" (if it still says adam3's Mac Mini)
@@ -41,7 +44,7 @@ GO=qwen27b sustained
 
 [[M6-MINI-24-512]]
 NAME=M6 MINI 24GB (24/512, yours)
-GO=handbrake
+GO=handbrake bandwidth
 1. Step 11 · HandBrake rerun · walk away, ~10 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
@@ -59,7 +62,7 @@ GO=handbrake
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
-GO=sustained
+GO=sustained bandwidth
 1. Step 10 · Sustained · walk away, ~30 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
@@ -78,7 +81,7 @@ GO=sustained
 
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
-GO=qwen27b sustained
+GO=qwen27b sustained bandwidth
 1. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
@@ -100,6 +103,7 @@ Nothing scheduled right now. Ask Claude.
 
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
+GO=bandwidth
 1. Step 14d · Ladder 8-bit · walk away, ~15 min
    First: LM Studio > Settings > Model loading guardrails = OFF (set back to Relaxed after)
    cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
@@ -127,6 +131,7 @@ Optional: Step 9 · Blender rerun (background slowed the CPU run)
 
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
+GO=bandwidth
 1. Step 17 · Stacker · first hands-off stacker of the night. Tell Claude if it clicks Share by itself.
    a) First time on this Mac: open Final Cut (let it update the library, leave
       "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
@@ -150,6 +155,7 @@ NAME=16" M5 Max PROLED (B&H loaner)
 
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
+GO=bandwidth
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library, leave
       "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
@@ -169,6 +175,7 @@ NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 
 [[M6-MBP]]
 NAME=M6 MacBook Pro (B&H loaner)
+GO=bandwidth
 1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 2. Step 17 · Stacker
@@ -192,7 +199,7 @@ NAME=M6 MacBook Pro (B&H loaner)
 
 [[M6-IMAC]]
 NAME=M6 iMac (B&H loaner)
-GO=qwen9b qwen27b gemma
+GO=qwen9b qwen27b gemma bandwidth
 1. Steps 14a + 14b + 14c · Qwen 9B, Qwen 27B, Gemma · walk away, ~35 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Internal SSD test · ask Claude for the line (needs fio)
@@ -217,6 +224,7 @@ GO=qwen9b qwen27b gemma
 
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
+GO=bandwidth
 1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 2. Step 17 · Stacker
@@ -238,7 +246,7 @@ NAME=M5 Pro PROLED MacBook Pro (yours)
 
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
-GO=blender redautumn handbrake sustained qwen9b
+GO=blender redautumn handbrake sustained qwen9b bandwidth
 1. Steps 9, 9b, 11, 10, 14a · Blender, Red Autumn, HandBrake, sustained, Qwen 9B · walk away
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker

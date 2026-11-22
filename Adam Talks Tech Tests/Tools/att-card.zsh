@@ -31,6 +31,7 @@ att_step_for() {
     att-puget.zsh) print 12 ;;
     att-logic-log.zsh) print 13 ;;
     lmstudio-bench.sh) case $a in qwen9b) print 14a;; qwen27b) print 14b;; gemma) print 14c;; ladder) print 14d;; *) print E4;; esac ;;
+    att-bandwidth.zsh) print 14e ;;
     att-stacker.zsh) print 17 ;;
     att-responsiveness.zsh) print 17b ;;
     att-drawthings.zsh) print 18 ;;
