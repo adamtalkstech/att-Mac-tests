@@ -70,6 +70,7 @@ M5 Pro Mac mini, upgraded GPU
 
 [[MAX-16]]
 16" M5 Max PROLED (B&H loaner)
+  0. FIRST real upload: LaCie plugged in, then att-upload.zsh setup + all (see the top). Check Raw Results for its rows.
   1. Step 17 stacker: FIRST hands-off test of the night (prep, restart, closer). Tell Claude if it clicks Share by itself.
   2. Step 13 Logic: 256 buffer, then 32, log it
   3. E6 Final Cut exports (same set as the 14")
@@ -109,11 +110,21 @@ MacBook Air (yours, use the Air Kit)
   2. Step 17 stacker
 
 [[STUDIO-M5MAX]]
+DRIVES (do on the Mac Studio, the only Mac with the key until a drive carries it):
+  [ ] LaCie: zsh /tmp/att-upload.zsh save-to-drive   (or the Tools copy once the Studio has the test folder)
+  [ ] PRO-G40 (busy now): same command when it's free, then update its test folder
+  [ ] Extreme Pro, P7, OWC: same command when plugged in
+  A drive with the key file goes to any Mac: setup reads it from there. Don't lend a drive that has it.
 Results uploader one-time setup (do this on whichever Studio you use, once):
   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey   -> then the Apps Script steps in Commands > Upload results
 M5 Max Mac Studio (yours): later. Full queue + Puget + games when the loaners are done.
 
 [[STUDIO-M4MAX]]
+DRIVES (do on the Mac Studio, the only Mac with the key until a drive carries it):
+  [ ] LaCie: zsh /tmp/att-upload.zsh save-to-drive   (or the Tools copy once the Studio has the test folder)
+  [ ] PRO-G40 (busy now): same command when it's free, then update its test folder
+  [ ] Extreme Pro, P7, OWC: same command when plugged in
+  A drive with the key file goes to any Mac: setup reads it from there. Don't lend a drive that has it.
 Results uploader one-time setup (do this on whichever Studio you use, once):
   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey   -> then the Apps Script steps in Commands > Upload results
 M4 Max Mac Studio (daily driver): later, overnight queue when the loaners are done.

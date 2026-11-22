@@ -1,3 +1,4 @@
+2026-11-21 20:02 Nov 21 2026 - RUN THIS NEXT: drive key steps on the Studios, 16" first upload
 2026-11-21 19:58 Nov 21 2026 - RUN THIS NEXT: upload setup + all as the first step on every Mac
 2026-11-21 19:55 Nov 21 2026 - att-next.zsh go (one command starts this Mac's walk-away tests); cooldown waits for macOS extension checker; macOS batch-version warning on cards; stacker 5-min prep instead of a warm-up run
 2026-11-21 19:35 Nov 21 2026 - RUN THIS NEXT: Update Scripts opens this Mac's next tests in TextEdit (matched by hardware)
