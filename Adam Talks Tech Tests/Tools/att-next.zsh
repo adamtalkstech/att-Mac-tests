@@ -121,7 +121,7 @@ LINE="============================================================"
   # only remaining walk-away test was bandwidth looked like it didn't have it.
   (( ${#DONE_GO} )) && print "✓ Walk-away already done on this Mac: ${(j:, :)DONE_GO}"
   if [[ -n $GO ]]; then
-    typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4 bandwidth 14e responsiveness 17b)
+    typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b)
     print "WALK-AWAY TESTS (one command runs them all, hands-off):"
     for t in ${=GO}; do print "   · Step ${ST[$t]:-?} · $t"; done
     print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go'

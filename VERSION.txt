@@ -1,4 +1,4 @@
-2026-11-22 03:15 Nov 21 2026 - Run This Next refreshes itself after every test and at the end of a walk-away queue (the TextEdit window was showing the list from before the tests ran)
+2026-11-22 05:25
 2026-11-22 03:00 Nov 21 2026 - Update Scripts also refreshes the scripts on every plugged-in test drive; uploads use the newest CSV as the summary when a test writes no card text
 2026-11-22 02:45 Nov 21 2026 - Accessibility: responsiveness and the stacker open the Accessibility setting themselves and wait (no Return); Run This Next checks the permission the real way
 2026-11-22 02:30 Nov 21 2026 - Responsiveness: start check really tests Accessibility (stops with the fix instead of failing app checks); warm-up no-answers no longer counted on the card

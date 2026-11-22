@@ -33,7 +33,7 @@ KIND=$(att_mac_kind 2>/dev/null)
 STAMP=$(date +%Y-%m-%d_%H-%M)
 QDIR="$ROOT/Results/$MAC/Queue"; mkdir -p "$QDIR"
 LOG="$QDIR/queue_${STAMP}.log"; SUMMARY="$QDIR/queue_${STAMP}.txt"
-typeset -A QSTEP; QSTEP=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper E4 bandwidth 14e responsiveness 17b)   # Run Order steps
+typeset -A QSTEP; QSTEP=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b)   # Run Order steps
 
 typeset -A DIR CMD MINS
 DIR=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrake "HandBrake Test" sustained "Blender Test"
@@ -41,7 +41,7 @@ DIR=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" handbrak
 CMD=(xcode "xcode-bench.sh" blender "blender-bench.sh" redautumn "blender-bench.sh redautumn" handbrake "handbrake-bench.zsh"
      sustained "sustained-test.sh" qwen9b "lmstudio-bench.sh qwen9b" qwen27b "lmstudio-bench.sh qwen27b" gemma "lmstudio-bench.sh gemma"
      ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper" bandwidth "att-bandwidth.zsh" responsiveness "att-responsiveness.zsh")
-MINS=(xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 8 bandwidth 4 responsiveness 50)
+MINS=(xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 10 bandwidth 4 responsiveness 50)
 
 if [[ -n $QUEUE ]]; then LIST=(${=QUEUE})
 else
@@ -92,6 +92,20 @@ if (( ${#want} )); then
   print "\nChecking the AI models are on this Mac..."
   zsh "$ROOT/AI Tests/att-models.zsh" get ${(u)want}
   (( ${RUN[(I)gemma]} )) && zsh "$ROOT/AI Tests/att-models.zsh" park gemma-3-4b-it-GGUF '*gemma-3-4b*'
+fi
+# Whisper (14f): the kit (1.6 GB) and the audio live on the drive. Copy them in once so the drive can still go.
+if (( ${RUN[(I)whisper]} )); then
+  AI="$ROOT/AI Tests"
+  if [[ ! -x "$AI/whisper-test/bin/whisper-cli-coreml" || ! -s "$AI/Whisper test audio.wav" ]]; then
+    src=""; for v in /Volumes/*(N); do [[ -x "$v/Adam Talks Tech Tests/AI Tests/whisper-test/bin/whisper-cli-coreml" ]] && { src="$v/Adam Talks Tech Tests/AI Tests"; break; }; done
+    if [[ -n $src ]]; then
+      print "\nCopying the Whisper kit from ${src#/Volumes/} (1.6 GB, once per Mac)..."
+      ditto "$src/whisper-test" "$AI/whisper-test" && ditto "$src/Whisper test audio.wav" "$AI/Whisper test audio.wav"
+      xattr -dr com.apple.quarantine "$AI/whisper-test" 2>/dev/null
+    else
+      print "!! Whisper kit not found on any plugged-in drive (P7/P9 have it). Whisper will be skipped."
+    fi
+  fi
 fi
 # Copying models restarts LM Studio; close it again so it can't sit there during
 # the Blender/HandBrake tests (the AI tests open it themselves when they need it).

@@ -3,6 +3,7 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 21 2026 (night)
+2026-11-22 05:25 Nov 21 2026 - NEW Step 14f Whisper (Neural Engine vs GPU) on every Mac's walk-away list; the queue copies the Whisper kit from the drive once so the drive can still be unplugged
 - Stacker/closer: Final Cut sometimes reopens the library with NO project in
   the timeline, so File > Share was greyed out at export time and it fell
   back to asking you. Now, right after Final Cut opens (before anything is

@@ -80,13 +80,15 @@ D. ONE AT A TIME  (same tests as the queue, if you'd rather run just one)
   14c Gemma        cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh gemma
   14d Ladder       cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder     (32GB+)
   14e Bandwidth    cd ~/Downloads/"Adam Talks Tech Tests"/"Bandwidth Test" && zsh att-bandwidth.zsh   (CPU + GPU GB/s, ~3 min)
+  14f Whisper      cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh whisper   (Neural Engine vs GPU, ~10 min,
+                   same 10-min audio transcribed twice. Needs a drive plugged in: the whisper-test kit stays on the drive)
 
 ==================================================================
 E. EXTRAS  (only when a video needs them)
 ==================================================================
   E1 mflux image gen:   double-click Image Gen Test > Run Image Tests.command, pick 1
   E2 Procyon AI Image Generation / E3 3DMark Steel Nomad: from Apps & Installers, screenshot
-  E4 More AI:           cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe   (or coding, agents, whisper)
+  E4 More AI:           cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh moe   (or coding, agents)
   E5 Memory:            cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-tabtest.zsh
   E6 Any export timed:  cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
 
