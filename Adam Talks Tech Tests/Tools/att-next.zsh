@@ -128,7 +128,17 @@ LINE="============================================================"
     print ""
   fi
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
-    sec | grep -v '^NAME=\|^GO=\|^SINCE=' | awk 'NR>1 && /^[0-9A-Z]/ && prev!="" {print ""} {print; prev=$0}'
+    # Nov 21: hands-on steps this Mac already finished (result newer than SINCE) get a ✓ DONE tag
+    dn() { local h=( "$RES"/${~1}(N+newer) ); (( ${#h} )); }
+    D_CLOSER=0 D_STACKER=0 D_RESP=0 D_DT=0
+    dn "Memory/stacker_closer_*.txt" && D_CLOSER=1; dn "Memory/stacker_stacker_*.txt" && D_STACKER=1
+    dn "Memory/responsiveness_*.txt" && D_RESP=1; dn "Image Tests/*" && D_DT=1
+    sec | grep -v '^NAME=\|^GO=\|^SINCE=' | awk -v c=$D_CLOSER -v st=$D_STACKER -v r=$D_RESP -v dt=$D_DT '
+      /att-stacker.zsh closer/ && c  {print "      ✓ DONE (closer)"; next}
+      /att-stacker.zsh stacker/ && st {print "      ✓ DONE (stacker)"; next}
+      /att-responsiveness.zsh/ && r  {print "      ✓ DONE (responsiveness)"; next}
+      /att-drawthings.zsh$/ && dt    {print "   ✓ DONE (Draw Things)"; next}
+      {print}' | awk 'NR>1 && /^[0-9A-Z]/ && prev!="" {print ""} {print; prev=$0}'
   else
     print "Couldn't tell which Mac this is. Ask Claude, or read 00 RUN THIS NEXT - all Macs.txt."
   fi
