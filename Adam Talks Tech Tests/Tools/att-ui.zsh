@@ -47,9 +47,17 @@ att_numbers_wait() {
 }
 
 # Wait until Final Cut has the library open and has settled. $1 app name, $2 library path
+# The real process name of Final Cut (the Creator Studio version isn't called "Final Cut Pro"). Nov 21.
+att_fcp_proc() {
+  local n=$(osascript -e 'tell application "System Events" to get name of first process whose bundle identifier starts with "com.apple.FinalCut"' 2>/dev/null)
+  print -r -- "${n:-$1}"
+}
+att_fcp_pid() { pgrep -f "Final Cut[^/]*\.app/Contents/MacOS/" | head -1; }
+
 att_fcp_wait() {
   local app=$1 lib=$2 t0=$EPOCHSECONDS quiet=0 cpu pid
   while (( EPOCHSECONDS - t0 < 600 )); do
+    app=$(att_fcp_proc "$1")
     osascript -e "tell application \"System Events\" to tell process \"$app\"
       repeat with w in windows
         try
@@ -63,7 +71,7 @@ att_fcp_wait() {
       end repeat
     end tell" >/dev/null 2>&1
     if lsof -c "Final Cut" 2>/dev/null | grep -q "${lib:t}"; then
-      pid=$(pgrep -x "$app" | head -1)
+      pid=$(att_fcp_pid)
       cpu=$(ps -o %cpu= -p $pid 2>/dev/null | awk '{printf "%d", $1}')
       if (( ${cpu:-100} < 40 )); then (( quiet++ )); else quiet=0; fi
       (( quiet >= 5 )) && { print "  Final Cut has the library open (settled after $(( EPOCHSECONDS - t0 ))s)."; return 0; }
@@ -78,6 +86,7 @@ att_fcp_share() {
   local app=$1 dir=$2 r i
   SHARE_START=""
   open -a "$app"; sleep 2
+  app=$(att_fcp_proc "$app")
   r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
     set frontmost to true
     delay 1

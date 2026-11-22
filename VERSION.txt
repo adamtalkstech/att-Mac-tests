@@ -1,3 +1,4 @@
+2026-11-21 20:50 Nov 21 2026 - Stacker: finds the Creator Studio Final Cut process (was stuck at 'final cut open')
 2026-11-21 20:45 Nov 21 2026 - Step 14e memory bandwidth (CPU STREAM + GPU Metal), in the queue as 'bandwidth'
 2026-11-21 20:40 Nov 21 2026 - Step 17b Responsiveness (felt speed) added after the stacker
 2026-11-21 20:35 Nov 21 2026 - Stacker finds Final Cut Pro by name/path too (Creator Studio version)

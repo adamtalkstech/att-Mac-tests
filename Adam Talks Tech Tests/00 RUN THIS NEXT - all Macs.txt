@@ -9,8 +9,8 @@ GO=bandwidth
 1. Step 15 · Cyberpunk · hands-on
 2. Step E6 · Lightroom rerun + 6K clips rerun · hands-on
 3. Step 17 · Stacker · hands-off, ~25 min per run
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -29,8 +29,8 @@ GO=qwen27b sustained bandwidth
 2. Step 3 · Name it "M6 MINI 24GB 256GB" (if it still says adam3's Mac Mini)
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-name-this-mac.zsh
 3. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -48,8 +48,8 @@ GO=handbrake bandwidth
 1. Step 11 · HandBrake rerun · walk away, ~10 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -66,8 +66,8 @@ GO=sustained bandwidth
 1. Step 10 · Sustained · walk away, ~30 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -85,8 +85,8 @@ GO=qwen27b sustained bandwidth
 1. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -133,8 +133,8 @@ Optional: Step 9 · Blender rerun (background slowed the CPU run)
 NAME=16" M5 Max PROLED (B&H loaner)
 GO=bandwidth
 1. Step 17 · Stacker · first hands-off stacker of the night. Tell Claude if it clicks Share by itself.
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -157,8 +157,8 @@ GO=bandwidth
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 GO=bandwidth
 1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -179,8 +179,8 @@ GO=bandwidth
 1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -206,8 +206,8 @@ GO=qwen9b qwen27b gemma bandwidth
 3. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 4. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -228,8 +228,8 @@ GO=bandwidth
 1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
 2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
@@ -250,8 +250,8 @@ GO=blender redautumn handbrake sustained qwen9b bandwidth
 1. Steps 9, 9b, 11, 10, 14a · Blender, Red Autumn, HandBrake, sustained, Qwen 9B · walk away
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library, leave
-      "universal control on mac 3 min" in the timeline) and the Numbers workbook once,
+   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
+      "universal control on mac 3 min" so it's open in the timeline, then the Numbers workbook once,
       quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
    b) Restart, then:
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
