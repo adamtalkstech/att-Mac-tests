@@ -1,132 +1,128 @@
-RUN THIS NEXT - every Mac's next tests (updated by Claude, pushed through GitHub)
-Updated: Nov 21 2026, 7:30 PM
-STEP 0, EVERY TIME on EVERY Mac: update the scripts first (paste this one line):
-  zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"
-Update Scripts opens just THIS Mac's part in TextEdit. Step numbers = "00 START HERE - Run Order.txt".
-Laptops: Apple's charger straight into the Mac, no dock.
-FIRST ON EVERY MAC (once). Plug in a test drive that has the key (LaCie now), then paste this ONE line:
-  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all
-  It sets the Mac up, sends a test ping, then sends everything this Mac has tested. Ends with "Done".
-  After that every test uploads by itself. Loaners: att-upload.zsh forget before they ship.
-Q = zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh   (paste the whole line below, not "Q")
-Stacker (17): restart first. Final Cut timeline must have "universal control on mac 3 min" open.
-  Closer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-  Stacker: cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-  First time on a Mac (5-min prep, no warm-up run): open Final Cut (let it update the library) and the
-  Numbers stack workbook once, quit both, allow Terminal in Accessibility, restart, then the closer.
-GO: on any Mac, "zsh ~/Downloads/\"Adam Talks Tech Tests\"/Tools/att-next.zsh go" starts that Mac's walk-away tests.
+RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
+Updated: Nov 21 2026, 8:15 PM
 
 [[M6-MINI-16]]
-M6 MINI 16GB (16/512, yours)
-  1. Step 15 Cyberpunk (hands-on)
-  2. Lightroom rerun + 6K clips rerun (E6, hands-on)
-  3. Step 17 stacker: 5-min prep, restart, closer, restart, stacker
+NAME=M6 MINI 16GB (16/512, yours)
+1. Step 15 · Cyberpunk · hands-on
+2. Step E6 · Lightroom rerun + 6K clips rerun · hands-on
+3. Step 17 · Stacker · see STACKER below
 
 [[M6-MINI-24-256]]
+NAME=M6 MINI 24GB 256GB (loaner, overdue)
 GO=qwen27b sustained
-M6 MINI 24GB 256GB (loaner, overdue). macOS updated to 27.2.1 on Nov 21.
-  1. Steps 14b + 10 (walk away, ~45 min):
-     QUEUE="qwen27b sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
-  2. Step 3 name it "M6 MINI 24GB 256GB" if it still says adam3's Mac Mini
-  3. Step 17 stacker (check ~60GB free first: it copies the 45GB Final Cut library)
-  4. Storage screenshot + free space  -> then it can ship
+1. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+2. Step 3 · Name it "M6 MINI 24GB 256GB" (if it still says adam3's Mac Mini)
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-name-this-mac.zsh
+3. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
+4. Storage screenshot + free space · then it can ship
 
 [[M6-MINI-24-512]]
+NAME=M6 MINI 24GB (24/512, yours)
 GO=handbrake
-M6 MINI 24GB (24/512, yours)
-  1. Step 11 HandBrake rerun (background CPU hit the first one):
-     cd ~/Downloads/"Adam Talks Tech Tests"/"HandBrake Test" && zsh handbrake-bench.zsh
-  2. Send the step 8 Xcode card (it's in Results/M6 MINI 24GB/Queue/)
-  3. Step 17 stacker
+1. Step 11 · HandBrake rerun · walk away, ~10 min
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+2. Step 17 · Stacker
 
 [[M6-MINI-32]]
+NAME=M6 MINI 32GB (loaner, overdue)
 GO=sustained
-M6 MINI 32GB (loaner, overdue)
-  1. Step 10 sustained (walk away, ~30 min):
-     QUEUE="sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
-  2. Step 17 stacker
-  3. Step 15 Cyberpunk  -> then it can ship
+1. Step 10 · Sustained · walk away, ~30 min
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+2. Step 17 · Stacker
+3. Step 15 · Cyberpunk · hands-on · then it can ship
 
 [[M5PRO-MINI]]
+NAME=M5 Pro Mac mini (loaner, back Nov 30)
 GO=qwen27b sustained
-M5 Pro Mac mini (loaner, back Nov 30)
-  1. Steps 14b + 10 (walk away, ~45 min):
-     QUEUE="qwen27b sustained" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
-  2. Step 17 stacker
+1. Steps 14b + 10 · Qwen 27B + sustained · walk away, ~45 min
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+2. Step 17 · Stacker
 
 [[M5PRO-MINI-UPGRADED]]
-M5 Pro Mac mini, upgraded GPU
-  Nothing scheduled right now. Ask Claude.
+NAME=M5 Pro Mac mini, upgraded GPU
+Nothing scheduled right now. Ask Claude.
 
 [[MAX-14]]
-14" M5 Max PROLED (B&H loaner)
-  1. Step 14d ladder 8-bit: LM Studio guardrails OFF, then (set back to Relaxed after):
-     cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
-  2. Send the step 8 Xcode card (Results/.../Queue/queue_2026-11-21_08-04.txt)
-  3. Step 13 Logic: 256 buffer, then 32. Log: cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-  4. E6 Final Cut exports: 3-min Social 4K, 30-min Apple Devices 4K, 30-min Social 4K, magnetic mask, 6K clips
-     Timer: cd ~/Downloads/"Adam Talks Tech Tests"/"Tools" && zsh att-export-timer.zsh "" "FCP export"
-  5. Step 17 stacker (real closer next: the Nov 20 one was the warm-up)
-  6. Step 16 War Thunder, step 18 Draw Things
-  Optional: step 9 Blender CPU rerun (background hit the 2:42.56)
+NAME=14" M5 Max PROLED (B&H loaner)
+1. Step 14d · Ladder 8-bit · walk away, ~15 min
+   First: LM Studio > Settings > Model loading guardrails = OFF (set back to Relaxed after)
+   cd ~/Downloads/"Adam Talks Tech Tests"/"AI Tests" && zsh lmstudio-bench.sh ladder
+2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
+   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+3. Step E6 · Final Cut exports · hands-on · 3-min Social 4K, 30-min Apple Devices 4K,
+   30-min Social 4K, Magnetic Mask, 6K clips. Time each export with:
+   cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
+4. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
+5. Step 16 · War Thunder · hands-on
+6. Step 18 · Draw Things · hands-on
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+Optional: Step 9 · Blender rerun (background slowed the CPU run)
 
 [[MAX-16]]
-16" M5 Max PROLED (B&H loaner)
-  0. FIRST real upload: LaCie plugged in, then att-upload.zsh setup + all (see the top). Check Raw Results for its rows.
-  1. Step 17 stacker: FIRST hands-off test of the night (prep, restart, closer). Tell Claude if it clicks Share by itself.
-  2. Step 13 Logic: 256 buffer, then 32, log it
-  3. E6 Final Cut exports (same set as the 14")
-  4. Step 16 War Thunder, step 18 Draw Things
+NAME=16" M5 Max PROLED (B&H loaner)
+1. Step 17 · Stacker · first hands-off stacker of the night. Tell Claude if it clicks Share by itself.
+2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
+   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+3. Step E6 · Final Cut exports · hands-on · same set as the 14":
+   cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
+4. Step 16 · War Thunder · hands-on
+5. Step 18 · Draw Things · hands-on
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M5PRO-MBP]]
-M5 Pro MacBook Pro (mini LED, B&H loaner)
-  1. Step 17 stacker
-  2. Step 16 War Thunder, step 18 Draw Things
+NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
+1. Step 17 · Stacker
+2. Step 16 · War Thunder · hands-on
+3. Step 18 · Draw Things · hands-on
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-MBP]]
-M6 MacBook Pro (B&H loaner)
-  1. Step 13 Logic at the 32 buffer
-  2. Step 17 stacker
-  3. Step 16 War Thunder, step 18 Draw Things
+NAME=M6 MacBook Pro (B&H loaner)
+1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
+   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+2. Step 17 · Stacker
+3. Step 16 · War Thunder · hands-on
+4. Step 18 · Draw Things · hands-on
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
 
 [[M6-IMAC]]
+NAME=M6 iMac (B&H loaner)
 GO=qwen9b qwen27b gemma
-M6 iMac (B&H loaner)
-  1. Steps 14a + 14b + 14c (walk away, ~35 min):
-     QUEUE="qwen9b qwen27b gemma" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
-  2. Internal SSD test
-  3. Step 13 Logic 256 + 32
-  4. Step 17 stacker, step 16 War Thunder, step 18 Draw Things
+1. Steps 14a + 14b + 14c · Qwen 9B, Qwen 27B, Gemma · walk away, ~35 min
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+2. Internal SSD test · ask Claude for the line (needs fio)
+3. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
+   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+4. Step 17 · Stacker
+5. Step 16 · War Thunder · hands-on
+6. Step 18 · Draw Things · hands-on
 
 [[PROLED-M5PRO]]
-M5 Pro PROLED MacBook Pro (yours)
-  1. Step 13 Logic at the 32 buffer
-  2. Step 17 stacker
-  3. Step 16 War Thunder, step 18 Draw Things
+NAME=M5 Pro PROLED MacBook Pro (yours)
+1. Step 13 · Logic at the 32 buffer · hands-on, then log it:
+   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+2. Step 17 · Stacker
+3. Step 16 · War Thunder · hands-on
+4. Step 18 · Draw Things · hands-on
 
 [[AIR]]
+NAME=MacBook Air (yours, use the Air Kit)
 GO=blender redautumn handbrake sustained qwen9b
-MacBook Air (yours, use the Air Kit)
-  1. Steps 9, 9b, 11, 10, 14a (walk away):
-     QUEUE="blender redautumn handbrake sustained qwen9b" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
-  2. Step 17 stacker
+1. Steps 9, 9b, 11, 10, 14a · Blender, Red Autumn, HandBrake, sustained, Qwen 9B · walk away
+   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+2. Step 17 · Stacker
 
 [[STUDIO-M5MAX]]
-DRIVES (do on the Mac Studio, the only Mac with the key until a drive carries it):
-  [ ] LaCie: zsh /tmp/att-upload.zsh save-to-drive   (or the Tools copy once the Studio has the test folder)
-  [ ] PRO-G40 (busy now): same command when it's free, then update its test folder
-  [ ] Extreme Pro, P7, OWC: same command when plugged in
-  A drive with the key file goes to any Mac: setup reads it from there. Don't lend a drive that has it.
-Results uploader one-time setup (do this on whichever Studio you use, once):
-  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey   -> then the Apps Script steps in Commands > Upload results
-M5 Max Mac Studio (yours): later. Full queue + Puget + games when the loaners are done.
+NAME=M5 Max Mac Studio (yours)
+DRIVES · put the upload key on each test drive (the Studio has the key):
+   zsh /tmp/att-upload.zsh save-to-drive
+   [ ] LaCie   [ ] PRO-G40 (when free)   [ ] Extreme Pro   [ ] P7   [ ] OWC
+   Don't lend a drive that has the key file on it.
+Tests: later. Full queue + Puget + games once the loaners are done.
 
 [[STUDIO-M4MAX]]
-DRIVES (do on the Mac Studio, the only Mac with the key until a drive carries it):
-  [ ] LaCie: zsh /tmp/att-upload.zsh save-to-drive   (or the Tools copy once the Studio has the test folder)
-  [ ] PRO-G40 (busy now): same command when it's free, then update its test folder
-  [ ] Extreme Pro, P7, OWC: same command when plugged in
-  A drive with the key file goes to any Mac: setup reads it from there. Don't lend a drive that has it.
-Results uploader one-time setup (do this on whichever Studio you use, once):
-  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh newkey   -> then the Apps Script steps in Commands > Upload results
-M4 Max Mac Studio (daily driver): later, overnight queue when the loaners are done.
+NAME=M4 Max Mac Studio (daily driver)
+DRIVES · put the upload key on each test drive (if this Studio has the key):
+   zsh /tmp/att-upload.zsh save-to-drive
+Tests: later. Overnight queue once the loaners are done.

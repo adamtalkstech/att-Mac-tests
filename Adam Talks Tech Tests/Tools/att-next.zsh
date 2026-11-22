@@ -29,30 +29,51 @@ case "$name|$chip" in
     elif (( ram >= 24 )); then (( ${dgb:-0} < 300 )) && key=M6-MINI-24-256 || key=M6-MINI-24-512
     else key=M6-MINI-16; fi ;;
 esac
+sec() { awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on' "$ALL"; }
+NAME=$( [[ -n $key ]] && sec | awk '/^NAME=/ {sub(/^NAME=/,""); print; exit}')
+GO=$( [[ -n $key ]] && sec | awk '/^GO=/ {sub(/^GO=/,""); print; exit}')
+UPD=$(sed -n 2p "$ALL")
+LINE="============================================================"
 {
-  print "THIS MAC: ${name:-Mac} ($model) | $chip | ${ram}GB | ${gpu:-?}-core GPU | ${disk:-?} SSD"
-  print "$(head -2 "$ALL" | tail -1)"
+  print "$LINE"
+  print " RUN THIS NEXT  ·  ${NAME:-this Mac}"
+  print " ${UPD}"
+  print " ${name:-Mac} ($model) · ${chip#Apple } · ${ram}GB · ${disk:-?} SSD"
+  print "$LINE"
   print ""
-  print "STEP 0, EVERY TIME YOU SIT DOWN AT THIS MAC: update the scripts (paste this one line):"
-  print -r -- '  zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"'
-  print "  (or double-click Update Scripts.command in the test folder)"
+  print "STEP 0 · UPDATE SCRIPTS · every time you sit down at this Mac"
+  print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/"Update Scripts.command"'
+  print ""
+  print "STEP 1 · UPLOAD RESULTS · once per Mac (test drive with the key plugged in)"
+  print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all'
+  print ""
+  print -r -- "------------------------------------------------------------"
+  print " THIS MAC'S TESTS (in order)"
+  print -r -- "------------------------------------------------------------"
   print ""
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
-    awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on && !/^GO=/' "$ALL"
-    print ""
-    awk '/^\[\[/ {exit} NR>2' "$ALL"
+    sec | grep -v '^NAME=\|^GO=' | awk 'NR>1 && /^[0-9A-Z]/ && prev!="" {print ""} {print; prev=$0}'
   else
-    print "Couldn't tell which Mac this is, so here's everyone's list:"
-    print ""; sed 's/^\[\[.*\]\]$//' "$ALL"
+    print "Couldn't tell which Mac this is. Ask Claude, or read 00 RUN THIS NEXT - all Macs.txt."
   fi
+  print ""
+  print -r -- "------------------------------------------------------------"
+  print " GOOD TO KNOW"
+  print -r -- "------------------------------------------------------------"
+  print " · Laptops: Apple's charger straight into the Mac, no dock."
+  print " · Paste each command as ONE line. Step numbers match 00 START HERE - Run Order.txt."
+  print " · STACKER (step 17): restart before each run. Final Cut's timeline must have"
+  print "   \"universal control on mac 3 min\" open. First time on a Mac: open Final Cut and"
+  print "   the Numbers workbook once, quit both, allow Terminal in Accessibility, restart."
+  print -r -- '     Closer:   cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer'
+  print -r -- '     Stacker:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker'
+  print " · Loaners: before shipping, run  att-upload.zsh forget"
 } > "$OUT"
-GO=$( [[ -n $key ]] && awk -v k="[[$key]]" '$0==k {on=1; next} /^\[\[/ {on=0} on && /^GO=/ {sub(/^GO=/,""); print; exit}' "$ALL")
 if [[ $1 == go ]]; then
   [[ -n $GO ]] || { print "Nothing walk-away is scheduled for this Mac right now (see its list)."; exit 0; }
   print "Starting this Mac's walk-away tests: $GO"
   QUEUE="$GO" exec zsh "$TOOLS/att-queue.zsh"
 fi
-[[ -n $GO ]] && print "\nWALK-AWAY: zsh ~/Downloads/\"Adam Talks Tech Tests\"/Tools/att-next.zsh go   (runs: $GO)" >> "$OUT"
 cat "$OUT"
 [[ -z $NOOPEN ]] && open -a TextEdit "$OUT" 2>/dev/null
 exit 0
