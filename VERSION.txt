@@ -1,3 +1,4 @@
+2026-11-21 19:58 Nov 21 2026 - RUN THIS NEXT: upload setup + all as the first step on every Mac
 2026-11-21 19:55 Nov 21 2026 - att-next.zsh go (one command starts this Mac's walk-away tests); cooldown waits for macOS extension checker; macOS batch-version warning on cards; stacker 5-min prep instead of a warm-up run
 2026-11-21 19:35 Nov 21 2026 - RUN THIS NEXT: Update Scripts opens this Mac's next tests in TextEdit (matched by hardware)
 2026-11-21 13:45 Nov 21 2026 - Every card and queue line shows its Run Order step number (rule)

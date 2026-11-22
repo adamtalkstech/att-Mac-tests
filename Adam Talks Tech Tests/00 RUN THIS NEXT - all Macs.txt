@@ -2,6 +2,10 @@ RUN THIS NEXT - every Mac's next tests (updated by Claude, pushed through GitHub
 Updated: Nov 21 2026, 7:30 PM
 Update Scripts opens just THIS Mac's part in TextEdit. Step numbers = "00 START HERE - Run Order.txt".
 Laptops: Apple's charger straight into the Mac, no dock.
+FIRST ON EVERY MAC (once): send everything it has already tested to the sheet + Drive.
+  Test drive plugged in, then:  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh setup
+  then:                          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-upload.zsh all
+  After that every test uploads by itself. Loaners: att-upload.zsh forget before they ship.
 Q = zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh   (paste the whole line below, not "Q")
 Stacker (17): restart first. Final Cut timeline must have "universal control on mac 3 min" open.
   Closer:  cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
