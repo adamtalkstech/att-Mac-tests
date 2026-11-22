@@ -44,6 +44,7 @@ att_step_for() {
     att-name-this-mac.zsh) print 3 ;;
     att-install-apps.zsh) print 3b ;;
     att-queue.zsh) print "B (queue)" ;;
+    att-cinebench.zsh) print 7 ;;
     att-ready.zsh) case $a in *geekbench*) print 6;; *cinebench*) print 7;; *logic*) print 13;; *cyberpunk*) print 15;; *thunder*) print 16;; *) print "C (hands-on)";; esac ;;
     *) print "" ;;
   esac

@@ -4,6 +4,7 @@
 # Matches the Mac by hardware (model ID, chip, RAM, GPU cores, SSD), not by its name.
 # Writes "00 RUN THIS NEXT (this Mac).txt" in the test folder and opens it in TextEdit.
 # NOOPEN=1 in front = just print it.
+# Nov 22: also reads the live Mac Tests sheet (ROWS= / GO=sheet / REDO= / SKIPT= in a Mac's section).
 TOOLS=${0:A:h}; ROOT=${TOOLS:h}
 ALL="$ROOT/00 RUN THIS NEXT - all Macs.txt"; OUT="$ROOT/00 RUN THIS NEXT (this Mac).txt"
 [[ -f $ALL ]] || { print "No RUN THIS NEXT file yet."; exit 0; }
@@ -47,10 +48,55 @@ since_for() { local v; v=$( [[ -n $key ]] && sec | awk -v k="SINCE_$1=" 'index($
   [[ -z $v ]] && v=$(awk -v k="SINCE_$1=" 'index($0,k)==1 {print substr($0,length(k)+1); exit}' "$ALL")
   [[ -n $v ]] && date -j -f "%Y-%m-%d %H:%M %z" "$v -0600" +%s 2>/dev/null; }
 RES="$ROOT/Results/$(scutil --get ComputerName 2>/dev/null)"
-typeset -A PAT; PAT=(bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
+typeset -A PAT; PAT=(cinebench "Cinebench/cinebench_*.txt" bandwidth "Bandwidth/bandwidth_*" handbrake "HandBrake/handbrake_*.txt" sustained "Sustained/CPU_*"
   xcode "Xcode/xcode-bench_*" blender "Blender/blender-standard_*" redautumn "Blender/blender-redautumn_*"
   qwen9b "LM Studio/*qwen9b*" qwen27b "LM Studio/*qwen27b*" gemma "LM Studio/*gemma*" ladder "LM Studio/*ladder*"
   whisper "LM Studio/*whisper*" responsiveness "Memory/responsiveness_*.txt" appmem "Memory/appmem_2*.txt" realday "Memory/realday_everyday_*.txt" realdaycreator "Memory/realday_creator_*.txt")
+# Nov 22: read the live Mac Tests sheet (the same published copy the website reads). Each Mac's section
+# has ROWS=MR:<Main Results row> NT:<New Tests row>. A test with a blank cell, or one marked RERUN / NOT CLEAN /
+# NOT VALID / PROVISIONAL, shows as still needed. GO=sheet runs every walk-away test the sheet is missing.
+# REDO=<keys> (or REDO=all) forces tests even when the cell has a number (Claude removes a key once it's
+# logged again); SKIPT=<keys> leaves tests out for this Mac. Keys: Tools/att-tests-catalog.txt.
+SH_ROWS=$( [[ -n $key ]] && sec | awk '/^ROWS=/ {sub(/^ROWS=/,""); print; exit}')
+SH_REDO=$( [[ -n $key ]] && sec | awk '/^REDO=/ {sub(/^REDO=/,""); print; exit}')
+# REDO= at the top of the all-Macs file (before the first [[Mac]]) applies to every Mac.
+SH_REDO="$SH_REDO $(awk '/^\[\[/ {exit} /^REDO=/ {sub(/^REDO=/,""); print; exit}' "$ALL")"
+SH_SKIP=$( [[ -n $key ]] && sec | awk '/^SKIPT=/ {sub(/^SKIPT=/,""); print; exit}')
+SH_WALK=(); SH_HAND=(); SH_NOTE=""; SH_ROWNAMES=()
+if [[ -n $SH_ROWS ]]; then
+  r_mr=${${(M)${=SH_ROWS}:#MR:*}#MR:}; r_nt=${${(M)${=SH_ROWS}:#NT:*}#NT:}
+  mkdir -p $HOME/.att
+  PUBK=2PACX-1vSKNimdukDqbgreZxIIpdqt6sQIB3pg77vkClSqhYn6daXZe93F5G_ppLA90Lz08JuAOutgyAP66rCW
+  DOCK=164SUueXKOVqONLQtFEeEvD8n_ixYLyNAM3CANRwPn5k
+  sheetget() {   # $1 gid, $2 name -> ~/.att/sheet_<name>.csv (keeps the last good copy if offline)
+    local f=$HOME/.att/sheet_$2.csv t=$HOME/.att/sheet_$2.tmp
+    if curl -fsSL -m 20 -o $t "https://docs.google.com/spreadsheets/d/e/$PUBK/pub?gid=$1&single=true&output=csv" 2>/dev/null && grep -q "Computer Model" $t; then mv $t $f; return 0; fi
+    if curl -fsSL -m 20 -o $t "https://docs.google.com/spreadsheets/d/$DOCK/gviz/tq?tqx=out:csv&gid=$1" 2>/dev/null && grep -q "Computer Model" $t; then mv $t $f; return 0; fi
+    rm -f $t; [[ -s $f ]] && return 2; return 1; }
+  sheetget 0 MR; a=$?; sheetget 1327339876 NT; b=$?
+  if (( a == 1 || b == 1 )); then SH_NOTE="Couldn't reach the Mac Tests sheet (no internet?). Only the list below is shown."
+  else
+    (( a == 2 || b == 2 )) && SH_NOTE="Couldn't reach the sheet just now: using the copy from $(stat -f '%Sm' -t '%b %d %I:%M %p' $HOME/.att/sheet_NT.csv)."
+    while IFS= read -r ln; do
+      case $ln in
+        ROW\|*) SH_ROWNAMES+=("${${ln#ROW|}/|/: }") ;;
+        WALK\|*) SH_WALK+=("${${ln#WALK|}%%|*}") ;;
+        HAND\|*) SH_HAND+=("${ln#HAND|}") ;;
+      esac
+    done < <(osascript -l JavaScript "$TOOLS/att-sheet-gaps.js" $HOME/.att/sheet_MR.csv $HOME/.att/sheet_NT.csv \
+               "$TOOLS/att-tests-catalog.txt" "${r_mr:-0}" "${r_nt:-0}" "$ram" "$SH_REDO" "$SH_SKIP" 2>/dev/null)
+  fi
+fi
+if [[ " $GO " == *" sheet "* ]]; then
+  # offline with no saved copy: fall back to every walk-away test (finished ones still drop out below)
+  [[ $SH_NOTE == *"no internet"* ]] && SH_WALK=(cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness)
+  g2=(); for t in ${=GO}; do [[ $t == sheet ]] && g2+=($SH_WALK) || g2+=($t); done
+  g2=(${(u)g2}); g3=()   # no repeats, in the queue's usual order
+  for t in cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder bandwidth whisper appmem responsiveness realday realdaycreator; do
+    (( ${g2[(Ie)$t]} )) && g3+=($t); done
+  for t in $g2; do (( ${g3[(Ie)$t]} )) || g3+=($t); done
+  GO="${(j: :)g3}"
+fi
 if [[ -n $GO ]]; then
   left=(); DONE_GO=()
   for t in ${=GO}; do
@@ -128,10 +174,29 @@ LINE="============================================================"
   # only remaining walk-away test was bandwidth looked like it didn't have it.
   (( ${#DONE_GO} )) && print "✓ Walk-away already done on this Mac: ${(j:, :)DONE_GO}"
   if [[ -n $GO ]]; then
-    typeset -A ST; ST=(xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)
+    typeset -A ST; ST=(cinebench 7 xcode 8 blender 9 redautumn 9b sustained 10 handbrake 11 qwen9b 14a qwen27b 14b gemma 14c ladder 14d whisper 14f bandwidth 14e responsiveness 17b appmem 17c realday 17d realdaycreator 17d)
     print "WALK-AWAY TESTS (one command runs them all, hands-off):"
     for t in ${=GO}; do print "   · Step ${ST[$t]:-?} · $t"; done
     print -r -- '   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go'
+    print ""
+  fi
+  if [[ -n $SH_ROWS ]]; then
+    print "STILL NEEDED ON THE SHEET (read live from the Mac Tests sheet, $(date '+%b %d %I:%M %p')):"
+    [[ -n $SH_NOTE ]] && print -r -- "   ($SH_NOTE)"
+    (( ${#SH_ROWNAMES} )) && print -r -- "   Sheet rows: ${(j:  ·  :)SH_ROWNAMES}"
+    if (( ${#SH_HAND} )); then
+      typeset -A HPAT; HPAT=(stacker "Memory/stacker_stacker_*.txt" drawthings "Image Tests/drawthings_*.txt" magmask "Final Cut/fcp-neural_*.txt" logic "Logic/logic_*.txt")
+      for h in $SH_HAND; do
+        hp=("${(@s:|:)h}")   # key step label command why
+        ran=""; if [[ -n ${HPAT[$hp[1]]} ]]; then T_SINCE_S=$(since_for $hp[1]); hh=( "$RES"/${~HPAT[$hp[1]]}(N+newer) ); T_SINCE_S=""; (( ${#hh} )) && ran=1; fi
+        if [[ -n $ran ]]; then print -r -- "   ✓ Step $hp[2] · $hp[3]: ran on this Mac, waiting to be logged (send Claude the card)"; continue; fi
+        why=$hp[5]; [[ $why == blank ]] && why="" || why="  [$why]"
+        print -r -- "   · Step $hp[2] · $hp[3]$why"
+        [[ -n $hp[4] ]] && print -r -- "       $hp[4]"
+      done
+    elif [[ -z $SH_NOTE ]]; then
+      print "   ✓ Nothing hand-run missing on the sheet for this Mac."
+    fi
     print ""
   fi
   if [[ -n $key ]] && grep -q "^\[\[$key\]\]" "$ALL"; then
@@ -140,7 +205,7 @@ LINE="============================================================"
     D_CLOSER=0 D_STACKER=0 D_RESP=0 D_DT=0
     dn "Memory/stacker_closer_*.txt" closer && D_CLOSER=1; dn "Memory/stacker_stacker_*.txt" stacker && D_STACKER=1
     dn "Memory/responsiveness_*.txt" responsiveness && D_RESP=1; dn "Image Tests/*" drawthings && D_DT=1
-    sec | grep -v '^NAME=\|^GO=\|^SINCE' | awk -v c=$D_CLOSER -v st=$D_STACKER -v r=$D_RESP -v dt=$D_DT '
+    sec | grep -v '^NAME=\|^GO=\|^SINCE\|^ROWS=\|^REDO=\|^SKIPT=' | awk -v c=$D_CLOSER -v st=$D_STACKER -v r=$D_RESP -v dt=$D_DT '
       /att-stacker.zsh closer/ && c  {print "      ✓ DONE (closer)"; next}
       /att-stacker.zsh stacker/ && st {print "      ✓ DONE (stacker)"; next}
       /att-responsiveness.zsh/ && r  {print "      ✓ DONE (responsiveness)"; next}

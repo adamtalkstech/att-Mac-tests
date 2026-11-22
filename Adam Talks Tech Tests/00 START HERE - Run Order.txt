@@ -37,7 +37,9 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
           zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Cinebench 2026"
 
 [ ] 6.  Geekbench 7: CPU, then Compute > Metal. Screenshot both.
-[ ] 7.  Cinebench 2026: GPU, CPU multi, CPU single. Screenshot.
+[ ] 7.  Cinebench 2026: GPU, CPU multi, CPU single. NO CLICKING since Nov 22 (also in the queue as "cinebench"):
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-cinebench.zsh
+        First time: also run it once in the app and send both, so Claude can check they match.
 [ ] 12. Puget Bench (first run of each app on a Mac: from the Puget app, see details file):
           cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
           cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro" "Photoshop" "Lightroom Classic" "After Effects"

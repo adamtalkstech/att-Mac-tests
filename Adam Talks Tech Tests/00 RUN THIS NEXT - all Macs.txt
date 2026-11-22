@@ -1,8 +1,9 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 10:25 AM
+Updated: Nov 22 2026, 11:00 AM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
+REDO=appmem
 NOV 22 AFTERNOON/TONIGHT:
  * Update Scripts on every Mac first (auto-logging, Whisper kit swap, App RAM fix, first-time prompts).
  * Keep P9 or the OWC Envoy plugged in for the first minute of each walk-away run (it copies the new
@@ -15,7 +16,8 @@ NOV 22 AFTERNOON/TONIGHT:
 
 [[M6-MINI-16]]
 NAME=M6 MINI 16GB (16/512, yours)
-GO=bandwidth whisper appmem realday realdaycreator
+ROWS=MR:21 NT:4
+GO=sheet bandwidth whisper appmem realday realdaycreator
 1. Step 17 · Stacker · hands-off, ~25 min per run
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -38,7 +40,8 @@ GO=bandwidth whisper appmem realday realdaycreator
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
-GO=sustained bandwidth whisper appmem realday realdaycreator
+ROWS=MR:29 NT:5
+GO=sheet sustained bandwidth whisper appmem realday realdaycreator
 1. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -64,7 +67,8 @@ GO=sustained bandwidth whisper appmem realday realdaycreator
 
 [[M6-MINI-24-512]]
 NAME=M6 MINI 24GB (24/512, yours)
-GO=bandwidth whisper appmem realday realdaycreator
+ROWS=MR:26 NT:6
+GO=sheet bandwidth whisper appmem realday realdaycreator
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -87,7 +91,8 @@ GO=bandwidth whisper appmem realday realdaycreator
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
-GO=bandwidth whisper appmem realday realdaycreator
+ROWS=MR:28 NT:7
+GO=sheet bandwidth whisper appmem realday realdaycreator
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -111,58 +116,42 @@ GO=bandwidth whisper appmem realday realdaycreator
 
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
-DESKTOP REDO (Nov 22): full set again on 27.2.1 so it matches the M5 Pro laptops. Old Oct/early-Nov numbers stay until each rerun lands.
+ROWS=MR:22 NT:8
 SINCE=2026-11-22 10:00
-GO=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness
+GO=sheet
+REDO=xcode blender redautumn gemma geekbench cinebench logic fcpexports lightroom ssd puget-resolve
+DESKTOP REDO (Nov 22): everything again on 27.2.1 so it matches the M5 Pro laptops. Old numbers stay on the sheet until each rerun lands.
 FIRST: Update Scripts, macOS 27.2.1 (same as the laptops), auto-updates off, restart, 15 min idle, version card (att-versions.zsh).
-   Leave Lightroom and Puget off while another Mac is running Lightroom.
+   Lightroom and Puget Bench for Lightroom Classic: only while no other Mac is running Lightroom.
 WALK-AWAY (~4 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-HAND-RUN (one at a time, run att-ready.zsh "<app>" before each, send Claude the photo):
-   Step 5 Geekbench 7 CPU + GPU (OpenCL + Metal) and Geekbench AI (Neural, CPU, GPU)
-   Step 7 Cinebench 2026 GPU + CPU multi + single
-   Step 6 Blackmagic RAW Speed Test (8K + 4K, CPU + Metal) and Blackmagic Disk Speed + AJA
-   Step 13 Logic · 256 buffer, then 32, then log it:
-      cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-   Step 19 Final Cut Magnetic Mask Analyze · hands-off ~8 min:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
-   Step 16 War Thunder · Step 18 Draw Things:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-   Step 17 Stacker (restart before each): closer, then stacker
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   Step 12 Puget Bench for DaVinci Resolve rerun (Standard):
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
-   Step 15 Cyberpunk only if the macOS changed since its Nov runs.
+Then the hand-run list above (STILL NEEDED ON THE SHEET), one at a time; send Claude each photo/card.
+Stacker first time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min",
+   do ONE File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once,
+   quit both, restart, closer; restart, stacker (cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker).
+Draw Things first time: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
 
 [[M5PRO-MINI-UPGRADED]]
 NAME=M5 Pro Mac mini, upgraded GPU
-DESKTOP REDO (Nov 22): full set on 27.2.1. Its Cinebench CPU multi (4,949, under the base mini's 6,990) is wrong: redo first.
+ROWS=MR:25 NT:9
 SINCE=2026-11-22 10:00
-GO=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness
+GO=sheet
+REDO=xcode blender redautumn gemma geekbench cinebench logic fcpexports lightroom ssd puget-resolve
+DESKTOP REDO (Nov 22): everything again on 27.2.1. Its Cinebench CPU multi (4,949, under the base mini) is wrong, so do Cinebench early.
 FIRST: Update Scripts, macOS 27.2.1 (same as the laptops), auto-updates off, restart, 15 min idle, version card (att-versions.zsh).
-   Leave Lightroom and Puget off while another Mac is running Lightroom.
+   Lightroom and Puget Bench for Lightroom Classic: only while no other Mac is running Lightroom.
 WALK-AWAY (~4 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-HAND-RUN (one at a time, run att-ready.zsh "<app>" before each, send Claude the photo):
-   Step 5 Geekbench 7 CPU + GPU (OpenCL + Metal) and Geekbench AI (Neural, CPU, GPU)
-   Step 7 Cinebench 2026 GPU + CPU multi + single
-   Step 6 Blackmagic RAW Speed Test (8K + 4K, CPU + Metal) and Blackmagic Disk Speed + AJA
-   Step 13 Logic · 256 buffer, then 32, then log it:
-      cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-   Step 19 Final Cut Magnetic Mask Analyze · hands-off ~8 min:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
-   Step 16 War Thunder · Step 18 Draw Things:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-   Step 17 Stacker (restart before each): closer, then stacker
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   Step 12 Puget Bench, all 5 (Resolve rerun + Premiere Pro, After Effects (log run 2), Photoshop, Lightroom Classic):
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"   (then each app)
+Then the hand-run list above (STILL NEEDED ON THE SHEET), one at a time; send Claude each photo/card.
+Stacker first time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min",
+   do ONE File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once,
+   quit both, restart, closer; restart, stacker (cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker).
+Draw Things first time: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
 
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
+ROWS=MR:31 NT:16
 (Ladder 8-bit DONE Nov 21 10 PM: swaps, never answers. Set LM Studio guardrails back to Relaxed.)
 SINCE=2026-11-21 22:00
-GO=whisper appmem
+GO=sheet whisper appmem
 RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's charger (the 'Max scored lower' line depends on it), Step 12 Puget Resolve / Premiere / Photoshop / Lightroom on the charger (Nov 20 runs were on a dock). Xcode (92.40, matches the 93.09 repeat) and Red Autumn (4:44) reruns are DONE Nov 22.
 1. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
    b) Restart, then:
@@ -191,7 +180,8 @@ ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Ton
 
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
-GO=handbrake bandwidth whisper appmem
+ROWS=MR:32 NT:17
+GO=sheet handbrake bandwidth whisper appmem
 SINCE=2026-11-21 22:05
 ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): HandBrake + bandwidth in the walk-away line.
 1. Step 17 · Stacker REDO (couch run doesn't count; the closer from earlier is fine) · restart first:
@@ -212,11 +202,12 @@ ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Ton
 
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
+ROWS=MR:19 NT:14
 SINCE=2026-11-21 22:05
 SINCE_responsiveness=2026-11-22 09:10
 REDO Step 17b Responsiveness: the Nov 21 desk run had one bad run (80-tab switches 819 ms, worst 2.5 s) next to a normal one (242 ms). Restart first.
 ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): bandwidth in the walk-away line, Draw Things redo below.
-GO=bandwidth whisper appmem
+GO=sheet bandwidth whisper appmem
 RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fps, which pulls the AI score down):
    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
 1. Step 18 · Draw Things REDO + save the model to the drive · LaCie plugged in
@@ -242,7 +233,8 @@ RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fp
 
 [[M6-MBP]]
 NAME=M6 MacBook Pro (B&H loaner)
-GO=bandwidth whisper appmem realday
+ROWS=MR:30 NT:15
+GO=sheet bandwidth whisper appmem realday
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -267,9 +259,10 @@ GO=bandwidth whisper appmem realday
 
 [[M6-IMAC]]
 NAME=M6 iMac (B&H loaner)
+ROWS=MR:33 NT:19
 SINCE=2026-11-21 22:05
 FIRST: open LM Studio once (the Nov 21 LM Studio runs failed: it wasn't set up), quit it, then run the walk-away line.
-GO=qwen9b qwen27b gemma bandwidth whisper appmem realday
+GO=sheet qwen9b qwen27b gemma bandwidth whisper appmem realday
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -295,7 +288,8 @@ GO=qwen9b qwen27b gemma bandwidth whisper appmem realday
 
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
-GO=bandwidth whisper appmem
+ROWS=MR:34 NT:18
+GO=sheet bandwidth whisper appmem
 RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fps, which pulls the AI score down):
    cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
 1. Step 17 · Stacker
@@ -320,7 +314,8 @@ RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fp
 
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
-GO=blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
+ROWS=MR:15 NT:20
+GO=sheet blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -343,28 +338,19 @@ GO=blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)
-DESKTOP REDO (Nov 22): its Main Results are from October. Full set on 27.2.1 so it lines up with the 14" and 16" M5 Max.
+ROWS=MR:23 NT:10
 SINCE=2026-11-22 10:00
-GO=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness ladder
+GO=sheet ladder
+REDO=xcode blender redautumn gemma geekbench cinebench logic fcpexports lightroom ssd puget-resolve
+DESKTOP REDO (Nov 22): its Main Results are from October. Everything again on 27.2.1 to line up with the 14" and 16" M5 Max.
 FIRST: Update Scripts, macOS 27.2.1 (same as the laptops), auto-updates off, restart, 15 min idle, version card (att-versions.zsh).
-   Leave Lightroom and Puget off while another Mac is running Lightroom.
-WALK-AWAY (~4.5 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-HAND-RUN (one at a time, run att-ready.zsh "<app>" before each, send Claude the photo):
-   Step 5 Geekbench 7 CPU + GPU (OpenCL + Metal) and Geekbench AI (Neural, CPU, GPU)
-   Step 7 Cinebench 2026 GPU + CPU multi + single
-   Step 6 Blackmagic RAW Speed Test (8K + 4K, CPU + Metal) and Blackmagic Disk Speed + AJA
-   Step 13 Logic · 256 buffer, then 32, then log it:
-      cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-   Step 19 Final Cut Magnetic Mask Analyze · hands-off ~8 min:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
-   Step 16 War Thunder · Step 18 Draw Things:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-   Step 17 Stacker (restart before each): closer, then stacker
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   Step 12 Puget Bench, all 5 (Resolve, Premiere Pro, After Effects (log run 2), Photoshop, Lightroom Classic)
-   Step E6 Final Cut exports (3-min Social 4K, 30-min Apple Devices 4K, 30-min Social 4K, 6K clips) + Lightroom Classic exports/denoise
-   Step 15 Cyberpunk (it has none)
+   Lightroom and Puget Bench for Lightroom Classic: only while no other Mac is running Lightroom.
+WALK-AWAY (~4 h): zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+Then the hand-run list above (STILL NEEDED ON THE SHEET), one at a time; send Claude each photo/card.
+Stacker first time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min",
+   do ONE File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once,
+   quit both, restart, closer; restart, stacker (cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker).
+Draw Things first time: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
 DRIVES · put the upload key on each test drive (the Studio has the key):
    zsh /tmp/att-upload.zsh save-to-drive
    [ ] LaCie   [ ] PRO-G40 (when free)   [ ] Extreme Pro   [ ] P7   [ ] OWC

@@ -1,0 +1,8 @@
+STEP 7 · Cinebench 2026 · hands-off, ~10-15 min (CPU multi, CPU single, GPU; one pass each)
+Quits other apps, pauses scanning, waits until the Mac is cool, runs Cinebench's command-line mode,
+prints a photo card and puts the scores in this Mac's Main Results row by itself.
+
+zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-cinebench.zsh
+
+Also runs in the walk-away queue:  QUEUE="cinebench" zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+First time on any Mac: also run Cinebench once in the app and send Claude both, to check they match.

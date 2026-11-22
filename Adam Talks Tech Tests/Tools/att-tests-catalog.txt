@@ -1,0 +1,36 @@
+# ATT test catalog for Run This Next (Nov 22 2026). Read by att-sheet-gaps.js.
+# A test shows as "still needed" on a Mac when any of its sheet cells is blank or marked
+# RERUN / NOT CLEAN / NOT VALID / PROVISIONAL / REDO / WARM-UP (capitals), or when the Mac's
+# section in "00 RUN THIS NEXT - all Macs.txt" lists it under REDO=.
+# Columns are matched by their row-2 header (exact, or the start of it). =VALUE means the cell must equal it.
+# key | step | walk or hand | min RAM GB (0 = any) | columns (TAB:header; ...) | label | command (hand only)
+xcode|8|walk|0|MR:Xcode 27 Average|Xcode 27 build|
+blender|9|walk|0|MR:Blender Render GPU Classroom Scene;MR:Classroom CPU;MR:Blender Render GPU Barbershop Scene|Blender Classroom + Barbershop|
+redautumn|9b|walk|0|MR:Blender Red Autumn 25 frames|Blender Red Autumn|
+sustained|10|walk|0|NT:Sustained drop|Sustained (throttling)|
+handbrake|11|walk|0|NT:x265 CPU encode time;NT:VideoToolbox H.265 encode time|HandBrake|
+qwen9b|14a|walk|0|NT:Qwen 9B generation (tok/s);NT:Qwen 9B power|Qwen 9B|
+qwen27b|14b|walk|24|NT:Generation (tok/s), Roman 10 paragraphs|Qwen 27B|
+gemma|14c|walk|0|MR:Tokens a Second;MR:Total Tokens=2033|Gemma (GGUF, 2,033 tokens)|
+ladder|14d|walk|36|NT:AI ladder|Qwen 27B ladder|
+bandwidth|14e|walk|0|NT:CPU memory bandwidth|Memory bandwidth|
+whisper|14f|walk|0|NT:Whisper Neural Engine|Whisper (Neural Engine)|
+responsiveness|17b|walk|0|NT:Responsiveness LOADED score|Responsiveness (felt speed)|
+appmem|17c|walk|0|NT:App RAM: Safari 20 / 80|App RAM appetite|
+geekbench|6|hand|0|MR:Geekbench 7 multi core;MR:Geekbench 7 Metal;MR:Quantized Score;MR:Geekbench AI GPU|Geekbench 7 (CPU + Metal + OpenCL) and Geekbench AI (Neural Engine, CPU, GPU)|zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Geekbench 7"
+cinebench|7|walk|0|MR:CPU Multithreaded;MR:CPU Single Thread;MR:GPU|Cinebench 2026 (no clicking)|
+puget-resolve|12|hand|0|MR:Puget Bench for DaVinci Resolve|Puget Bench for DaVinci Resolve|cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
+puget-premiere|12|hand|0|MR:Puget Bench for Premiere Pro|Puget Bench for Premiere Pro|cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Premiere Pro"
+puget-ae|12|hand|0|MR:Puget Bench for After Effects|Puget Bench for After Effects (log run 2)|cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "After Effects"
+puget-ps|12|hand|0|MR:Puget Bench for Photoshop|Puget Bench for Photoshop|cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Photoshop"
+puget-lr|12|hand|0|MR:Puget Bench for Lightroom Classic|Puget Bench for Lightroom Classic (one Mac at a time)|cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "Lightroom Classic"
+logic|13|hand|0|NT:Logic tracks @32;MR:Logic Tracks|Logic tracks, 256 then 32 buffer|cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
+cyberpunk|15|hand|0|NT:Cyberpunk native avg fps|Cyberpunk 2077 (4 passes)|zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Cyberpunk 2077"
+warthunder|16|hand|0|NT:War Thunder avg fps|War Thunder (throwaway run, log the 2nd)|zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "War Thunder"
+stacker|17|hand|0|NT:Stacker: FCP 3-min 4K export|Stacker: restart, closer, restart, stacker|cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
+drawthings|18|hand|0|NT:Draw Things standard|Draw Things|cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+magmask|19|hand|0|NT:Final Cut Magnetic Mask Analyze|Final Cut Magnetic Mask Analyze|cd ~/Downloads/"Adam Talks Tech Tests"/"Final Cut Test" && zsh att-fcp-neural.zsh
+fcpexports|E6|hand|0|MR:3 Min Video Export Social Media 4K setting;MR:30 Min Apple Devices 4K Export;MR:30 min video export shocial media 4k setting;MR:Simultaneous 6K Video Clips Playing|Final Cut exports (3-min Social 4K, 30-min Apple Devices 4K, 30-min Social 4K) + 6K clips|cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
+lightroom|E6|hand|0|MR:Export Test 500 photos;MR:AI Denoise 50 RAW photos|Lightroom Classic exports + AI Denoise (one Mac at a time)|
+ssd|E6|hand|0|MR:Blackmagic Disk Speed Test (Read);MR:AJA System Test Lite 16GB 4K Read|Blackmagic Disk Speed + AJA (internal SSD)|
+braw|E6|hand|0|MR:Blackmagic RAW Speed Test (Metal);MR:Blackmagic RAW Speed Test 4k version metal|Blackmagic RAW Speed Test (8K + 4K, CPU + Metal)|
