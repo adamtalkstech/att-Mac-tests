@@ -200,7 +200,16 @@ att_upload_results() {
   zsh "$ATT_TOOLS_DIR/att-upload.zsh" auto "$ATT_TEST_NAME" 2>/dev/null
   return 0
 }
-trap 'att_resume_bg; att_sync_results; att_upload_results' EXIT
+# Nov 21: refresh this Mac's RUN THIS NEXT list after every test, so finished steps show ✓ right away
+# (inside a walk-away queue it only rewrites the file; the queue opens it at the end).
+att_refresh_next() {
+  [[ -f "$ATT_TOOLS_DIR/att-next.zsh" ]] || return 0
+  [[ ${ZSH_ARGZERO:t} == att-next.zsh || ${ZSH_ARGZERO:t} == att-update.zsh ]] && return 0
+  if [[ -n $ATT_NOSYNC ]]; then NOOPEN=1 zsh "$ATT_TOOLS_DIR/att-next.zsh" >/dev/null 2>&1
+  else zsh "$ATT_TOOLS_DIR/att-next.zsh" >/dev/null 2>&1; fi
+  return 0
+}
+trap 'att_resume_bg; att_sync_results; att_upload_results; att_refresh_next' EXIT
 trap 'att_resume_bg; att_sync_results; att_upload_results; exit 130' INT TERM HUP
 
 # Every cooldown is also saved to Results/<Mac>/cooldowns.csv (date, time, test, waited s, result)

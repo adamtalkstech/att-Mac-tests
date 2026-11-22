@@ -100,6 +100,7 @@ if pgrep -xq "LM Studio"; then
   pgrep -xq "LM Studio" && pkill -x "LM Studio" 2>/dev/null
 fi
 afplay /System/Library/Sounds/Glass.aiff 2>/dev/null
+zsh "$TOOLS/att-next.zsh" >/dev/null 2>&1   # show the updated list (finished tests now ✓)
 print "\n>>> All set. You can unplug the drive and walk away. Don't use this Mac until it's done. <<<\n"
 
 typeset -A RC TOOK

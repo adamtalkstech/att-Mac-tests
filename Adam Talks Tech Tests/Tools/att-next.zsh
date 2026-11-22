@@ -155,11 +155,11 @@ if [[ $1 == go ]]; then
     print "✓ All walk-away tests are done on this Mac${DONE_GO:+ (${(j:, :)DONE_GO})}."
     nxt=$(sec | grep -m1 '^1\. ')
     [[ -n $nxt ]] && print "Next is hands-on: $nxt  (full steps in the RUN THIS NEXT window)"
-    open -a TextEdit "$OUT" 2>/dev/null; exit 0
+    osascript -e 'tell application "TextEdit" to close (every document whose name contains "RUN THIS NEXT") saving no' >/dev/null 2>&1; open -a TextEdit "$OUT" 2>/dev/null; exit 0
   fi
   print "Starting this Mac's walk-away tests: $GO"
   QUEUE="$GO" exec zsh "$TOOLS/att-queue.zsh"
 fi
 cat "$OUT"
-[[ -z $NOOPEN ]] && open -a TextEdit "$OUT" 2>/dev/null
+[[ -z $NOOPEN ]] && { osascript -e 'tell application "TextEdit" to close (every document whose name contains "RUN THIS NEXT") saving no' >/dev/null 2>&1; open -a TextEdit "$OUT" 2>/dev/null; }
 exit 0
