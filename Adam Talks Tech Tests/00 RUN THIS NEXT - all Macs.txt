@@ -1,5 +1,5 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 11:10 AM
+Updated: Nov 22 2026, 11:05 AM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
@@ -320,6 +320,8 @@ RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fp
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
 ROWS=MR:15 NT:20
+REDO=cinebench
+Cinebench REDO (Nov 22): single-core read 557, well below the other Airs. att-cinebench.zsh quits everything and waits till it's cool first.
 GO=sheet blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
