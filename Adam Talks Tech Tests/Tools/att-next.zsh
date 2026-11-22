@@ -85,7 +85,9 @@ LINE="============================================================"
   [[ -x /Applications/Blender.app/Contents/MacOS/Blender ]] || fix+=("Blender missing in Applications (Blender, Red Autumn, sustained): Tools/att-install-apps.zsh")
   [[ -n $(mdfind "kMDItemCFBundleIdentifier == 'com.apple.FinalCut*'" 2>/dev/null | grep -m1 '\.app$') || -n $(print -l /Applications/Final\ Cut*.app(N)) ]] || \
     fix+=("Final Cut Pro (Creator Studio) missing: needed for the stacker/closer")
-  [[ -d /Applications/Numbers.app ]] || fix+=("Numbers missing: free in the App Store (stacker/closer)")
+  # Numbers can be the Creator Studio copy with a different name: ask macOS the same way the stacker opens it
+  { open -Ra Numbers 2>/dev/null || [[ -n $(print -l /Applications/Numbers*.app(N)) || -n $(mdfind "kMDItemCFBundleIdentifier == 'com.apple.iWork.Numbers*'" 2>/dev/null | grep -m1 '\.app$') ]]; } || \
+    fix+=("Numbers missing: free in the App Store (stacker/closer)")
   dtc="$HOME/Library/Containers/com.liuliu.draw-things/Data/Documents"
   if [[ -z $(mdfind "kMDItemCFBundleIdentifier == 'com.liuliu.draw-things'" 2>/dev/null | grep -m1 '\.app$') ]]; then
     fix+=("Draw Things missing: free in the Mac App Store, open it once, Settings > API Server ON (HTTP, 7860)")
