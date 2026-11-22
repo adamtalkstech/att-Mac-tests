@@ -17,8 +17,8 @@ att_ui_setup() {   # call before the timed part. Returns 0 when UI control works
     print "  System Settings > Privacy & Security > Accessibility > turn ON Terminal"
     print "  (if Terminal isn't listed, click + and add Applications/Utilities/Terminal)."
     open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
-    print -n "  Press Return when it's on. "; read -r
-    ok=$(osascript -e 'tell application "System Events" to get UI elements enabled' 2>/dev/null)
+    print -n "  Waiting for it (no need to press anything)"
+    for i in {1..200}; do ok=$(osascript -e 'tell application "System Events" to get UI elements enabled' 2>/dev/null); [[ $ok == true ]] && break; print -n "."; sleep 3; done; print ""
     [[ $ok == true ]] || { print "  Still off. The test will ask you to click Share yourself."; return 1; }
   fi
   # Trigger the "Terminal wants to control Numbers" prompt now instead of mid-test

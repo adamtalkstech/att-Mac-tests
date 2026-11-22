@@ -224,9 +224,16 @@ print "ATT Responsiveness Score (step 17b) on $MAC"
 # Nov 21: listing processes works WITHOUT Accessibility; counting a window doesn't. Test the real thing
 # (the 16GB mini's warm-up failed all 40 app checks until macOS's Accessibility prompt was answered).
 if ! osascript -e 'tell application "System Events" to tell process "Finder" to count windows' >/dev/null 2>&1; then
-  print "!! Terminal can't control other apps yet."
-  print "   System Settings > Privacy & Security > Accessibility: turn Terminal ON, quit Terminal, then run this again."
-  exit 1
+  print "!! Terminal can't control other apps yet. Opening the setting for you:"
+  print "   Privacy & Security > Accessibility: turn Terminal ON (click + and add Applications/Utilities/Terminal if it isn't listed)."
+  open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
+  whence att_say >/dev/null && att_say "Turn on Terminal in Accessibility." || say "Turn on Terminal in Accessibility." 2>/dev/null &
+  print -n "   Waiting for it (the test starts by itself)"
+  for i in {1..200}; do osascript -e 'tell application "System Events" to tell process "Finder" to count windows' >/dev/null 2>&1 && break; print -n "."; sleep 3; done
+  if ! osascript -e 'tell application "System Events" to tell process "Finder" to count windows' >/dev/null 2>&1; then
+    print "\n   Still off. If Terminal IS switched on, quit Terminal (Cmd-Q), reopen it and run this again."; exit 1
+  fi
+  print "\n   Got it."
 fi
 osascript -e 'tell application "Safari"' -e 'make new document with properties {URL:"about:blank"}' -e 'end tell' >/dev/null 2>&1
 sleep 4

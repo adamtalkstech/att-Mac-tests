@@ -82,7 +82,7 @@ LINE="============================================================"
   [[ -n $want && $have != $want ]] && fix+=("macOS is $have: update to $want first (System Settings > General > Software Update), or results won't match the other Macs")
   tz=$(readlink /etc/localtime 2>/dev/null | sed 's#.*/zoneinfo/##')
   [[ -n $tz && $tz != America/Chicago ]] && fix+=("Time zone is $tz: set it to Central so times line up (the walk-away queue does it for you, or: sudo systemsetup -settimezone America/Chicago)")
-  osascript -e 'tell application "System Events" to get name of first process' >/dev/null 2>&1 || \
+  osascript -e 'tell application "System Events" to tell process "Finder" to count windows' >/dev/null 2>&1 || \
     fix+=("Terminal can't control apps: System Settings > Privacy & Security > Accessibility > Terminal ON, then Cmd-Q Terminal (stacker, responsiveness, Final Cut, Numbers)")
   xcode-select -p >/dev/null 2>&1 || fix+=("Xcode Command Line Tools missing: run  xcode-select --install  (bandwidth test, Final Cut click helper, Python)")
   [[ -x $HOME/.lmstudio/bin/lms ]] || fix+=("LM Studio not set up: install LM Studio 0.4.28, open it once, quit it (Qwen, Gemma, ladder, stacker)")
