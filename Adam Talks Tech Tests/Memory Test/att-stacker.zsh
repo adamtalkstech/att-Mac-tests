@@ -84,8 +84,11 @@ ask()   { print -n "  >> $1 Press Return. "; read -r; }
 timed() { local t0=$EPOCHREALTIME; print -n -u2 "  >> $1 Press Return the moment it's done. "; read -r; printf "%.1f" $(( EPOCHREALTIME - t0 )); }
 open_tabs() { local n=$1 i; for (( i = 1; i <= n; i++ )); do open -a Safari "${SITES[$i]}"; sleep 3; done; }
 quit_app()  { osascript -e "tell application \"$1\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$1\" to quit" >/dev/null 2>&1; sleep 3; }
-clear_export() { local e="$ROOT/Export"; mkdir -p "$e"; [[ -n $(ls -A "$e" 2>/dev/null) ]] || return 0
-  local d="$ROOT/_To Delete/old exports $(date +%H%M%S)"; mkdir -p "$d"; mv "$e"/* "$d"/ 2>/dev/null; print "  (moved old files out of Export into ${d:t})"; }
+# Deletes old test exports (Nov 21: they were piling up in _To Delete at ~350MB each).
+clear_export() { local e="$ROOT/Export"; mkdir -p "$e"
+  rm -rf "$ROOT/_To Delete"/old\ exports\ *(N) 2>/dev/null
+  [[ -n $(ls -A "$e" 2>/dev/null) ]] || return 0
+  rm -rf "$e"/*(N) "$e"/.*(N) 2>/dev/null; print "  (deleted the old export from the Export folder)"; }
 lms_load()  { "$LMS" load "$1" --yes --context-length 8192 >/dev/null 2>&1 && print "  loaded ${1:t}" || print "  !! couldn't load $1"; }
 numbers_ready() {
   if (( UIOK )) && NUM_S=$(att_numbers_wait 600); then print "  Numbers open: ${NUM_S}s (timed by the script)"
@@ -181,6 +184,7 @@ att_card_start "RAM: $MODE run (Safari, Final Cut, Numbers, LM Studio)"
 print "Mode:                 $MODE   (${RAM_GB}GB, settle ${SETTLE}s, 27B on top: $BIG)"
 print "Final Cut 3-min export: ${EXP:-?} s $([[ $MODE == stacker ]] && print '(with everything open)')"
 print "Export check:         $EXPORT_NOTE"
+clear_export >/dev/null   # the export isn't needed once it's timed and checked
 print "Numbers open to Dashboard: ${NUM_S:-?} s"
 print "Peak swap:            $(val 'Peak swap GB') GB   (start $(val 'Swap at start GB') GB)"
 print "Peak compressed:      $(val 'Peak compressed GB') GB"

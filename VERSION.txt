@@ -1,3 +1,4 @@
+2026-11-21 21:15 Nov 21 2026 - Stacker deletes its export after timing it, and clears old exports before each run
 2026-11-21 21:12 Nov 21 2026 - Responsiveness (17b) quits apps by app ID with the shared routine (missed some apps before)
 2026-11-21 21:05 Nov 21 2026 - Stacker: catches Final Cut saving to Documents/Movies, times it there, logs it, moves it to Export; first-time prep sets the Export folder once
 2026-11-21 20:55 Nov 21 2026 - Red Autumn: when frames are missing, Blender's log is saved to Results (uploads) and its last lines print
