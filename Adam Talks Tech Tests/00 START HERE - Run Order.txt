@@ -55,6 +55,10 @@ pauses background scanning, waits till the Mac is cool). Press Return in it when
 [ ] 17b. Responsiveness (felt speed, ~10 min, hands-off). Restart first. One-time: Safari
         Developer > Allow JavaScript from Apple Events; Terminal in Accessibility.
           cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
+[ ] 17c. App RAM appetite (~25 min, hands-off, also runs in the walk-away queue as "appmem"):
+        each app alone (Safari 20/80 tabs, Chrome 20/80, Numbers, Final Cut playing, Logic 600 tracks,
+        Qwen 9B, 27B on 32GB+): how much memory it wants, how much macOS squeezed, swap, pressure.
+          cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-appmem.zsh
 [ ] 18. Draw Things (Z-Image Turbo). Draw Things open, Settings > API Server ON (HTTP, 7860).
         Check it's ready:  cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh check
         Run it:            cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh

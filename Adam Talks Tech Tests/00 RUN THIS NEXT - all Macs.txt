@@ -2,13 +2,13 @@ RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub
 Updated: Nov 21 2026, 11:25 PM
 SINCE=2026-11-21 17:00
 PRIORITY on every Mac (Nov 21): the RAM tests first (Step 17 closer, stacker, 17b responsiveness),
-plus Step 14e bandwidth, NEW Step 14f Whisper (Neural Engine; keep a drive plugged in) + any reruns
+plus Step 14e bandwidth, NEW Step 14f Whisper (Neural Engine) and 17c App RAM appetite + any reruns
 in each Mac's walk-away line:
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 
 [[M6-MINI-16]]
 NAME=M6 MINI 16GB (16/512, yours)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 1. Step 17 · Stacker · hands-off, ~25 min per run
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -31,7 +31,7 @@ GO=bandwidth whisper
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
-GO=sustained bandwidth whisper
+GO=sustained bandwidth whisper appmem
 1. Step 17 · Stacker · check ~60GB free first (it copies the 45GB Final Cut library)
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -57,7 +57,7 @@ GO=sustained bandwidth whisper
 
 [[M6-MINI-24-512]]
 NAME=M6 MINI 24GB (24/512, yours)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -80,7 +80,7 @@ GO=bandwidth whisper
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -104,7 +104,7 @@ GO=bandwidth whisper
 
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
-GO=qwen27b sustained bandwidth whisper
+GO=qwen27b sustained bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -137,7 +137,7 @@ Nothing scheduled right now. Ask Claude.
 NAME=14" M5 Max PROLED (B&H loaner)
 (Ladder 8-bit DONE Nov 21 10 PM: swaps, never answers. Set LM Studio guardrails back to Relaxed.)
 SINCE=2026-11-21 22:00
-GO=xcode redautumn bandwidth whisper
+GO=xcode redautumn bandwidth whisper appmem
 RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's charger (the 'Max scored lower' line depends on it), Step 12 Puget Resolve / Premiere / Photoshop / Lightroom on the charger (Nov 20 runs were on a dock). Xcode and Red Autumn reruns are in the walk-away line.
 1. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
    b) Restart, then:
@@ -166,7 +166,7 @@ ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Ton
 
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
-GO=handbrake bandwidth whisper
+GO=handbrake bandwidth whisper appmem
 SINCE=2026-11-21 22:05
 ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): HandBrake + bandwidth in the walk-away line.
 1. Step 17 · Stacker REDO (couch run doesn't count; the closer from earlier is fine) · restart first:
@@ -189,7 +189,7 @@ ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Ton
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 SINCE=2026-11-21 22:05
 ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): bandwidth in the walk-away line, Draw Things redo below.
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 1. Step 18 · Draw Things REDO + save the model to the drive · LaCie plugged in
    Redo (hands-off now, no Return presses):
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
@@ -213,7 +213,7 @@ GO=bandwidth whisper
 
 [[M6-MBP]]
 NAME=M6 MacBook Pro (B&H loaner)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -240,7 +240,7 @@ GO=bandwidth whisper
 NAME=M6 iMac (B&H loaner)
 SINCE=2026-11-21 22:05
 FIRST: open LM Studio once (the Nov 21 LM Studio runs failed: it wasn't set up), quit it, then run the walk-away line.
-GO=qwen9b qwen27b gemma bandwidth whisper
+GO=qwen9b qwen27b gemma bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -266,7 +266,7 @@ GO=qwen9b qwen27b gemma bandwidth whisper
 
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -289,7 +289,7 @@ GO=bandwidth whisper
 
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
-GO=blender redautumn handbrake sustained qwen9b bandwidth whisper
+GO=blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
 1. Step 17 · Stacker
    a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
       "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
@@ -312,7 +312,7 @@ GO=blender redautumn handbrake sustained qwen9b bandwidth whisper
 
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 DRIVES · put the upload key on each test drive (the Studio has the key):
    zsh /tmp/att-upload.zsh save-to-drive
    [ ] LaCie   [ ] PRO-G40 (when free)   [ ] Extreme Pro   [ ] P7   [ ] OWC
@@ -321,7 +321,7 @@ Tests (Nov 21, new tests on every Mac): walk-away line runs bandwidth; then Step
 
 [[STUDIO-M4MAX]]
 NAME=M4 Max Mac Studio (daily driver)
-GO=bandwidth whisper
+GO=bandwidth whisper appmem
 DRIVES · put the upload key on each test drive (if this Studio has the key):
    zsh /tmp/att-upload.zsh save-to-drive
 Tests (Nov 21): walk-away line runs bandwidth; then Step 17 closer + stacker and Step 17b responsiveness when it's free.

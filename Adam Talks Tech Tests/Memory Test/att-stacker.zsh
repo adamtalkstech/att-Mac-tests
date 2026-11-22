@@ -145,6 +145,8 @@ att_cooldown
 LOGOUT="$OUT/.memlog_${STAMP}.out"
 zsh "$HERE/att-memlog.zsh" "$MACNAME $MODE" 5 > "$LOGOUT" 2>&1 &
 LOGPID=$!
+# Nov 21: per-app memory too (what each app is using, not just the whole Mac)
+source "$ROOT/Tools/att-appmem.zsh"; APPCSV="$OUT/appmem_${MODE}_${STAMP}.csv"; att_appmem_start "$APPCSV" 10
 sleep 6
 step "baseline (nothing open)"; sleep 30
 
@@ -175,6 +177,7 @@ step "done"; sleep 10
 
 # ---------- Stop the logger, collect the numbers ----------
 kill -TERM $LOGPID 2>/dev/null; wait $LOGPID 2>/dev/null
+att_appmem_stop
 CSV=$(ls -t "$OUT"/*.csv 2>/dev/null | grep -v '/ATT-' | head -1)
 val() { awk -F, -v k="$1" '$1==k{print $2}' "$CSV" 2>/dev/null | tail -1; }
 EXP=$(tail -1 "$ROOT/Results/$MACNAME/Exports/exports.csv" 2>/dev/null | sed -E 's/"[^"]*"//g' | awk -F, '{print $5}')   # drop quoted fields first (the test name has a comma)
@@ -195,7 +198,9 @@ print "Peak compressed:      $(val 'Peak compressed GB') GB"
 print "Lowest memory free:   $(val 'Lowest memory free %')%"
 print "Time in yellow / red: $(val 'Seconds in yellow')s / $(val 'Seconds in red')s"
 print "SSD written:          $(val 'SSD written during test GB') GB"
-print "Log: ${CSV:t}"
+print "Biggest apps (peak footprint = what Activity Monitor calls Memory):"
+att_appmem_peaks "$APPCSV" 6
+print "Log: ${CSV:t}  +  ${APPCSV:t}"
 } | tee "$RES"
 att_card_end
 cat "$RES.steps" >> "$RES" 2>/dev/null; rm -f "$RES.steps" "$LOGOUT"
