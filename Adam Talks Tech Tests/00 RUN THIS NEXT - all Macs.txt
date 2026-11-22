@@ -1,5 +1,5 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 21 2026, 10:10 PM
+Updated: Nov 21 2026, 10:15 PM
 SINCE=2026-11-21 17:00
 PRIORITY on every Mac (Nov 21): the RAM tests first (Step 17 closer, stacker, 17b responsiveness),
 plus Step 14e bandwidth + any reruns in each Mac's walk-away line:
@@ -140,8 +140,11 @@ Optional: Step 9 · Blender rerun (background slowed the CPU run)
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
 GO=handbrake bandwidth
-RERUNS (Nov 21): HandBrake on Apple's charger is in the walk-away line (the Nov 20 run may have been on a dock).
-1. Step 17b · Responsiveness RERUN (first run's memory readout was broken, fixed) · closer + stacker DONE Nov 21. Restart first, then:
+SINCE=2026-11-21 22:05
+ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): HandBrake + bandwidth in the walk-away line.
+1. Step 17 · Stacker REDO (couch run doesn't count; the closer from earlier is fine) · restart first:
+   cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
+   Then Step 17b · Responsiveness REDO · restart first:
    cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
    cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
@@ -154,8 +157,9 @@ RERUNS (Nov 21): HandBrake on Apple's charger is in the walk-away line (the Nov 
 
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
-(Step 14e bandwidth DONE Nov 21: 261.7 CPU / 279.1 GPU GB/s, run twice.)
-GO=
+SINCE=2026-11-21 22:05
+ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): bandwidth in the walk-away line, Draw Things redo below.
+GO=bandwidth
 1. Step 18 · Draw Things REDO + save the model to the drive · LaCie plugged in
    Redo (hands-off now, no Return presses):
    cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
@@ -175,7 +179,7 @@ GO=
       then Settings > Developer > "Allow JavaScript from Apple Events".
       cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
 3. Step 16 · War Thunder · hands-on
-(First Draw Things run Nov 21: 25.83 s standard, 136.72 s stress.)
+
 
 [[M6-MBP]]
 NAME=M6 MacBook Pro (B&H loaner)
