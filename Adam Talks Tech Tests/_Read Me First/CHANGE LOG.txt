@@ -3,6 +3,7 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+2026-11-22 14:00 Nov 22 2026 - Logic logger v1.1: records sample rate, Process Buffer Range, Multithreading; optional 64/128 buffer passes; auto-logs Logic Tracks + @32. READ ME has a shareable 'repeat it' section
 2026-11-22 13:45 Nov 22 2026 - Step 19 v1.2: times the Magnetic Mask Analyze button (where the AI work happens), not an export. 3 runs, saved analysis cleared before each and restored after
 2026-11-22 13:35 Nov 22 2026 - Step 19 v1.1: uses Adam's existing "magnetic" project in Test Library rev (no new library); fresh mask vs saved mask export, original mask files restored
 2026-11-22 13:20 Nov 22 2026 - Responsiveness LOADED score rescaled: 1000 x (0-tab ms / 80-tab ms) = speed kept at 80 tabs (the old 250 ms scale hit 1000 on every Mac because ~230 ms is the AppleScript floor)
