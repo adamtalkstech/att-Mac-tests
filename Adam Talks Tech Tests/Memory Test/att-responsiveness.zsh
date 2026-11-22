@@ -125,6 +125,7 @@ mem_vals() {   # swap used, free %, pressure color (Activity Monitor's graph), c
   swap=$(sysctl -n vm.swapusage | awk '{print $6}')
   free=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{print $2}')
   lvl=$(sysctl -n kern.memorystatus_vm_pressure_level 2>/dev/null)
+  [[ -z $lvl ]] && lvl=$(memory_pressure 2>/dev/null | awk '/pressure level/ {print ($NF ~ /[Cc]ritical/ ? 4 : ($NF ~ /[Ww]arn/ ? 2 : 1)); exit}')
   print -r -- "${swap:-?} ${free:-?} $(plev_name $lvl) $(comp_gb)GB"
 }
 # Every 5 s during a run: pressure level, swap MB, compressor pages -> peaks for the card
@@ -133,7 +134,7 @@ mem_sampler_start() {
   ( while true; do
       print "$(sysctl -n kern.memorystatus_vm_pressure_level 2>/dev/null) $(sysctl -n vm.swapusage | awk '{v=$6; u=substr(v,length(v)); sub(/[MG]$/,"",v); if(u=="G") v*=1024; printf "%d", v}') $(vm_stat | awk '/occupied by compressor/ {gsub(/\./,"",$NF); print $NF}')"
       sleep 5
-    done ) &!
+    done >> "$1" ) &!
   MEMPID=$!
 }
 mem_sampler_stop() { [[ -n $MEMPID ]] && kill $MEMPID 2>/dev/null; MEMPID=""; }
