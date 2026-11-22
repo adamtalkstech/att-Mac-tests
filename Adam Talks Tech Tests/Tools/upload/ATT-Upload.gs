@@ -1,5 +1,5 @@
 /**
- * ATT Test Results receiver (Google Apps Script) - v1, Nov 21 2026
+ * ATT Test Results receiver (Google Apps Script) - v2, Nov 22 2026 (auto-logging)
  *
  * Paste this into the Mac Tests sheet: Extensions > Apps Script.
  * It contains NO secrets. The key lives in Project Settings > Script Properties.
@@ -19,6 +19,14 @@
  * WHAT IT CAN DO: add a row to Raw Results, save a zip in ATT Test Results, copy any
  * Puget CSV in that zip into Puget Results/<Mac>, and add its tests to Puget Detail.
  * It never sends anything back except "ok" or "denied".
+ *
+ * v2 AUTO-LOGGING: a card line   LOG | New Tests | <column header> | <value>
+ * (or the LM Studio style   New Tests  BJ-BK (label):<tab>v1<tab>v2 ) is written into that
+ * Mac's row. The row comes from the "Mac Map" tab (Mac ID -> row). Every write keeps the old
+ * value in the cell's note and gets a line in the "Auto Log" tab. A card with a warning
+ * (WARM-UP, don't log, NOT CLEAN, NOT ANE, a line starting !!, run it again, WRONG PROJECT)
+ * is HELD: logged in Auto Log, nothing written. Queue and backfill uploads are skipped
+ * (each test already uploads on its own).
  */
 
 var MAX_BODY = 40 * 1024 * 1024;      // bytes of JSON
@@ -89,6 +97,7 @@ function doPost(e) {
       if (d.summary_b64) summary = Utilities.newBlob(Utilities.base64Decode(d.summary_b64)).getDataAsString('UTF-8').slice(0, 45000);
       sh.appendRow([new Date(), cell_(d.mac), cell_(/^[0-9a-f]{8}$/.test(d.macid || '') ? d.macid : ''), cell_(d.test), cell_(d.mackind), cell_(d.when),
                     Number(d.files) || 0, link, cell_(d.summary_file), cell_(summary), cell_(d.note)]);
+      try { autoLog_(d, summary, link); } catch (ae) { console.error(ae); }
     } finally { lock.releaseLock(); }
     return reply_(d.kind === 'ping' ? 'ok ping received' : 'ok sent to the Mac Tests sheet + Drive');
   } catch (err) {
@@ -195,3 +204,93 @@ function importPugetText_(text, fileName, mac, macid, url) {
   return out.length;
 }
 function num_(v) { if (v === undefined || v === '') return ''; var n = Number(v); return isNaN(n) ? v : n; }
+
+// ---------------- v2: auto-logging into the Mac's row ----------------
+var AUTO_TAB = 'Auto Log', MAP_TAB = 'Mac Map';
+var HOLD_RE = /WARM-UP|don't log|NOT CLEAN|NOT ANE|^!!.*|run it again|WRONG PROJECT/m;
+
+function autoLog_(d, summary, link) {
+  if (!summary || /queue|backfill|^ping$/i.test(String(d.test || ''))) return;
+  var items = parseLogLines_(summary);
+  if (!items.length) return;
+  var ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('ATT_SHEET_ID'));
+  var macid = /^[0-9a-f]{8}$/.test(d.macid || '') ? d.macid : '';
+  var rows = macRows_(ss, macid);
+  var hold = summary.match(HOLD_RE);
+  var log = autoSheet_(ss), when = Utilities.formatDate(new Date(), 'America/Chicago', 'MMM d h:mm a');
+  var out = [];
+  items.forEach(function (it) {
+    var sh = ss.getSheetByName(it.tab), col = 0, head = it.header || '', status;
+    if (!sh) status = 'no tab ' + it.tab;
+    else {
+      col = it.col || findCol_(sh, it.header);
+      if (col && !head) head = String(sh.getRange(2, col).getValue());
+      var row = rows[it.tab];
+      if (!col) status = 'no column matches "' + it.header + '"';
+      else if (!row) status = 'Mac ID ' + (macid || '?') + ' not in Mac Map';
+      else if (hold) status = 'HELD (card says: ' + hold[0].slice(0, 80) + ')';
+      else if (/^[\s\/\-?]*$|^n\/a$/i.test(it.value)) status = 'no value, skipped';
+      else {
+        var cell = sh.getRange(row, col), old = String(cell.getDisplayValue());
+        if (old === it.value) status = 'same as sheet';
+        else {
+          cell.setValue(val_(it.value));
+          cell.setNote('Auto-logged ' + when + ' from ' + (d.test || '') + (old ? '\nwas: ' + old : '') + (link ? '\n' + link : ''));
+          status = old ? 'REPLACED (was ' + old + ')' : 'written';
+        }
+      }
+    }
+    out.push([new Date(), cell_(d.mac), macid, cell_(d.test), it.tab, (rows[it.tab] || ''), col ? letter_(col) : '', cell_(head), cell_(it.value), status, link || '']);
+  });
+  if (out.length) log.getRange(log.getLastRow() + 1, 1, out.length, out[0].length).setValues(out);
+}
+
+function parseLogLines_(text) {
+  var items = [];
+  String(text).split(/\r?\n/).forEach(function (l) {
+    var m = l.match(/^\s*LOG \| (Main Results|New Tests) \| (.+?) \| (.*?)\s*$/);
+    if (m) { items.push({ tab: m[1], header: m[2].trim(), value: m[3].trim() }); return; }
+    m = l.match(/^\s*(Main Results|New Tests)\s+([A-Z]{1,2})(?:-([A-Z]{1,2}))?\s*\(.*?\):\t(.*)$/);
+    if (m) {
+      var c0 = colNum_(m[2]), c1 = m[3] ? colNum_(m[3]) : c0, vals = m[4].split('\t');
+      for (var i = 0; i < vals.length && c0 + i <= c1; i++) items.push({ tab: m[1], col: c0 + i, value: vals[i].trim() });
+    }
+  });
+  return items;
+}
+
+// Mac Map: A Mac ID | B Mac name | C New Tests row | D Main Results row | E note
+function macRows_(ss, macid) {
+  var sh = ss.getSheetByName(MAP_TAB);
+  if (!sh || !macid) return {};
+  var v = sh.getDataRange().getValues();
+  for (var i = 1; i < v.length; i++) if (String(v[i][0]).trim() === macid)
+    return { 'New Tests': Number(v[i][2]) || 0, 'Main Results': Number(v[i][3]) || 0 };
+  return {};
+}
+
+function findCol_(sh, header) {
+  if (!header) return 0;
+  var norm = function (s) { return String(s).toLowerCase().replace(/\s+/g, ' ').trim(); };
+  var h = norm(header), row = sh.getRange(2, 1, 1, sh.getLastColumn()).getValues()[0];
+  for (var i = 0; i < row.length; i++) if (norm(row[i]) === h) return i + 1;
+  for (i = 0; i < row.length; i++) if (row[i] && norm(row[i]).indexOf(h) === 0) return i + 1;
+  return 0;
+}
+
+function autoSheet_(ss) {
+  var sh = ss.getSheetByName(AUTO_TAB) || ss.insertSheet(AUTO_TAB);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(['Received', 'Mac', 'Mac ID', 'Test', 'Tab', 'Row', 'Column', 'Column header', 'Value', 'What happened', 'Logs (zip)']);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+function colNum_(a) { var n = 0; for (var i = 0; i < a.length; i++) n = n * 26 + (a.charCodeAt(i) - 64); return n; }
+function letter_(n) { var s = ''; while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+function val_(v) { return /^-?\d+(\.\d+)?$/.test(v) ? Number(v) : cell_(v); }
+
+// Run by hand to test without a Mac: Run > testAutoLog (writes nothing; shows what it would parse)
+function testAutoLog() {
+  Logger.log(JSON.stringify(parseLogLines_('LOG | New Tests | CPU memory bandwidth | 279.1\nNew Tests  BJ-BK (Whisper):\t12.3s / 48x\t9.1s / 66x / ANE 1.2 W')));
+}

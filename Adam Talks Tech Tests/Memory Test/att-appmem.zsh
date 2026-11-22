@@ -133,7 +133,7 @@ peak_of() {   # $1 step label, $2 app regex -> "footprintMB compressedMB" at the
       if (a ~ re) { f[$1]+=$(NF-2); c[$1]+=$(NF-1) } }
     END { m=0; mc=0; for (t in f) if (f[t] > m) { m=f[t]; mc=c[t] } printf "%.0f %.0f", m, mc }' "$CSV"
 }
-typeset -A FP CP
+typeset -A FP CP; MAXC=0; MAXSW=0; WORST=green
 att_card_start "RAM: App appetite, one app at a time (Step 17c)"
 {
 print "Each app alone. Footprint = Activity Monitor 'Memory' (what the app wants)."
@@ -145,6 +145,8 @@ while IFS='~' read -r k re label sw0; do
   read -r f c <<< "$(peak_of "$label" "$re")"; FP[$k]=$f; CP[$k]=$c
   endl=$(grep "^END~$k~" "$PH" | tail -1); sw1=$(print -r -- "$endl" | cut -d'~' -f3); pl=$(print -r -- "$endl" | cut -d'~' -f4)
   printf "  %-46s %5.1f GB %7.1f GB %+6.1f GB %s\n" "${label:0:46}" $(( f / 1024.0 )) $(( c / 1024.0 )) $(( ${sw1:-0} - ${sw0:-0} )) "$pl"
+  (( c > MAXC )) && MAXC=$c; (( ${sw1:-0} - ${sw0:-0} > MAXSW )) && MAXSW=$(( ${sw1:-0} - ${sw0:-0} ))
+  [[ $pl == red ]] && WORST=red; [[ $pl == yellow && $WORST == green ]] && WORST=yellow
 done < "$PH"
 if [[ -n ${FP[safari80]} && -n ${FP[safari20]} ]]; then
   printf "\n  Safari: about %.0f MB per extra tab (20 -> 80 tabs)\n" $(( (FP[safari80] - FP[safari20]) / 60.0 ))
@@ -153,6 +155,13 @@ fi
 print ""
 print "Biggest apps over the whole run:"
 att_appmem_peaks "$CSV" 6
+g() { [[ -n ${FP[$1]} ]] && printf "%.1f" $(( FP[$1] / 1024.0 )) || printf -- "-"; }
+print ""
+att_log "New Tests" "App RAM: Safari 20 / 80 tabs" "$(g safari20) / $(g safari80)"
+[[ -n ${FP[chrome20]} ]] && att_log "New Tests" "App RAM: Chrome 20 / 80 tabs" "$(g chrome20) / $(g chrome80)"
+att_log "New Tests" "App RAM: Final Cut / Logic / Numbers" "$(g finalcut) / $(g logic) / $(g numbers)"
+att_log "New Tests" "App RAM: Qwen 9B / 27B" "$(g qwen9b) / $(g qwen27b)"
+att_log "New Tests" "App RAM: most compressed" "$(printf %.1f $(( MAXC / 1024.0 ))) / $(printf %.1f $MAXSW) / $WORST"
 print "\nEvery 5-second sample: ${CSV:t}"
 } | tee "$RES"
 att_card_end

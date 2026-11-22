@@ -180,6 +180,7 @@ att_card_start "Sustained load (heat), Classroom $DEVICE x$RUNS back to back"
   cat "$RUN_DIR/runs.txt"
   echo ""
   echo "Run 1 vs run $RUNS: ${DROP}% slower (positive = slowed down as it heated up)"
+  [[ $DEVICE == CPU ]] && att_log "New Tests" "Sustained drop: Blender CPU run 1 vs run 3" "$DROP"
 } | tee "$SUMMARY"
 att_card_end
 

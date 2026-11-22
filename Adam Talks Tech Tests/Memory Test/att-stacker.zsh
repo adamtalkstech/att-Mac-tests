@@ -198,6 +198,12 @@ print "Peak compressed:      $(val 'Peak compressed GB') GB"
 print "Lowest memory free:   $(val 'Lowest memory free %')%"
 print "Time in yellow / red: $(val 'Seconds in yellow')s / $(val 'Seconds in red')s"
 print "SSD written:          $(val 'SSD written during test GB') GB"
+if [[ $MODE == stacker ]]; then
+  _y=$(val 'Seconds in yellow'); _r=$(val 'Seconds in red'); _w=green; (( ${_y:-0} > 0 )) && _w=yellow; (( ${_r:-0} > 0 )) && _w=red
+  att_log "New Tests" "Stacker: FCP 3-min 4K export" "${EXP:-?}"
+  att_log "New Tests" "Stacker: swap added" "$(awk -v a="$(val 'Peak swap GB')" -v b="$(val 'Swap at start GB')" 'BEGIN{if(a=="")print "?"; else printf "%.1f", a-b}')"
+  att_log "New Tests" "Stacker: memory pressure color" "$_w"
+fi
 print "Biggest apps (peak footprint = what Activity Monitor calls Memory):"
 att_appmem_peaks "$APPCSV" 6
 print "Log: ${CSV:t}  +  ${APPCSV:t}"

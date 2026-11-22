@@ -387,6 +387,9 @@ relaunch_t=0; for v in $R_RELAUNCH; do (( relaunch_t += v )); done
   print "SHEET: Swap end / slower % / spread  ->  ${swap} / ${slower}% / ${spread}%"
   print "SHEET: Pressure peak / tabs dropped / old tabs reloaded  ->  ${peakp} / ${dropped} / ${prl_t} of ${pr_t}"
   print "SHEET: Peak swap MB / peak compressed GB / apps relaunched  ->  ${peaksw} / ${peakcomp} / ${relaunch_t}"
+  att_log "New Tests" "Responsiveness LOADED score" "${loaded}"
+  att_log "New Tests" "Responsiveness light / overall score" "${light} / ${score} | ${avg0} / ${avg80} ms"
+  att_log "New Tests" "RAM at 80 tabs" "${peakp} / ${dropped} / ${prl_t} of ${pr_t} / ${peaksw} MB"
   print "Saved: Results/$MAC/Memory/${TXT:t} (+ .csv)"
   att_card_end; } | tee "$TXT"
 

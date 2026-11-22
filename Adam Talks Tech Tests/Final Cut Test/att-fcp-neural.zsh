@@ -71,6 +71,6 @@ print "Same 1-min 4K clip, Apple Devices 4K, exported $ROUNDS times each, in tur
 print "No mask:          $AN s   (runs: ${(j:, :)TN})"
 print "Magnetic Mask:    $AM s   (runs: ${(j:, :)TM})"
 [[ $AN != "?" && $AM != "?" ]] && printf "Mask cost:        %.1f s  (mask - no mask = the AI work)\n" $(( AM - AN ))
-print "SHEET  New Tests (Final Cut Magnetic Mask): no mask $AN s | mask $AM s"
+[[ $AN != "?" && $AM != "?" ]] && att_log "New Tests" "Final Cut Magnetic Mask 1-min export" "$AN / $AM / $(printf %.1f $(( AM - AN )))"
 } | tee "$RES"
 att_card_end

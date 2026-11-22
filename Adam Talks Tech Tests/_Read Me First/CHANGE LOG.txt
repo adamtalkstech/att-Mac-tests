@@ -2,6 +2,9 @@ ATT MAC TESTS - CHANGE LOG
 Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
+NOV 22 2026
+2026-11-22 13:00 Nov 22 2026 - AUTO-LOGGING: cards print LOG lines (bandwidth, responsiveness, stacker, sustained, HandBrake, Draw Things, App RAM, Final Cut AI; LM Studio/Whisper use their existing sheet lines). The receiver (ATT-Upload.gs v2) writes them into the Mac's row (Mac Map tab), keeps the old value in the cell note, lists every write in Auto Log, and holds warm-up / !! / NOT CLEAN cards. Draw Things now saves its card as a .txt
+
 NOV 21 2026 (night)
 2026-11-22 06:05 Nov 21 2026 - NEW Step 19 Final Cut AI (att-fcp-neural.zsh): Magnetic Mask export vs no-mask export, hands-off, once Adam's ATT Neural Test library is on the drive
 2026-11-22 05:50 Nov 21 2026 - NEW Step 17c App RAM appetite (att-appmem.zsh): each app alone, per-app footprint / compressed / swap / pressure, MB per tab; in the walk-away queue as appmem. Closer + stacker cards now list the biggest apps (Tools/att-appmem.zsh)

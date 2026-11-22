@@ -66,6 +66,10 @@ att_card_start() {
   [[ -n $ATT_COOL_NOTE ]] && print "START: $ATT_COOL_NOTE"
   print -r -- "---------------------------------------------------------------"
 }
+# Auto-logging (Nov 22): one line per sheet cell. The receiver puts the value in this Mac's row
+# (Mac Map tab), keeps the old value in the cell's note and lists it in the Auto Log tab.
+# A card with WARM-UP / don't log / NOT CLEAN / a line starting !! is held, not written.
+att_log() { print -r -- "LOG | $1 | $2 | $3"; }
 att_card_end() {
   print "###############################################################"
   print "(Make the window tall enough that the whole box shows in the photo.)"

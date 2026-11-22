@@ -154,8 +154,12 @@ fi
 LOG="$ATT_RESULTS_DIR/.drawthings_$(date +%Y%m%d-%H%M%S).out"; mkdir -p "$ATT_RESULTS_DIR"
 cd "$KIT" && PYTHONUNBUFFERED=1 "${PY[@]}" att_drawthings_bench.py --tests "${TESTS:-standard,stress}" 2>&1 | tee "$LOG"
 
+{
 att_card_start "Draw Things image gen (Z-Image Turbo, seed 42, 8 steps)"
 print "Draw Things $DTV | $(grep -m1 '^Draw Things settings:' "$LOG" | cut -c23-)"
 grep -E "Draw Things (standard|stress):|warm-up|run [0-9]|MEDIAN|FAILED" "$LOG" | sed 's/^ */  /'
 print "Sheet: New Tests BS = standard median (s). Stress goes in F for now."
+_med=$(grep -E "Draw Things standard: [0-9.]+ *$" "$LOG" | tail -1 | awk '{print $NF}')
+[[ -n $_med ]] && att_log "New Tests" "Draw Things standard" "$_med"
 att_card_end
+} | tee "$ATT_RESULTS_DIR/drawthings_$(date +%Y-%m-%d_%H-%M).txt"
