@@ -25,3 +25,7 @@ PLANNED / IN PROGRESS   (scripts here print EXP lines, which never auto-log; sen
       Not uploaded; send Claude the result. One Mac at a time.
   E7  Logic heavy plugins (Alchemy): open "LogicAlchemyTest" from the test drive's Logic Test folder and run
       the normal track count method (att-logic-log.zsh) at 256 and 32 buffer. Send Claude the result.
+  E8  e8-battery-drain.zsh   Battery life, run to 5%: each hour 45 min web browsing + 15 min video, brightness 50% of
+      the slider, Wi-Fi on, muted, display awake. Logs % and watts every minute; card shows hours to 5%, a full-battery
+      estimate, average watts and battery health. Charge to 100%, turn off auto-brightness + True Tone, run, unplug.
+      6-24+ hours: two laptops at a time. "zsh e8-battery-drain.zsh report" rebuilds the card if the Mac restarted.
