@@ -93,10 +93,11 @@ if [[ -n $SH_ROWS ]]; then
 fi
 if [[ " $GO " == *" sheet "* ]]; then
   # offline with no saved copy: fall back to every walk-away test (finished ones still drop out below)
-  [[ $SH_NOTE == *"no internet"* ]] && SH_WALK=(ssdint cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma bandwidth whisper appmem responsiveness)
+  [[ $SH_NOTE == *"no internet"* ]] && SH_WALK=(bandwidth whisper cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ssdint appmem responsiveness)
   g2=(); for t in ${=GO}; do [[ $t == sheet ]] && g2+=($SH_WALK) || g2+=($t); done
   g2=(${(u)g2}); g3=()   # no repeats, in the queue's usual order
-  for t in ssdint cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder bandwidth whisper appmem responsiveness realday realdaycreator; do
+  # Nov 22 (Adam): steady tests first, the multi-app ones (App RAM, responsiveness, Real Day) always last
+  for t in bandwidth whisper cinebench xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder ssdint appmem responsiveness realday realdaycreator; do
     (( ${g2[(Ie)$t]} )) && g3+=($t); done
   for t in $g2; do (( ${g3[(Ie)$t]} )) || g3+=($t); done
   GO="${(j: :)g3}"

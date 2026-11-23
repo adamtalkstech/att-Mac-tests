@@ -245,6 +245,8 @@ function autoLog_(d, summary, link) {
       else {
         var cell = sh.getRange(row, col), old = String(cell.getDisplayValue());
         if (old === it.value) status = 'same as sheet';
+        // Nov 22: a re-sent old result must not clear a rerun mark ("NOT CLEAN (...): 956" + 956 again)
+        else if (/^(NOT CLEAN|RERUN|NOT VALID|PROVISIONAL|REDO)/.test(old) && old.slice(-(it.value.length + 2)) === ': ' + it.value) status = 'kept the rerun mark (same old result re-sent)';
         else {
           cell.setValue(val_(it.value));
           cell.setNote('Auto-logged ' + when + ' from ' + (d.test || '') + (old ? '\nwas: ' + old : '') + (link ? '\n' + link : ''));
