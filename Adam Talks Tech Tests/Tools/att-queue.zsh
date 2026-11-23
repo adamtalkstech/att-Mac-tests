@@ -110,7 +110,7 @@ att_fetch_dir() {   # $1 = folder inside "Adam Talks Tech Tests"
   have=$(du -sk "$ROOT/$rel" 2>/dev/null | cut -f1); need=$(du -sk "$src" 2>/dev/null | cut -f1)
   (( need - ${have:-0} < 512000 )) && return 0          # under 0.5 GB missing: nothing to do
   free=$(df -k "$HOME" | awk 'NR==2{print $4}')
-  (( free < need - ${have:-0} + 15728640 )) && { print "!! $rel: $(( (need - ${have:-0}) / 1048576 )) GB to copy back but only $(( free / 1048576 )) GB free. Run Tools/att-space.zsh."; return 0; }
+  (( free < need - ${have:-0} + 8388608 )) && { print "!! $rel: $(( (need - ${have:-0}) / 1048576 )) GB to copy back but only $(( free / 1048576 )) GB free. Run Tools/att-space.zsh."; return 0; }
   print "Copying $rel back from ${${src#/Volumes/}%%/*} ($(( (need - ${have:-0}) / 1048576 )) GB missing on this Mac)..."
   mkdir -p "$ROOT/$rel"; rsync -a --ignore-existing "$src/" "$ROOT/$rel/" && print "  done."
 }
@@ -121,7 +121,10 @@ if (( $(df -k / | awk 'NR==2{print int($4/1048576)}') < 45 )); then
   KEEP=(); for t in $RUN; do KEEP+=(${(s:|:)NEEDS[$t]}); done
   [[ " $RUN " == *" "(qwen9b|qwen27b|gemma|ladder|realdaycreator)" "* ]] && KEEP+=("AI Tests/LM Studio Models")
   [[ " $RUN " == *" puget"* ]] && KEEP+=("Puget Test/Assets")
-  ATT_KEEP=${(j:|:)${(u)KEEP}} zsh "$ROOT/Tools/att-space.zsh" auto | grep -v "^  *[0-9.]* GB  " | tail -12
+  [[ " $RUN " == *(cyberpunk|game|warthunder|gaming)* ]] && KEEP+=(Games)
+  mkdir -p "$ROOT/Results"; ATT_KEEP=${(j:|:)${(u)KEEP}} zsh "$ROOT/Tools/att-space.zsh" auto > "$ROOT/Results/space-last.txt" 2>&1
+  grep -E "^  (offloaded|[A-Za-z].*: )|^SPACE|keeping|no test drive" "$ROOT/Results/space-last.txt" | grep -v "^    " | tail -10
+  print "  (full list: Results/space-last.txt)"
 fi
 typeset -A FETCHED
 for t in $RUN; do for r in ${(s:|:)NEEDS[$t]}; do [[ -n $r && -z ${FETCHED[$r]} ]] && { FETCHED[$r]=1; att_fetch_dir "$r"; }; done; done

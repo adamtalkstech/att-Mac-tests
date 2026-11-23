@@ -170,6 +170,12 @@ if [[ $MODE == auto ]] && (( $(gb) < ${ATT_SPACE_TARGET:-45} )); then
       (( have )) || { print "  keeping $rel (no full copy on the drive)"; continue; }
       print "  $rel ($(fmt $(kb "$p")) GB, copy on ${${d#/Volumes/}%%/*})"; zap "offloaded $rel" "$p"
     done
+    G="$HOME/Downloads/Adam Talks Tech Games"
+    if (( $(gb) < ${ATT_SPACE_TARGET:-45} )) && [[ -d $G && "|${ATT_KEEP}|" != *"|Games|"* ]]; then
+      for d in /Volumes/*/"Adam Talks Tech Games"(N/); do
+        (( $(kb "$d") >= $(kb "$G") * 98 / 100 )) && { print "  games folder ($(fmt $(kb "$G")) GB, copy on ${${d#/Volumes/}%%/*})"; zap "offloaded games folder" "$G"; break; }
+      done
+    fi
   else
     print "\nStill under ${ATT_SPACE_TARGET:-45} GB and no test drive plugged in: plug one in so big test folders can be offloaded."
   fi
@@ -217,6 +223,7 @@ fi
 # ---- 3. what happened ----
 END=$(gb)
 print "\nFree space: ${START} GB -> ${END} GB  (+$(( END - START )) GB)"
+print "SPACE | ${START} -> ${END} GB free | cleared: ${#DONE} item(s)$( (( ${#FAILED} )) && print ", ${#FAILED} couldn't (run att-space.zsh by hand to see)")"
 if (( ${#FAILED} )); then
   print "\nCOULDN'T CLEAR:"; for f in $FAILED; do print "  - $f"; done
   (( NEEDFDA )) && print "  FIX: System Settings > Privacy & Security > Full Disk Access > turn on Terminal, quit Terminal, run this again."
@@ -224,7 +231,7 @@ fi
 (( END - START < $(( FREED / 1048576 )) - 3 )) && print "Note: macOS can take a minute to show freed space (APFS frees it in the background). Finder may show more 'available' than this: that's purgeable space macOS only frees when something asks for it."
 if (( END < 45 )); then
   print "\nStill under 45 GB: the Internal SSD test (step 20) needs 40 GB, the stacker needs 60. Biggest folders:"
-  du -skx $HOME/*(N/) $HOME/Library/*(N/) $HOME/Library/Containers/*(N/) $HOME/Library/Application\ Support/*(N/) 2>/dev/null | sort -rn | head -10 | awk '{printf "  %6.1f GB  %s\n", $1/1048576, $2}' | sed "s#$HOME#~#"
+  du -skx $HOME/*(N/) $HOME/Downloads/*(N/) "$ROOT"/*(N/) "$ROOT/AI Tests"/*(N/) $HOME/.lmstudio/models/*/*(N/) $HOME/Library/*(N/) $HOME/Library/Containers/*(N/) $HOME/Library/Application\ Support/*(N/) 2>/dev/null | sort -rn | head -10 | awk '{printf "  %6.1f GB  %s\n", $1/1048576, $2}' | sed "s#$HOME#~#"
 fi
 if [[ $MODE != report ]]; then
   mkdir -p "$ROOT/Results"
