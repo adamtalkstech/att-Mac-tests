@@ -156,6 +156,9 @@ send_batch() {
   # newest .txt is the card; if a test only wrote CSVs (Draw Things) use the newest .csv instead
   local newest=$(cd "$dir" && ls -t ${(M)files:#*.txt} 2>/dev/null | head -1) summary=""
   [[ -z $newest ]] && newest=$(cd "$dir" && ls -t ${(M)files:#*.csv} 2>/dev/null | grep -v 'runs_log\|cooldowns' | head -1)
+  # Nov 22: a card older than the test that's uploading is an old result being re-sent (it was
+  # wiping NOT CLEAN marks): send the files, but no card, so nothing gets logged from it
+  [[ -n $newest && -n $ATT_TEST_T0 ]] && (( $(stat -f %m "$dir/$newest" 2>/dev/null || echo 0) < ATT_TEST_T0 )) && newest=""
   [[ -n $newest ]] && summary=$(head -c 40000 "$dir/$newest" | base64 | tr -d '\n')
   print -rn -- "{\"kind\":\"result\",\"mac\":\"$(clean "$ATT_MAC")\",\"macid\":\"$ATT_MACID\",\"test\":\"$(clean "$label")\",\"mackind\":\"$(clean "$ATT_KIND")\",\"when\":\"$(date '+%Y-%m-%d %H:%M:%S %Z')\",\"files\":${#files},\"note\":\"$(clean "$note")\",\"summary_file\":\"$(clean "$resname/${newest#./}")\",\"summary_b64\":\"$summary\",\"zip_b64\":\"$zipb64\"}" > $tmp/body.json
   print "Uploading ${#files} result file(s) from Results/$resname to the Mac Tests sheet + Drive..."

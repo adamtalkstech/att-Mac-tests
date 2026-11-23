@@ -147,6 +147,9 @@ att_only_test_docs() { local n=$1 wins
   local w; for w in ${(s:, :)wins}; do [[ $w =~ "($ATT_TEST_DOCS)" ]] || [[ $w == "$n" ]] || return 1; done
   return 0; }
 
+# Nov 22: when this test started (uploads ignore cards older than this; a child script keeps the parent's time)
+zmodload zsh/datetime 2>/dev/null; typeset -g ATT_TEST_T0=$EPOCHSECONDS   # per test script (not exported)
+
 att_quit_apps() {
   [[ $NOQUIT == 1 ]] && { print "Quitting other apps skipped (NOQUIT=1)."; return 0; }
   local -a keep names ids closed stuck
@@ -276,7 +279,7 @@ ATT_TEST_NAME="${ZSH_ARGZERO:t}${1:+ $1}"
 att_upload_results() {
   [[ -n $NOUPLOAD || ! -s $HOME/.att/upload.conf ]] && return 0
   local root=${ATT_TOOLS_DIR:h}; [[ $root == /Volumes/* ]] && return 0
-  zsh "$ATT_TOOLS_DIR/att-upload.zsh" auto "$ATT_TEST_NAME" 2>/dev/null
+  ATT_TEST_T0=$ATT_TEST_T0 zsh "$ATT_TOOLS_DIR/att-upload.zsh" auto "$ATT_TEST_NAME" 2>/dev/null
   return 0
 }
 # Nov 21: refresh this Mac's RUN THIS NEXT list after every test, so finished steps show ✓ right away

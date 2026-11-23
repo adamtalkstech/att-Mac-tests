@@ -84,7 +84,7 @@ fi
 ATT_KEEP="Claude,Screen Sharing" att_cooldown
 "$LMS" unload --all >/dev/null 2>&1
 
-zsh "$HERE/att-memlog.zsh" "realday $PILE" 5 > "$OUT/.memlog_realday_$STAMP.out" 2>&1 &
+NOUPLOAD=1 zsh "$HERE/att-memlog.zsh" "realday $PILE" 5 > "$OUT/.memlog_realday_$STAMP.out" 2>&1 &
 LOGPID=$!
 att_appmem_start "$APPCSV" 15
 trap 'att_appmem_stop; kill -TERM $LOGPID 2>/dev/null; print "\nStopped."; exit 130' INT TERM
