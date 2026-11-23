@@ -17,6 +17,8 @@ bandwidth|14e|walk|0|NT:CPU memory bandwidth|Memory bandwidth|
 whisper|14f|walk|0|NT:Whisper Neural Engine|Whisper (Neural Engine)|
 responsiveness|17b|walk|0|NT:Responsiveness LOADED score|Responsiveness (felt speed)|
 appmem|17c|walk|0|NT:App RAM: Safari 20 / 80;NT:App RAM: Final Cut / Logic / Numbers|App RAM appetite|
+realday|17d|walk|0|NT:Real Day everyday|Real Day everyday (60 min, no clicking)|
+realdaycreator|17d|walk|0|NT:Real Day creator|Real Day creator (70 min, no clicking)|
 ssdint|20|walk|0|NT:Internal SSD: sequential;NT:Internal SSD: random 4K;NT:Internal SSD: sustained;NT:25GB file copy time|Internal SSD (no clicking)|
 geekbench|6|hand|0|MR:Geekbench 7 multi core;MR:Geekbench 7 Metal;MR:Quantized Score;MR:Geekbench AI GPU|Geekbench 7 (CPU + Metal + OpenCL) and Geekbench AI (Neural Engine, CPU, GPU)|zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-ready.zsh "Geekbench 7"
 cinebench|7|walk|0|MR:CPU Multithreaded;MR:CPU Single Thread;MR:GPU|Cinebench 2026 (no clicking)|
