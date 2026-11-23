@@ -15,7 +15,7 @@ else
   else
     rsync -a --exclude 'Results/' --exclude '_To Delete/' --exclude '*LICENSES*' --include '*/' \
       --include '*.sh' --include '*.zsh' --include '*.command' --include '*.txt' --include '*.py' \
-      --include '*.json' --include '*.md' --exclude '*' "$SRC/" "$DEST/" \
+      --include '*.json' --include '*.md' --include '*.swift' --include '*.js' --include '*.c' --include '*.gs' --exclude '*' "$SRC/" "$DEST/" \
       && print "Updated from $SRC" && print "Version: $(head -1 "$DEST/_Read Me First/SCRIPTS VERSION.txt" 2>/dev/null)"
   fi
 fi
