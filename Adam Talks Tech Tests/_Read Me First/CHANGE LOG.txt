@@ -3,6 +3,10 @@ Newest first. Every script prints its version; match it to this list.
 ==========================================================================
 
 NOV 22 2026
+- Run This Next (6:15 PM): reruns always show. When the sheet says a test is still needed (blank, RERUN, NOT CLEAN,
+  PROVISIONAL, REDO), an older result on the Mac no longer hides it; only a run from the last 30 min counts (the sheet
+  hasn't caught up yet). Every Mac's section rewritten: no more hand-typed step lists that went stale; the lists come
+  from the sheet, with short notes (charger/desk, reruns, first-time setup).
 - Internal SSD fix (6:05 PM): the 25GB copy read 0.0 s on the iMac (cp/ditto made an APFS clone). The tester now
   does the copy itself (att_ssd copy: every byte read and written, cache off).
 - Internal SSD fix (5:45 PM): a smaller-than-25GB copy no longer holds the whole card (the iMac's good

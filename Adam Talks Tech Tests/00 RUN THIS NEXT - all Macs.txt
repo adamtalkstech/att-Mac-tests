@@ -1,45 +1,31 @@
 RUN THIS NEXT - every Mac's next tests (Claude keeps this current through GitHub)
-Updated: Nov 22 2026, 6:00 PM
+Updated: Nov 22 2026, 6:10 PM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
 REDO=appmem
-NOV 22 AFTERNOON/TONIGHT:
- * Update Scripts on every Mac first (auto-logging, Whisper kit swap, App RAM fix, first-time prompts).
- * Keep P9 or the OWC Envoy plugged in for the first minute of each walk-away run (it copies the new
-   Whisper kit), and stay for that first minute: it opens each app once and you click Allow / OK.
- * Redo on every Mac: 14f Whisper (new Neural Engine kit) and 17c App RAM (Final Cut/Logic now counted right).
- * NEW step 20 Internal SSD (no clicking, ~15-20 min) is in every Mac's walk-away line from the sheet.
- * NEW RAM tests: 17e macOS by itself (idle RAM, Apple Intelligence on/off, GPU memory cap) and 17f what each
-   display costs. Real Day now logs SSD writes per hour. Both show in each Mac's list from the sheet.
- * NEW 17d Real Day on the M6 minis, iMac and M6 MacBook Pro (about 70-80 min each, walk-away).
-   Leave it out with  SKIP="realday realdaycreator"  in front of the go command.
- * Results go into the sheet by themselves now. Photos only for Geekbench, Cinebench, games, Puget app runs.
+NOV 22 EVENING:
+ * Run Update Scripts first on every Mac. Each Mac's list now comes from the live sheet: anything blank or
+   marked RERUN / NOT CLEAN / PROVISIONAL shows up, and finished tests drop off by themselves.
+ * Whisper: the new kit (locked to the Neural Engine) copies from a drive or downloads by itself (2.8 GB).
+ * Stay for the first minute of each walk-away run: it opens each app once so you can click Allow / OK.
+ * Leave Real Day out with  SKIP="realday realdaycreator"  in front of the go command.
    zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
 
 [[M6-MINI-16]]
 NAME=M6 MINI 16GB (16/512, yours)
 ROWS=MR:21 NT:4
-GO=sheet bandwidth whisper appmem realday realdaycreator
-1. Step 17 · Stacker · hands-off, ~25 min per run
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 15 · Cyberpunk · hands-on
-3. Step E6 · Lightroom rerun + 6K clips rerun · hands-on
-4. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+GO=sheet realday realdaycreator
+REDO=lightroom fcpexports
+Lightroom exports + Final Cut exports/6K clips are reruns (old runs looked off).
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[M6-MINI-24-256]]
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
@@ -59,51 +45,29 @@ Before it ships: storage screenshot + free space, att-upload.zsh forget.
 [[M6-MINI-24-512]]
 NAME=M6 MINI 24GB (24/512, yours)
 ROWS=MR:26 NT:6
-GO=sheet bandwidth whisper appmem realday realdaycreator
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 11 · HandBrake rerun · walk away, ~10 min
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+GO=sheet realday realdaycreator
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
 ROWS=MR:28 NT:7
-GO=sheet bandwidth whisper appmem realday realdaycreator
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 10 · Sustained · walk away, ~30 min
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Step 15 · Cyberpunk · hands-on · then it can ship
-4. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+GO=sheet realday realdaycreator
+Overdue loaner: RAM video tests first (stacker, App RAM, Real Day, idle RAM). Before it ships: att-upload.zsh forget.
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
@@ -140,202 +104,118 @@ Draw Things first time: install it (Mac App Store), open once, Settings > API Se
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
 ROWS=MR:31 NT:16
-REDO=cinebench puget-resolve puget-premiere puget-ps puget-lr
-(Ladder 8-bit DONE Nov 21 10 PM: swaps, never answers. Set LM Studio guardrails back to Relaxed.)
 SINCE=2026-11-21 22:00
-GO=sheet whisper appmem
-RERUNS (dock or odd results, Nov 21): Step 7 Cinebench CPU + GPU on Apple's charger (the 'Max scored lower' line depends on it), Step 12 Puget Resolve / Premiere / Photoshop / Lightroom on the charger (Nov 20 runs were on a dock). Xcode (92.40, matches the 93.09 repeat) and Red Autumn (4:44) reruns are DONE Nov 22.
-1. Step 17 · Stacker (straight to the closer: its warm-up was Nov 20)
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
-   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-3. Step E6 · Final Cut exports · hands-on · 3-min Social 4K, 30-min Apple Devices 4K,
-   30-min Social 4K, Magnetic Mask, 6K clips. Time each export with:
-   cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
-4. Step 16 · War Thunder · hands-on
-5. Step 18 · Draw Things · hands-on
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-Optional: Step 9 · Blender rerun (background slowed the CPU run)
-ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Tonight's runs were 6-8% apart run to run (laptop warming up). Same command:
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-
+GO=sheet
+REDO=cinebench puget-resolve puget-premiere puget-ps puget-lr
+Apple's charger, on a desk. Cinebench + Puget are reruns (Nov 20 runs were on a dock). LM Studio guardrails back to Relaxed.
+Draw Things shows as PROVISIONAL: rerun it on a cold Mac (first thing after a restart).
+Before it ships: att-upload.zsh forget.
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[MAX-16]]
 NAME=16" M5 Max PROLED (B&H loaner)
 ROWS=MR:32 NT:17
-GO=sheet handbrake bandwidth whisper appmem
 SINCE=2026-11-21 22:05
-ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): HandBrake + bandwidth in the walk-away line.
-1. Step 17 · Stacker REDO (couch run doesn't count; the closer from earlier is fine) · restart first:
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   Then Step 17b · Responsiveness REDO · restart first:
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
-   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-3. Step E6 · Final Cut exports · hands-on · same set as the 14":
-   cd ~/Downloads/"Adam Talks Tech Tests"/Tools && zsh att-export-timer.zsh "" "FCP export"
-4. Step 16 · War Thunder · hands-on
-5. Step 18 · Draw Things · hands-on
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-ANOTHER DAY (not tonight): Step 18 · Draw Things rerun, cold Mac on a desk. Tonight's runs were 6-8% apart run to run (laptop warming up). Same command:
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-
+GO=sheet
+Apple's charger, on a desk (the Nov 21 couch runs don't count: stacker + responsiveness are reruns).
+Draw Things shows as PROVISIONAL: rerun it on a cold Mac. Before it ships: att-upload.zsh forget.
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 ROWS=MR:19 NT:14
-REDO=puget-resolve
 SINCE=2026-11-21 22:05
 SINCE_responsiveness=2026-11-22 09:10
-REDO Step 17b Responsiveness: the Nov 21 desk run had one bad run (80-tab switches 819 ms, worst 2.5 s) next to a normal one (242 ms). Restart first.
-ON A DESK, Apple charger (the Nov 21 7-8 PM PST couch runs don't count): bandwidth in the walk-away line, Draw Things redo below.
-GO=sheet bandwidth whisper appmem
-RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fps, which pulls the AI score down):
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
-1. Step 18 · Draw Things REDO + save the model to the drive · LaCie plugged in
-   Redo (hands-off now, no Return presses):
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-   Then save Z-Image Turbo onto the drive for every other Mac (answer y if the list is only Z-Image files):
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh save
-2. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-3. Step 16 · War Thunder · hands-on
-
+GO=sheet
+REDO=puget-resolve
+Apple's charger, on a desk. Puget Bench for DaVinci Resolve is a rerun (Super Scale glitched).
+Responsiveness is a rerun (one bad run Nov 21): restart first. Before it ships: att-upload.zsh forget.
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[M6-MBP]]
 NAME=M6 MacBook Pro (B&H loaner)
 ROWS=MR:30 NT:15
-GO=sheet bandwidth whisper appmem realday
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 13 · Logic at the 32 buffer · hands-on, then log it:
-   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-3. Step 16 · War Thunder · hands-on
-4. Step 18 · Draw Things · hands-on
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+GO=sheet realday
+Apple's charger, on a desk. Before it ships: att-upload.zsh forget.
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[M6-IMAC]]
 NAME=M6 iMac (B&H loaner)
 ROWS=MR:33 NT:19
 SINCE=2026-11-21 22:05
-FIRST: open LM Studio once (the Nov 21 LM Studio runs failed: it wasn't set up), quit it, then run the walk-away line.
-GO=sheet qwen9b qwen27b gemma bandwidth whisper appmem realday
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Steps 14a + 14b + 14c · Qwen 9B, Qwen 27B, Gemma · walk away, ~35 min
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Step 20 · Internal SSD: now in the walk-away line (no fio needed)
-4. Step 13 · Logic · hands-on · 256 buffer, then 32, then log it:
-   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-5. Step 16 · War Thunder · hands-on
-6. Step 18 · Draw Things · hands-on
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+GO=sheet realday
+Before it ships: att-upload.zsh forget.
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
 ROWS=MR:34 NT:18
+GO=sheet
 REDO=puget-resolve
-GO=sheet bandwidth whisper appmem
-RERUN: Step 12 Puget Bench for DaVinci Resolve (Super Scale glitched under ~5 fps, which pulls the AI score down):
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Puget Test" && zsh att-puget.zsh run "DaVinci Resolve"
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Step 13 · Logic at the 32 buffer · hands-on, then log it:
-   cd ~/Downloads/"Adam Talks Tech Tests" && zsh "Logic Test/att-logic-log.zsh"
-3. Step 16 · War Thunder · hands-on
-4. Step 18 · Draw Things · hands-on
-   First time: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal and reopen.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+Apple's charger, on a desk. Puget Bench for DaVinci Resolve is a rerun (Super Scale glitched).
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
 ROWS=MR:15 NT:20
+GO=sheet
 REDO=cinebench
-Cinebench REDO (Nov 22): single-core read 557, well below the other Airs. att-cinebench.zsh quits everything and waits till it's cool first.
-GO=sheet blender redautumn handbrake sustained qwen9b bandwidth whisper appmem
-1. Step 17 · Stacker
-   a) First time on this Mac: open Final Cut (let it update the library), DOUBLE-CLICK
-      "universal control on mac 3 min" so it's open in the timeline, do ONE File > Share > Apple Devices 4K
-      saved into Downloads/Adam Talks Tech Tests/Export (Final Cut remembers that folder), then the Numbers workbook once,
-      quit both, allow Terminal in System Settings > Privacy & Security > Accessibility.
-   b) Restart, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh closer
-   c) Restart again, then:
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-stacker.zsh stacker
-   d) Step 17b · Responsiveness (felt speed) · hands-off, ~45 min (3 runs) · restart first.
-      First time: Safari > Settings > Advanced > "Show features for web developers",
-      then Settings > Developer > "Allow JavaScript from Apple Events".
-      cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-responsiveness.zsh
-2. Steps 9, 9b, 11, 10, 14a · Blender, Red Autumn, HandBrake, sustained, Qwen 9B · walk away
-   zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
-3. Step 18 · Draw Things · hands-off once set up (Z-Image Turbo copies from the drive by itself once it's been saved there)
-   First time: install Draw Things (free, Mac App Store), open it once, Settings > API Server ON (HTTP, 7860).
-   If it says it can't see Draw Things' files: System Settings > Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal.
-   cd ~/Downloads/"Adam Talks Tech Tests"/"Image Gen Test" && zsh att-drawthings.zsh
+Cinebench is a rerun (single-core read 557, well below the other Airs).
+HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
+FIRST TIME ON THIS MAC (only if not done yet):
+   Stacker: open Final Cut (let it update the library), DOUBLE-CLICK "universal control on mac 3 min", do ONE
+     File > Share > Apple Devices 4K into Downloads/Adam Talks Tech Tests/Export, open the Numbers workbook once, quit both.
+     Then restart -> closer, restart -> stacker (the list's command starts the closer; stacker = same with "stacker").
+   Draw Things: install it (Mac App Store), open once, Settings > API Server ON (HTTP, 7860); Full Disk Access > Terminal ON.
+   Safari (responsiveness, App RAM, Real Day): Settings > Advanced > Show features for web developers, then
+     Developer > Allow JavaScript from Apple Events.
 
 [[NEO-512]]
 NAME=MacBook Neo 8GB/512GB (yours) · RAM video: the 8GB end
 ROWS=MR:14 NT:21
-GO=bandwidth appmem responsiveness realday
+GO=ssdint bandwidth appmem responsiveness realday
 SKIPT=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper cinebench geekbench puget-resolve puget-premiere puget-ae puget-ps puget-lr logic cyberpunk warthunder stacker drawthings magmask fcpexports lightroom ssd braw
 RAM tests only (Nov 22): walk-away line, then steps 17e (idle, on + off) and 17f (displays) from the list above.
 App RAM will try Qwen 9B on 8GB: if it won't load or swaps hard, that's the result.
@@ -365,4 +245,4 @@ NAME=M4 Max Mac Studio (daily driver)
 GO=bandwidth whisper appmem
 DRIVES · put the upload key on each test drive (if this Studio has the key):
    zsh /tmp/att-upload.zsh save-to-drive
-Tests (Nov 21): walk-away line runs bandwidth; then Step 17 closer + stacker and Step 17b responsiveness when it's free.
+Not a priority (Nov 22): full redo later, after the M5 Pro minis and M5 Max Studio.

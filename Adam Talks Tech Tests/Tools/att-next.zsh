@@ -102,6 +102,9 @@ if [[ -n $GO ]]; then
   left=(); DONE_GO=()
   for t in ${=GO}; do
     T_SINCE_S=$(since_for $t)
+    # Nov 22 (reruns): when the sheet itself says this test is still needed (blank, RERUN, NOT CLEAN, REDO...),
+    # an older result on this Mac doesn't count: only one from the last 30 min (ran, sheet not caught up yet).
+    if (( ${SH_WALK[(Ie)$t]} )); then fresh=$(( $(date +%s) - 1800 )); (( ${T_SINCE_S:-$SINCE_S} < fresh )) && T_SINCE_S=$fresh; fi
     hit=( "$RES"/${~PAT[$t]:-NOMATCH}(N+newer) )
     # Nov 22: a Whisper run that stopped on an old kit doesn't count as done
     [[ $t == whisper ]] && hit=( ${(f)"$(for h in $hit; do grep -q "Old Whisper kit" "$h" 2>/dev/null || print -r -- "$h"; done)"} )
@@ -191,7 +194,8 @@ LINE="============================================================"
       typeset -A HPAT; HPAT=(stacker "Memory/stacker_stacker_*.txt" drawthings "Image Tests/drawthings_*.txt" magmask "Final Cut/fcp-neural_*.txt" logic "Logic/logic_*.txt")
       for h in $SH_HAND; do
         hp=("${(@s:|:)h}")   # key step label command why
-        ran=""; if [[ -n ${HPAT[$hp[1]]} ]]; then T_SINCE_S=$(since_for $hp[1]); hh=( "$RES"/${~HPAT[$hp[1]]}(N+newer) ); T_SINCE_S=""; (( ${#hh} )) && ran=1; fi
+        # Nov 22 (reruns): only a result from the last 30 min counts as "ran, waiting to be logged"
+        ran=""; if [[ -n ${HPAT[$hp[1]]} ]]; then T_SINCE_S=$(( $(date +%s) - 1800 )); hh=( "$RES"/${~HPAT[$hp[1]]}(N+newer) ); T_SINCE_S=""; (( ${#hh} )) && ran=1; fi
         if [[ -n $ran ]]; then print -r -- "   ✓ Step $hp[2] · $hp[3]: ran on this Mac, waiting to be logged (send Claude the card)"; continue; fi
         why=$hp[5]; [[ $why == blank ]] && why="" || why="  [$why]"
         print -r -- "   · Step $hp[2] · $hp[3]$why"
