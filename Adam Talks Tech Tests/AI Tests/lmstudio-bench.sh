@@ -715,7 +715,7 @@ whisper_mode() {
     "$bin" -m "$model" -f "$audio" -t $WHISPER_THREADS -otxt -of "$TMP/whisper" >/dev/null 2>"$TMP/whisper.log"
     rc=$?; wall=$(( EPOCHREALTIME - t0 ))
     stop_power; stop_sampler
-    if (( rc != 0 )); then warn "whisper.cpp failed: $(tail -2 "$TMP/whisper.log")"; RES_STATUS[$k]=ERROR; return; fi
+    if (( rc != 0 )); then warn "whisper.cpp failed: $(grep -iE 'error|fail|invalid|unable|not found' "$TMP/whisper.log" | grep -v '^ *[0-9]' | head -3)"; RES_STATUS[$k]=ERROR; return; fi
     secs+=($wall); [[ -n $AVG_W ]] && ws+=($AVG_W); [[ -n $ANE_W ]] && anes+=($ANE_W)
     rt=""; [[ -n $dur ]] && rt=$(awk -v d=$dur -v w=$wall 'BEGIN{printf "%.1fx realtime", d/w}')
     say "      run $r: $(printf %.1f $wall)s  $rt  peak ${PEAK_MEM} GB${AVG_W:+  ${AVG_W} W}${ANE_W:+  (Neural Engine ${ANE_W} W)}"
@@ -770,6 +770,13 @@ test_whisper() {
     return
   fi
   xattr -dr com.apple.quarantine "$WHISPER_DIR" 2>/dev/null   # copied/AirDropped kits get blocked otherwise
+  # Nov 22 evening: a garbled kit made both programs crash instantly (16", M5 Pro MBP). Quick 11 s check first;
+  # a bad kit on this Mac is thrown out and fetched again (drive or download) before anything is timed.
+  if [[ $WHISPER_DIR != /Volumes/* && ! -f $WHISPER_DIR/.selftest-ok ]] && ! "$WHISPER_DIR/bin/whisper-cli-metal" -m "$WHISPER_DIR/models/ggml-large-v3-turbo.bin" -f "$WHISPER_DIR/samples/jfk.wav" -nt 2>/dev/null | grep -qi "ask not"; then
+    warn "The Whisper kit on this Mac fails its 11 s test (garbled download). Getting a fresh copy..."
+    rm -rf "$WHISPER_DIR"
+    zsh "${SCRIPT_DIR:h}/Tools/att-whisper-kit.zsh" && WHISPER_DIR="$SCRIPT_DIR/whisper-test" || { warn "Couldn't get a working Whisper kit. Not run, nothing logged."; return; }
+  fi
   local model="$WHISPER_DIR/models/ggml-large-v3-turbo.bin" audio
   [[ -s $model ]] || { warn "Model missing in $WHISPER_DIR/models. Rerun whisper-coreml-setup.sh."; return; }
   audio=$(need_file "$WHISPER_AUDIO") || return
