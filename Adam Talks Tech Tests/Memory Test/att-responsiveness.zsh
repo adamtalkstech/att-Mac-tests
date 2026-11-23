@@ -1,5 +1,9 @@
 #!/bin/zsh
-# ATT Responsiveness Score, Run Order step 17b (v1.0, Nov 21 2026; rebuilt to match the newer tests)
+# ATT Responsiveness Score, Run Order step 17b (v2.0, Nov 22 2026 evening)
+# v2: a compiled millisecond timer (Tools/att-snappy.swift) replaces the AppleScript stopwatch, which
+#     couldn't see under ~230 ms (every fast Mac scored 1000). Apps: until the app answers AND its window
+#     is in front on screen. Old tabs: until the page paints a frame (or the reloaded page first paints).
+#     v1 numbers are not comparable.
 # One score for "how snappy does this Mac stay as you pile on a normal day?"
 #
 # Hands off, about 45 minutes: 3 runs, run 1 is a warm-up, runs 2-3 averaged (RUNS=1 for one). No Return presses.
@@ -21,7 +25,7 @@
 source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || { print "Can't find Tools/att-card.zsh. Run Update Scripts first."; exit 1; }
 zmodload zsh/datetime
 
-INSTANT_MS=250          # a switch this fast counts as instant (score 1000)
+INSTANT_MS=33           # v2: two 60 Hz frames counts as instant (score 1000); v1 used 250 (its timer floor)
 WANT_APPS=("Calculator" "Chess" "Dictionary" "Font Book" "Activity Monitor" "TV" "GarageBand")
 WAIT_MAX=15             # seconds to wait for each new tab to finish loading
 STAGES=(0 20 40 60 80)
@@ -140,21 +144,14 @@ mem_sampler_start() {
 mem_sampler_stop() { [[ -n $MEMPID ]] && kill $MEMPID 2>/dev/null; MEMPID=""; }
 ms_since() { printf '%.0f' $(( (EPOCHREALTIME - $1) * 1000 )) }
 
-probe_app() {   # bring the app to front, then ask it how many windows it has; a busy app can't answer until ready
-  # Nov 21 fix: the old check asked for the FRONT WINDOW's name, which fails in ~250 ms when an app
-  # has no window open (closed, minimized, or behind Safari's 80 tabs) -> every app "no answer"
-  # at 80 tabs on the M5 Pro MBP. Counting windows answers even with zero, so only a real
-  # failure (app not running, Accessibility off) counts as no answer; one retry, reason logged.
-  local app="$1" t0 rc err try
-  t0=$EPOCHREALTIME
-  osascript -e "tell application \"System Events\" to set frontmost of process \"$app\" to true" >/dev/null 2>&1
+probe_app() {   # v2: "<ms> <rc>" from the compiled timer (app answers + its window in front)
+  local app="$1" r try
   for try in 1 2; do
-    err=$(osascript -e "tell application \"System Events\" to tell process \"$app\" to count windows" 2>&1 >/dev/null)
-    rc=$?; (( rc == 0 )) && break
     pgrep -xq "$app" || { open -a "$app" 2>/dev/null; sleep 2; }
+    r=$("$SNAPPY" app "$app" 2>/dev/null); [[ ${r##* } == 0 ]] && break
   done
-  (( rc )) && print -r -- "$(date +%H:%M:%S) $app: ${err//$'\n'/ }" >> "$OUTDIR/responsiveness_noanswer_$STAMP.txt"
-  print "$(ms_since $t0) $rc"
+  [[ ${r##* } == 0 ]] || print -r -- "$(date +%H:%M:%S) $app: no answer (${r:-timer gave nothing})" >> "$OUTDIR/responsiveness_noanswer_$STAMP.txt"
+  print -r -- "${r:--1 1}"
 }
 
 close_test_apps() {   # Nov 21: close all 80 tabs first (Safari can ask before quitting with many
@@ -167,21 +164,10 @@ close_test_apps() {   # Nov 21: close all 80 tabs first (Safari can ask before q
   return 0
 }
 
-probe_tab() {   # switch Safari to tab N and time until the page answers
-  local n="$1" t0 r
-  t0=$EPOCHREALTIME
-  r=$(osascript - "$n" <<'OSA' 2>/dev/null
-on run argv
-  tell application "Safari"
-    activate
-    set w to front window
-    set current tab of w to tab ((item 1 of argv) as integer) of w
-    return do JavaScript "var r=window.__att?'kept':'reloaded'; window.__att=1; r" in current tab of w
-  end tell
-end run
-OSA
-)
-  print "$(ms_since $t0) $([[ -n "$r" ]] && print 0 || print 1) $([[ $r == kept ]] && print 0 || print 1)"
+probe_tab() {   # v2: switch Safari to tab N, "<ms> <rc> <reloaded>" until that page paints a frame
+  local r; r=$("$SNAPPY" tab "$1" 2>/dev/null)
+  [[ ${r##* } == 1 ]] && mark_tab   # reloaded page: put the marker + frame listener back
+  print -r -- "${r:--1 1 0}"
 }
 
 open_tab() {
@@ -199,7 +185,11 @@ OSA
   done
   mark_tab
 }
-mark_tab() { osascript -e 'tell application "Safari" to do JavaScript "window.__att=1" in current tab of front window' >/dev/null 2>&1; }
+# v2: the marker (gone = Safari threw the tab away) + a listener that stamps the first frame after the tab comes back
+mark_tab() { osascript >/dev/null 2>&1 <<'OSA'
+tell application "Safari" to do JavaScript "window.__att=1; if(!window.__attL){window.__attL=1; window.__attShows=[]; document.addEventListener('visibilitychange', function(){ if(document.visibilityState=='visible'){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ window.__attShows.push(performance.timeOrigin+performance.now()) }) }) } })}; 1" in current tab of front window
+OSA
+}
 # End of a run: how many of the open tabs lost their marker (macOS dropped them to free RAM)
 count_dropped_tabs() {
   osascript <<'OSA' 2>/dev/null
@@ -248,6 +238,15 @@ if [[ $t != 2 && $t != 2.0 ]]; then
   exit 1
 fi
 print "Settings OK (Accessibility + Safari)."
+# v2: build the millisecond timer once per Mac (rebuilt when the .swift changes)
+SNAPPY=$HOME/.att/att-snappy; SNSRC="$ROOT/Tools/att-snappy.swift"; mkdir -p $HOME/.att
+if [[ ! -x $SNAPPY || $SNSRC -nt $SNAPPY ]]; then
+  print "Building the millisecond timer (once)..."
+  swiftc -O "$SNSRC" -o "$SNAPPY" 2>"$HOME/.att/att-snappy-build.log" || {
+    print "!! Couldn't build the timer (needs Xcode or the Command Line Tools: xcode-select --install). Not run."; exit 1; }
+fi
+t=$("$SNAPPY" app Finder 2>/dev/null); [[ ${t##* } == 0 ]] || { print "!! The timer can't see apps (Accessibility for Terminal?). Said: $t. Not run."; exit 1; }
+print "Timer OK (Finder switch: ${t% *} ms)."
 
 # Only time apps this Mac has (GarageBand/Chess can be missing on a fresh Mac)
 APPS=(); MISSING=()
@@ -356,7 +355,7 @@ close_test_apps
 # --- Score + photo card (average of the good runs) ---
 n=${#R_LOADED}
 if (( n == 0 )); then
-  { att_card_start "Responsiveness (app switching, 0 to 80 tabs)"
+  { att_card_start "Responsiveness v2 (ms timer; app switching, 0 to 80 tabs)"
     print "!! No usable timings (apps didn't answer). Check Accessibility for Terminal, restart, run again."
     att_card_end; } | tee "$TXT"
   exit 1
@@ -371,8 +370,9 @@ dropped=$(mean $R_DROP); prl_t=0; pr_t=0; for v in $R_PRL; do (( prl_t += v )); 
 peakp=$(plev_name ${${(On)R_PEAKP}[1]}); peaksw=${${(On)R_PEAKSW}[1]}; peakcomp=${${(On)R_PEAKCOMP}[1]}
 relaunch_t=0; for v in $R_RELAUNCH; do (( relaunch_t += v )); done
 
-{ att_card_start "Responsiveness (app switching, 0 to 80 tabs), ${n} run(s) averaged$( (( WARMUP )) && print ' after a warm-up')"
+{ att_card_start "Responsiveness v2 (ms timer; app switching, 0 to 80 tabs), ${n} run(s) averaged$( (( WARMUP )) && print ' after a warm-up')"
   print "LOADED SCORE (80 tabs): ${loaded}   <- headline: speed kept at 80 tabs (1000 = as fast as with no tabs)"
+  print "Light score (v2 scale: 1000 = a 33 ms switch, 500 = 66 ms; not comparable to v1)"
   print "Light score (0 tabs):   ${light}"
   print "Overall score:          ${score}"
   print "80 tabs vs none:        ${slower}% slower to switch"
