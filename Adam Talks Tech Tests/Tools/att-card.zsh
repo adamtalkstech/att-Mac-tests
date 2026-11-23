@@ -74,7 +74,8 @@ att_card_start() {
 # Auto-logging (Nov 22): one line per sheet cell. The receiver puts the value in this Mac's row
 # (Mac Map tab), keeps the old value in the cell's note and lists it in the Auto Log tab.
 # A card with WARM-UP / don't log / NOT CLEAN / a line starting !! is held, not written.
-att_log() { print -r -- "LOG | $1 | $2 | $3"; }
+# Nov 22: experiments (ATT_EXPERIMENT=1) print EXP lines instead, which the sheet never auto-logs
+att_log() { if [[ -n $ATT_EXPERIMENT ]]; then print -r -- "EXP | $1 | $2 | $3"; else print -r -- "LOG | $1 | $2 | $3"; fi; }
 att_card_end() {
   print "###############################################################"
   print "(Make the window tall enough that the whole box shows in the photo.)"
