@@ -163,6 +163,13 @@ LINE="============================================================"
   elif [[ -d $dtc ]] && ! ls "$dtc" >/dev/null 2>&1; then
     fix+=("Terminal can't see Draw Things' files: Privacy & Security > Full Disk Access > Terminal ON, then Cmd-Q Terminal")
   fi
+  # Nov 23 (Adam: "update every Mac to 13"): every Mac runs the Final Cut tests on Final Cut 13.
+  for fa in "/Applications/Final Cut Pro.app" "/Applications/Final Cut Pro Creator Studio.app"; do
+    [[ -d $fa ]] || continue
+    fv=$(defaults read "$fa/Contents/Info" CFBundleShortVersionString 2>/dev/null)
+    [[ -n $fv && ${fv%%.*} -lt 13 ]] && fix+=("Final Cut is $fv: update to 13 in the App Store first (the tests' library opens as 13; it updates itself on first open)")
+    break
+  done
   freeg=$(df -g "$HOME" 2>/dev/null | awk 'NR==2{print $4}')
   [[ -n $freeg ]] && (( freeg < 60 )) && fix+=("Only ${freeg} GB free: the stacker copies a 45 GB Final Cut library. Free space with Tools/att-get.zsh free")
   # Nov 22: the Internal SSD test (step 20) quietly exits under 40 GB free, so the minis never got it
