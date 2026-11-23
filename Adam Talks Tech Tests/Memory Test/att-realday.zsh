@@ -100,7 +100,7 @@ if [[ -n $CHROME ]]; then
   APPS+=("Google Chrome")
 fi
 step "open: Notes, Calendar, Numbers"
-open -a Notes; open -a Calendar; [[ -n $WB ]] && open -a Numbers "$WB"; sleep 15
+open -a Notes; open -a Calendar; [[ -n $WB ]] && { open -a Numbers "$WB"; att_clear_dialogs Numbers 16; }; att_clear_dialogs Calendar 4; att_clear_dialogs Notes 2
 APPS+=(Notes Calendar); [[ -n $WB ]] && APPS+=(Numbers)
 if [[ -n $PBOOTH ]] && (( HAS_CAM )); then step "open: Photo Booth (camera on, call stand-in)"; open -a "$PBOOTH"; sleep 5; APPS+=("Photo Booth"); fi
 if [[ $PILE == creator ]]; then

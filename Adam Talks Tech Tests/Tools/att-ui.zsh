@@ -32,7 +32,8 @@ att_ui_setup() {   # call before the timed part. Returns 0 when UI control works
 att_numbers_wait() {
   local t0=$EPOCHREALTIME max=${1:-600} r
   while (( EPOCHREALTIME - t0 < max )); do
-    r=$(osascript -e 'tell application "Numbers"
+    whence att_clear_dialogs >/dev/null && att_clear_dialogs Numbers 2   # Nov 22: welcome / newer-version boxes
+    r=$(att_osa_capped 5 'tell application "Numbers"
       if (count of documents) is 0 then return "no"
       try
         tell sheet 1 of document 1 to set n to count of tables
@@ -40,7 +41,7 @@ att_numbers_wait() {
       on error
         return "no"
       end try
-    end tell' 2>/dev/null)
+    end tell')
     [[ $r == yes ]] && { printf "%.1f" $(( EPOCHREALTIME - t0 )); return 0; }
     sleep 0.5
   done

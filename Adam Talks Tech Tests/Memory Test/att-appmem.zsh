@@ -88,7 +88,7 @@ if want chrome && [[ -n $CHROME ]]; then
   osascript -e 'tell application "Google Chrome" to close every window' >/dev/null 2>&1; quit_hard "Google Chrome"; between
 fi
 if want numbers && [[ -n $WB ]]; then
-  phase numbers '^Numbers' "Numbers workbook"; open -a Numbers "$WB"
+  phase numbers '^Numbers' "Numbers workbook"; open -a Numbers "$WB"; att_clear_dialogs Numbers 20
   (( UIOK )) && att_numbers_wait 300 >/dev/null || sleep 60
   hold 30; phase_end; quit_hard Numbers; between
 fi

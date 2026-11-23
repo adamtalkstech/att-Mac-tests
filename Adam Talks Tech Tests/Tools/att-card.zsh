@@ -116,6 +116,29 @@ tell application "System Events" to tell process "$1"
 end tell
 OSA
 }
+# Nov 22 (Adam: Numbers keeps getting stuck): click through the harmless boxes an app shows when a
+# test opens a file (welcome / what's new / "newer version" / iCloud / notifications), for up to $2 s.
+# Never clicks Update/Convert/Save (those would change the test file). Runs each check in the
+# background with a cap, so a busy app can't freeze the test.
+att_clear_dialogs() { local app=$1 secs=${2:-20} t=0 p
+  while (( t < secs )); do
+    ( osascript >/dev/null 2>&1 <<OSA
+tell application "System Events" to tell process "$app"
+  repeat with w in windows
+    try
+      repeat with b in (buttons of sheet 1 of w & buttons of w)
+        if name of b is in {"Continue", "Not Now", "Get Started", "OK", "Open Anyway", "Open", "Close", "Skip", "Later", "Don’t Allow", "Don't Allow", "Cancel Update"} then
+          if (name of w) is not "" or true then click b
+        end if
+      end repeat
+    end try
+  end repeat
+end tell
+OSA
+    ) & p=$!
+    sleep 2; kill $p 2>/dev/null; (( t += 2 ))
+  done; return 0; }
+
 # A stuck app is safe to force-quit when the only thing open in it is a test file (or nothing).
 ATT_TEST_DOCS='NewLogicBenchmark|ATT Stack Test|Test Library|Untitled|Choose a Project|Project Chooser|Welcome|What.s New'
 att_only_test_docs() { local n=$1 wins
