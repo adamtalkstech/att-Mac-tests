@@ -85,7 +85,7 @@ att_card_end() {
 #  Keeps Terminal/Finder (TextEdit is quit too since Nov 20: it shows in the results) (and anything in ATT_KEEP, e.g. ATT_KEEP="LM Studio").
 #  Polite quit only: an app with unsaved work asks you first and stays open.
 #  Skip it with NOQUIT=1.
-ATT_HELPERS=("Creative Cloud" "Adobe Creative Cloud" "Dropbox" "Google Drive" "OneDrive" "Backblaze" "Spotify" "Discord" "Slack" "zoom.us" "Microsoft Teams" "Steam" "Logi Options+" "Elgato Stream Deck" "Stream Deck" "Docker Desktop" "Music" "Photos" "Mail" "Messages")
+ATT_HELPERS=("Creative Cloud" "Adobe Creative Cloud" "Dropbox" "Google Drive" "OneDrive" "Backblaze" "Spotify" "Discord" "Slack" "zoom.us" "Microsoft Teams" "Steam" "Logi Options+" "Elgato Stream Deck" "Stream Deck" "Docker Desktop" "Music" "Photos" "Mail" "Messages" "Epic Games Launcher" "EpicGamesLauncher" "EpicWebHelper" "Battle.net" "Adobe Desktop Service" "CCXProcess")
 # Nov 22 (Adam: "Logic or stuff getting stuck open"): close an app the TEST opened, for real.
 #  Asks it to quit without saving, presses Don't Save on any save box, waits up to 30 s
 #  (Logic's 600-track project is slow to close), then force-quits. Test files are never
@@ -195,7 +195,11 @@ att_power_check() {
 # If a test is force-quit and they stay frozen: zsh Tools/att-resume-bg.zsh (or restart).
 ATT_BG_PROCS=(mediaanalysisd photoanalysisd photolibraryd cloudphotod corespotlightd mdworker_shared mdworker
   textunderstandingd duetexpertd suggestd knowledgeconstructiond searchpartyd)
-ATT_BG_ROOT=(mds mds_stores)   # Spotlight's main indexer runs as root: paused only if sudo is already unlocked
+ATT_BG_ROOT=(mds mds_stores kernelmanager_helper XprotectService)   # root: paused only if sudo is already unlocked
+# Nov 22 (Adam: pause the verifying): macOS's extension checker (kernelmanager_helper) and XProtect's
+# background malware scans (XprotectService + the XProtectRemediator* scanners) are paused too.
+# NOT paused: syspolicyd (the "Verifying <app>..." on first launch) -- pausing it would freeze
+# every app a test opens (Final Cut, Logic, Safari), so first launches still go through att-prime.
 att_pause_bg() {
   [[ $NOPAUSE == 1 ]] && return 0
   [[ -n $ATT_BG_PAUSED ]] && return 0
@@ -210,9 +214,10 @@ att_pause_bg() {
   ATT_BG_ROOT_PAUSED=""
   if sudo -n true 2>/dev/null; then
     for p in $ATT_BG_ROOT; do sudo -n pkill -STOP -x "$p" 2>/dev/null && ATT_BG_ROOT_PAUSED=1; done
+    sudo -n pkill -STOP -f "XProtectRemediator" 2>/dev/null
   fi
   ATT_BG_PAUSED=1; export ATT_BG_PARENT=$$
-  (( ${#ATT_BG_PIDS} )) && print "Paused Photos/Spotlight/Siri scanning for the test${ATT_BG_ROOT_PAUSED:+ (Spotlight indexer too)} (wakes back up when it ends)."
+  (( ${#ATT_BG_PIDS} )) && print "Paused Photos/Spotlight/Siri scanning for the test${ATT_BG_ROOT_PAUSED:+ (Spotlight indexer, extension checker + XProtect scans too)} (wakes back up when it ends)."
 }
 att_resume_bg() {
   [[ -z $ATT_BG_PAUSED ]] && return 0
@@ -220,6 +225,7 @@ att_resume_bg() {
   (( ${#ATT_BG_PIDS} )) && kill -CONT $ATT_BG_PIDS 2>/dev/null
   for p in $ATT_BG_PROCS; do pkill -CONT -x -U $UID "$p" 2>/dev/null; done
   [[ -n $ATT_BG_ROOT_PAUSED ]] && for p in $ATT_BG_ROOT; do sudo -n pkill -CONT -x "$p" 2>/dev/null; done
+  [[ -n $ATT_BG_ROOT_PAUSED ]] && sudo -n pkill -CONT -f "XProtectRemediator" 2>/dev/null
   ATT_BG_PAUSED=""
 }
 # zsh runs an EXIT trap set inside a function as soon as that function returns,
