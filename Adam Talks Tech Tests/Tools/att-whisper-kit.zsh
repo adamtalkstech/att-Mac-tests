@@ -26,6 +26,11 @@ w=0; until mkdir "$LOCK" 2>/dev/null; do
   # a lock older than 2 h is left over from a stopped run
   [[ -n $(find "$LOCK" -maxdepth 0 -mmin +120 2>/dev/null) ]] && { rmdir "$LOCK" 2>/dev/null; continue; }
   sleep 10; (( w += 10 )); (( w > 3600 )) && { print "!! Whisper kit: waited an hour for the other download. Run Update Scripts again."; exit 1; }
+  # Nov 22 (Adam): show progress while waiting (model 1.6 GB + Neural Engine encoder 1.2 GB)
+  if (( w % 30 == 0 )); then
+    got=$(du -sk $HOME/.att/whisper-dl 2>/dev/null | awk '{printf "%.2f", $1/1048576}')
+    print "  ...still downloading: ${got:-0.00} of about 2.8 GB ($(( w / 60 )) min waited)"
+  fi
 done
 trap 'rmdir "$LOCK" 2>/dev/null' EXIT
 if locked "$KIT"; then
@@ -43,13 +48,13 @@ for v in /Volumes/*/"Adam Talks Tech Tests"/"AI Tests"/whisper-test(N/); do
   fi
 done
 [[ -x $SRC/bin/whisper-cli-coreml ]] || { print "!! Whisper kit: the programs aren't in the scripts folder yet. Run Update Scripts, then this again."; exit 1; }
-print "Whisper kit: downloading the model + Neural Engine encoder (2.8 GB, once per Mac)..."
+print "Whisper kit: downloading the model + Neural Engine encoder (2.8 GB, once per Mac). Progress: 1.6 GB model, then 1.2 GB encoder..."
 D="$KIT.new"; mkdir -p "$D/bin" "$D/models" "$D/samples"
 cp "$SRC/bin/"* "$D/bin/"; chmod +x "$D/bin/"*; cp "$SRC/BUILD-INFO.txt" "$D/"; cp "$SRC/samples/jfk.wav" "$D/samples/"
 # keep finished downloads in ~/.att so a stopped run resumes instead of starting over
 C=$HOME/.att/whisper-dl; mkdir -p $C
-curl -fL -C - --retry 3 -o "$C/ggml-large-v3-turbo.bin" "$HF/ggml-large-v3-turbo.bin" || { print "!! Model download failed. Run it again to resume."; exit 1; }
-curl -fL -C - --retry 3 -o "$C/encoder.zip" "$HF/ggml-large-v3-turbo-encoder.mlmodelc.zip" || { print "!! Encoder download failed. Run it again to resume."; exit 1; }
+curl -fL -C - --retry 3 $( [[ -t 1 ]] && print -- --progress-bar || print -- -sS ) -o "$C/ggml-large-v3-turbo.bin" "$HF/ggml-large-v3-turbo.bin" || { print "!! Model download failed. Run it again to resume."; exit 1; }
+curl -fL -C - --retry 3 $( [[ -t 1 ]] && print -- --progress-bar || print -- -sS ) -o "$C/encoder.zip" "$HF/ggml-large-v3-turbo-encoder.mlmodelc.zip" || { print "!! Encoder download failed. Run it again to resume."; exit 1; }
 sz() { curl -sIL "$1" | awk 'tolower($1)=="content-length:"{n=$2} END{gsub(/\r/,"",n); print n+0}'; }
 for f in ggml-large-v3-turbo.bin:ggml-large-v3-turbo.bin encoder.zip:ggml-large-v3-turbo-encoder.mlmodelc.zip; do
   want=$(sz "$HF/${f#*:}"); have=$(stat -f %z "$C/${f%%:*}" 2>/dev/null)
