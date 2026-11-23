@@ -53,8 +53,14 @@ LMS=$(command -v lms 2>/dev/null); [[ -z $LMS ]] && LMS="$HOME/.lmstudio/bin/lms
 API="http://localhost:1234"
 
 ms_since() { printf '%.0f' $(( (EPOCHREALTIME - $1) * 1000 )) }
-probe_app() {   # same check as Step 17b: bring it to the front, time until it answers
-  local app="$1" t0 rc try
+# Nov 22: same millisecond timer as Responsiveness v2 (Tools/att-snappy.swift); the AppleScript
+# fallback below can't see under ~220 ms, so a card made with it is held.
+SNAPPY=$HOME/.att/att-snappy; SNSRC="$ROOT/Tools/att-snappy.swift"
+if [[ ! -x $SNAPPY || $SNSRC -nt $SNAPPY ]]; then swiftc -O "$SNSRC" -o "$SNAPPY" 2>/dev/null; fi
+[[ -x $SNAPPY ]] && TIMER=ms || TIMER=applescript
+probe_app() {   # time from "switch to it" until the app answers and its window is in front
+  local app="$1" t0 rc try r
+  if [[ $TIMER == ms ]]; then r=$("$SNAPPY" app "$app" 2>/dev/null); print -r -- "${r:--1 1}"; return; fi
   t0=$EPOCHREALTIME
   osascript -e "tell application \"System Events\" to set frontmost of process \"$app\" to true" >/dev/null 2>&1
   for try in 1 2; do osascript -e "tell application \"System Events\" to tell process \"$app\" to count windows" >/dev/null 2>&1; rc=$?; (( rc == 0 )) && break; done
@@ -176,6 +182,7 @@ _y=$(val 'Seconds in yellow'); _r=$(val 'Seconds in red'); WORST=green; (( ${_y:
 SWAP=$(awk -v a="$(val 'Peak swap GB')" -v b="$(val 'Swap at start GB')" 'BEGIN{if(a=="")print "?"; else printf "%.1f", a-b}')
 {
 att_card_start "RAM: Real Day, $PILE pile, $(( DURATION / 60 )) min (Step 17d)"
+[[ $TIMER == ms ]] || print "!! Timed with the old AppleScript check (the ms timer did not build: needs Command Line Tools). Not logged."
 print "Open all day: ${(j:, :)APPS}"
 print "App switch (Step 17b check): avg ${A_ALL} ms, worst ${W_ALL} ms over ${N_ALL} switches"
 print "   first 10 min avg ${A_FIRST} ms  ->  last 10 min avg ${A_LAST} ms   (no answer: $NOANS)"

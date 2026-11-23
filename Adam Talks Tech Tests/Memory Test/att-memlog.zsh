@@ -41,8 +41,9 @@ pagesize=$(sysctl -n vm.pagesize)
 
 # Total bytes written to the internal SSD since boot
 ssd_written_bytes() {
+  # Nov 22: summed over every disk driver (head -1 could pick a test drive or disk image -> 0.0 GB/h)
   ioreg -c IOBlockStorageDriver -r -w0 2>/dev/null \
-    | grep -o '"Bytes (Write)"=[0-9]*' | head -1 | cut -d= -f2
+    | grep -o '"Bytes (Write)"=[0-9]*' | cut -d= -f2 | awk '{s+=$1} END{printf "%.0f", s}'
 }
 
 # Swap used in GB (from "total = X used = Y free = Z")
