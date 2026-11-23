@@ -215,7 +215,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[NEO-512]]
 NAME=MacBook Neo 8GB/512GB (yours) · RAM video: the 8GB end
 ROWS=MR:14 NT:21
-GO=ssdint bandwidth appmem responsiveness realday
+GO=ssdint cinebench bandwidth appmem responsiveness realday
 SKIPT=xcode blender redautumn handbrake sustained qwen9b qwen27b gemma ladder whisper cinebench geekbench puget-resolve puget-premiere puget-ae puget-ps puget-lr logic cyberpunk warthunder stacker drawthings magmask fcpexports lightroom ssd braw
 RAM tests only (Nov 22): walk-away line, then steps 17e (idle, on + off) and 17f (displays) from the list above.
 App RAM will try Qwen 9B on 8GB: if it won't load or swaps hard, that's the result.
