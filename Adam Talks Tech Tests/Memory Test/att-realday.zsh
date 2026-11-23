@@ -27,7 +27,14 @@ source "${0:A:h:h}/Tools/att-card.zsh" 2>/dev/null || { print "Can't find Tools/
 # =============================================================================
 zmodload zsh/datetime
 PILE=${1:-everyday}
-[[ $PILE == (everyday|creator) ]] || { print "Which pile?  zsh att-realday.zsh everyday   or   zsh att-realday.zsh creator"; exit 1; }
+[[ $PILE == (everyday|creator|light|heavy|work) ]] || { print "Which pile?  everyday | creator   (experiments: light | heavy | work)"; exit 1; }
+# Nov 23 (Adam: "do they measure normal people stuff?", no sign-ins): three realistic piles as Experiment E9.
+#  light  student/office: one browser 15 tabs + music (YouTube, muted), Pages doc being written, Notes, Calendar,
+#         a 20-min video call (WebRTC loopback: real camera-style encode + decode, no account) with the camera on
+#  heavy  same + 25 tabs, Numbers, a 30-min call
+#  work   creator for real: one browser 15 tabs + music, Notes, Final Cut with the project open, export at the end
+#  (everyday and creator stay as they are; creator = the stress pile.) Experiments print EXP lines, never auto-logged.
+[[ $PILE == (light|heavy|work) ]] && export ATT_EXPERIMENT=1
 HERE=${0:A:h}; ROOT=${HERE:h}
 [[ $HERE == /Volumes/* ]] && { print "This is on an external drive. Run it from ~/Downloads/Adam Talks Tech Tests."; exit 1; }
 MACNAME=$(scutil --get ComputerName 2>/dev/null)
@@ -95,23 +102,34 @@ APPS=()
 step "open: Safari + YouTube"
 open -a Safari "$YT_URL"; sleep 8
 safari_js 1 "var v=document.querySelector('video'); if(v){v.muted=true; v.loop=true; v.play();} 'ok'" >/dev/null
-for (( i = 1; i <= 20; i++ )); do osascript -e "tell application \"Safari\" to tell window 1 to make new tab with properties {URL:\"${SITES[$i]}\"}" >/dev/null 2>&1; sleep 2; done
+NT=20; [[ $PILE == (light|work) ]] && NT=14; [[ $PILE == heavy ]] && NT=24
+for (( i = 1; i <= NT; i++ )); do osascript -e "tell application \"Safari\" to tell window 1 to make new tab with properties {URL:\"${SITES[$i]}\"}" >/dev/null 2>&1; sleep 2; done
 sleep 10
-for (( i = 2; i <= 21; i++ )); do safari_js $i "window.__att=1" >/dev/null; done   # mark the tabs (a reload clears the mark)
+for (( i = 2; i <= NT + 1; i++ )); do safari_js $i "window.__att=1" >/dev/null; done   # mark the tabs (a reload clears the mark)
 osascript -e 'tell application "Safari" to set current tab of window 1 to tab 1 of window 1' >/dev/null 2>&1
 APPS+=(Safari)
-if [[ -n $CHROME ]]; then
+if [[ -n $CHROME && $PILE == (everyday|creator) ]]; then
   step "open: Chrome 20 tabs"
   for (( i = 21; i <= 40; i++ )); do open -a "$CHROME" "${SITES[$i]}"; sleep 2; done
   APPS+=("Google Chrome")
 fi
-step "open: Notes, Calendar, Numbers"
-open -a Notes; open -a Calendar; [[ -n $WB ]] && { open -a Numbers "$WB"; att_clear_dialogs Numbers 16; }; att_clear_dialogs Calendar 4; att_clear_dialogs Notes 2
-APPS+=(Notes Calendar); [[ -n $WB ]] && APPS+=(Numbers)
-if [[ -n $PBOOTH ]] && (( HAS_CAM )); then step "open: Photo Booth (camera on, call stand-in)"; open -a "$PBOOTH"; sleep 5; APPS+=("Photo Booth"); fi
-if [[ $PILE == creator ]]; then
+step "open: Notes, Calendar$([[ $PILE == (light|work) ]] || print ', Numbers')"
+[[ $PILE == (light|work) ]] && WB=""
+open -a Notes; [[ $PILE == work ]] || open -a Calendar; [[ -n $WB ]] && { open -a Numbers "$WB"; att_clear_dialogs Numbers 16; }; att_clear_dialogs Calendar 4; att_clear_dialogs Notes 2
+APPS+=(Notes); [[ $PILE == work ]] || APPS+=(Calendar); [[ -n $WB ]] && APPS+=(Numbers)
+PAGES=$(att_app_path "Pages")
+if [[ $PILE == (light|heavy) && -n $PAGES ]]; then
+  step "open: Pages (a document being written)"; open -a "$PAGES"; att_clear_dialogs Pages 10
+  osascript -e 'tell application "Pages" to make new document' >/dev/null 2>&1; sleep 3; APPS+=(Pages)
+fi
+CALL_FROM=0; CALL_TO=0; [[ $PILE == light ]] && { CALL_FROM=20; CALL_TO=40; }; [[ $PILE == heavy ]] && { CALL_FROM=20; CALL_TO=50; }
+CALL_URL="https://webrtc.github.io/samples/src/content/capture/canvas-pc/"   # canvas -> WebRTC encode -> decode, no camera prompt
+if [[ -n $PBOOTH && $PILE != work ]] && (( HAS_CAM )); then step "open: Photo Booth (camera on, call stand-in)"; open -a "$PBOOTH"; sleep 5; APPS+=("Photo Booth"); fi
+if [[ $PILE == (creator|work) ]]; then
   step "open: Final Cut"; open -a "$FCP_APP" "$LIB"; att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; att_fcp_open_project "$FCP_NAME" "$FCP_PROJECT"
   APPS+=("$(att_fcp_proc "$FCP_NAME")")
+fi
+if [[ $PILE == creator ]]; then
   if [[ -n $LOGIC_APP && -n $LOGIC_PRJ ]]; then step "open: Logic"; open -a "$LOGIC_APP" "$LOGIC_PRJ"; sleep 60; APPS+=("${${LOGIC_APP:t}%.app}"); fi
   if [[ -n $PIX ]]; then step "open: Pixelmator Pro"; open -a "$PIX"; sleep 10; APPS+=("Pixelmator Pro"); fi
   step "open: Qwen 9B"; "$LMS" server start >/dev/null 2>&1; "$LMS" load "$Q9" --yes --context-length 8192 >/dev/null 2>&1; APPS+=("LM Studio")
@@ -145,12 +163,27 @@ while (( EPOCHSECONDS - T0 < DURATION )); do
     rec oldtab "tab $k" "${r:-?}" 0
     osascript -e 'tell application "Safari" to set current tab of window 1 to tab 1 of window 1' >/dev/null 2>&1
   fi
+  m=$(( el / 60 ))
+  if (( CALL_TO > 0 )); then
+    if (( m >= CALL_FROM && m < CALL_TO )) && [[ -z $INCALL ]]; then
+      step "video call starts (WebRTC loopback, $(( CALL_TO - CALL_FROM )) min)"
+      osascript -e "tell application \"Safari\" to tell window 1 to make new tab with properties {URL:\"$CALL_URL\"}" >/dev/null 2>&1; sleep 6
+      osascript -e 'tell application "Safari" to do JavaScript "var b=document.querySelector(\"#callButton,button\"); if(b){b.click()}; 1" in last tab of window 1' >/dev/null 2>&1
+      osascript -e 'tell application "Safari" to set current tab of window 1 to tab 1 of window 1' >/dev/null 2>&1
+      INCALL=1; rec call start 1 0
+    elif (( m >= CALL_TO )) && [[ -n $INCALL ]]; then
+      osascript -e 'tell application "Safari" to close last tab of window 1' >/dev/null 2>&1; INCALL=""; rec call end 1 0
+    fi
+  fi
+  if [[ $PILE == (light|heavy) && -n $PAGES ]] && (( n % 5 == 2 )); then
+    osascript -e 'tell application "Pages" to tell document 1 to set body text to (body text & "The Mac kept up with everything I threw at it today, and that is what this test is checking. ")' >/dev/null 2>&1
+  fi
   if [[ $PILE == creator ]] && (( n > 0 && n % 10 == 0 )); then t=$(qwen_tps); [[ -n $t ]] && { QT+=($t); rec qwen "min $(( el / 60 ))" $t 0; }; fi
   (( n++ ))
   sleep $(( 60 - (EPOCHSECONDS - T0 - el) > 0 ? 60 - (EPOCHSECONDS - T0 - el) : 1 ))
 done
 EXP=""
-if [[ $PILE == creator ]]; then
+if [[ $PILE == (creator|work) ]]; then
   step "final cut export at the end of the day"
   rm -rf "$ROOT/Export"/*(N) 2>/dev/null; mkdir -p "$ROOT/Export"
   if att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
@@ -189,13 +222,13 @@ print "   first 10 min avg ${A_FIRST} ms  ->  last 10 min avg ${A_LAST} ms   (no
 print "YouTube (Safari, muted, looping): ${YD:-?} of ${YTOT:-?} frames dropped (${YPCT}%)"
 print "Old Safari tabs macOS threw away: $OLD_RL of $OLD_N checks"
 (( ${#QT} )) && print "Qwen 9B tok/s: start ${QT[1]}  ->  end ${QT[-1]}   (all: ${(j:, :)QT})"
-[[ $PILE == creator ]] && print "Final Cut 3-min export at the end of the day: ${EXP:-?} s"
+[[ $PILE == (creator|work) ]] && print "Final Cut 3-min export at the end of the day: ${EXP:-?} s"
 print "Pressure: worst $WORST | yellow $(( ${_y:-0} / 60 )) min, red $(( ${_r:-0} / 60 )) min | swap added $SWAP GB | peak compressed $(val 'Peak compressed GB') GB"
 print "SSD written: $(val 'SSD written during test GB') GB | lowest memory free $(val 'Lowest memory free %')%"
 print "Biggest apps (peak, Activity Monitor 'Memory'):"
 att_appmem_peaks "$APPCSV" 8
 (( HAS_CAM )) || print "No camera on this Mac: Photo Booth (call stand-in) skipped"
-att_log "New Tests" "Real Day $PILE" "${A_ALL} / ${W_ALL} ms | ${A_FIRST} -> ${A_LAST} ms | $WORST, swap +$SWAP GB | YT drop ${YPCT}%$([[ $PILE == creator ]] && print " | Qwen ${QT[1]:-?} -> ${QT[-1]:-?} tok/s | FCP ${EXP:-?} s")"
+att_log "New Tests" "Real Day $PILE" "${A_ALL} / ${W_ALL} ms | ${A_FIRST} -> ${A_LAST} ms | $WORST, swap +$SWAP GB | YT drop ${YPCT}%$([[ $PILE == creator ]] && print " | Qwen ${QT[1]:-?} -> ${QT[-1]:-?} tok/s | FCP ${EXP:-?} s")$([[ $PILE == work ]] && print " | FCP ${EXP:-?} s")"
 SSDW=$(val 'SSD written during test GB')
 if [[ -n $SSDW ]]; then
   GBH=$(awk -v w=$SSDW -v d=$DURATION 'BEGIN{printf "%.1f", w*3600/d}')
