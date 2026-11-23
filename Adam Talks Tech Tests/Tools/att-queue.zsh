@@ -116,8 +116,12 @@ att_fetch_dir() {   # $1 = folder inside "Adam Talks Tech Tests"
 }
 # Nov 23: under 45 GB free, clear the safe leftovers first (no questions: test scratch, build folders,
 # render files, caches, duplicate model copies, models this Mac can't run). Logged to Results/space-log.txt.
-if (( $(df -k / | awk 'NR==2{print int($4/1048576)}') < 45 )); then
-  print "Under 45 GB free: clearing test leftovers first (Tools/att-space.zsh auto)..."
+# Nov 23: the Internal SSD test needs ~80 GB to be clean (50 GB sustained write + 25 GB copy); the M5 Max
+# Studio ran it at 54 GB free (89% full) and only wrote 29 GB. Aim higher when ssdint is on the list.
+NEEDGB=45; [[ " $RUN " == *" ssdint "* ]] && NEEDGB=85
+if (( $(df -k / | awk 'NR==2{print int($4/1048576)}') < NEEDGB )); then
+  export ATT_SPACE_TARGET=$NEEDGB
+  print "Under $NEEDGB GB free: clearing test leftovers first (Tools/att-space.zsh auto)..."
   KEEP=(); for t in $RUN; do KEEP+=(${(s:|:)NEEDS[$t]}); done
   [[ " $RUN " == *" "(qwen9b|qwen27b|gemma|ladder|realdaycreator)" "* ]] && KEEP+=("AI Tests/LM Studio Models")
   [[ " $RUN " == *" puget"* ]] && KEEP+=("Puget Test/Assets")
