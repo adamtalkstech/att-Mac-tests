@@ -74,7 +74,10 @@ if [[ -n $SH_ROWS ]]; then
     if curl -fsSL -m 20 -o $t "https://docs.google.com/spreadsheets/d/e/$PUBK/pub?gid=$1&single=true&output=csv" 2>/dev/null && grep -q "Computer Model" $t; then mv $t $f; return 0; fi
     if curl -fsSL -m 20 -o $t "https://docs.google.com/spreadsheets/d/$DOCK/gviz/tq?tqx=out:csv&gid=$1" 2>/dev/null && grep -q "Computer Model" $t; then mv $t $f; return 0; fi
     rm -f $t; [[ -s $f ]] && return 2; return 1; }
-  sheetget 0 MR; a=$?; sheetget 1327339876 NT; b=$?
+  # Nov 22: live read through the upload receiver first (no publish lag); published CSV as the fallback
+  # (only once the receiver is redeployed with the sheet reader: Tools/live-sheet.on; the old one would log a junk row)
+  if [[ -f $TOOLS/live-sheet.on ]] && zsh "$TOOLS/att-upload.zsh" sheet 2>/dev/null; then a=0; b=0; SH_LIVE=1
+  else sheetget 0 MR; a=$?; sheetget 1327339876 NT; b=$?; fi
   if (( a == 1 || b == 1 )); then SH_NOTE="Couldn't reach the Mac Tests sheet (no internet?). Only the list below is shown."
   else
     (( a == 2 || b == 2 )) && SH_NOTE="Couldn't reach the sheet just now: using the copy from $(stat -f '%Sm' -t '%b %d %I:%M %p' $HOME/.att/sheet_NT.csv)."
@@ -189,7 +192,7 @@ LINE="============================================================"
     print ""
   fi
   if [[ -n $SH_ROWS ]]; then
-    print "STILL NEEDED ON THE SHEET (read live from the Mac Tests sheet, $(date '+%b %d %I:%M %p')):"
+    print "STILL NEEDED ON THE SHEET (${SH_LIVE:+live }read from the Mac Tests sheet, $(date '+%b %d %I:%M %p')${SH_LIVE:-; published copy, can be a few min behind}):"
     [[ -n $SH_NOTE ]] && print -r -- "   ($SH_NOTE)"
     (( ${#SH_ROWNAMES} )) && print -r -- "   Sheet rows: ${(j:  ·  :)SH_ROWNAMES}"
     if (( ${#SH_HAND} )); then

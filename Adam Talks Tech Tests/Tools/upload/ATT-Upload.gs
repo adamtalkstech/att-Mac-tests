@@ -80,6 +80,18 @@ function doPost(e) {
     cache.put('sig_' + sig, '1', 900);
 
     var d = JSON.parse(body);
+    // Nov 22: signed live read of both result tabs for Run This Next (the published CSV can lag minutes)
+    if (d.kind === 'sheet') {
+      var ss = SpreadsheetApp.openById(props.getProperty('ATT_SHEET_ID'));
+      var out = 'ok sheet\n';
+      ['Main Results', 'New Tests'].forEach(function (name) {
+        var v = ss.getSheetByName(name).getDataRange().getDisplayValues();
+        out += '=====ATT-TAB ' + name + '=====\n' + v.map(function (r) {
+          return r.map(function (c) { c = String(c); return /[",\n\r]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(',');
+        }).join('\n') + '\n';
+      });
+      return reply_(out);
+    }
     var lock = LockService.getScriptLock();
     lock.waitLock(30000);
     try {

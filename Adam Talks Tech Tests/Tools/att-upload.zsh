@@ -196,7 +196,24 @@ cmd_auto() {
   return 0
 }
 
+# Nov 22: live copy of Main Results + New Tests for Run This Next (signed, read-only), into ~/.att/sheet_MR.csv / sheet_NT.csv
+cmd_sheet() {
+  load_conf || return 1
+  local body=$(mktemp) out=$(mktemp) ts sig
+  print -r -- '{"kind":"sheet"}' > $body
+  ts=$(date +%s)
+  sig=$( { printf '%s\n' "$ts"; cat "$body"; } | openssl dgst -sha256 -hmac "$ATT_UPLOAD_KEY" -r | awk '{print $1}')
+  curl -sS -L --proto '=https' --tlsv1.2 --max-time 60 -H 'Content-Type: application/json' --data-binary @"$body" "$ATT_UPLOAD_URL?ts=$ts&sig=$sig" -o $out 2>/dev/null
+  rm -f $body
+  [[ $(head -1 $out) == "ok sheet" ]] || { rm -f $out; return 1; }
+  awk -v d="$HOME/.att" '/^=====ATT-TAB Main Results=====$/{f=d"/sheet_MR.tmp";next} /^=====ATT-TAB New Tests=====$/{f=d"/sheet_NT.tmp";next} NR>1 && f{print > f}' $out
+  rm -f $out
+  grep -q "Computer Model" $HOME/.att/sheet_MR.tmp 2>/dev/null && grep -q "Computer Model" $HOME/.att/sheet_NT.tmp 2>/dev/null || return 1
+  mv $HOME/.att/sheet_MR.tmp $HOME/.att/sheet_MR.csv; mv $HOME/.att/sheet_NT.tmp $HOME/.att/sheet_NT.csv; return 0
+}
+
 case $1 in
+  sheet) cmd_sheet; exit $? ;;
   newkey) cmd_newkey ;;
   setup) cmd_setup ;;
   test) cmd_test ;;
