@@ -114,6 +114,12 @@ att_fetch_dir() {   # $1 = folder inside "Adam Talks Tech Tests"
   print "Copying $rel back from ${${src#/Volumes/}%%/*} ($(( (need - ${have:-0}) / 1048576 )) GB missing on this Mac)..."
   mkdir -p "$ROOT/$rel"; rsync -a --ignore-existing "$src/" "$ROOT/$rel/" && print "  done."
 }
+# Nov 23: under 45 GB free, clear the safe leftovers first (no questions: test scratch, build folders,
+# render files, caches, duplicate model copies, models this Mac can't run). Logged to Results/space-log.txt.
+if (( $(df -k / | awk 'NR==2{print int($4/1048576)}') < 45 )); then
+  print "Under 45 GB free: clearing test leftovers first (Tools/att-space.zsh auto)..."
+  zsh "$ROOT/Tools/att-space.zsh" auto | tail -4
+fi
 typeset -A FETCHED
 for t in $RUN; do for r in ${(s:|:)NEEDS[$t]}; do [[ -n $r && -z ${FETCHED[$r]} ]] && { FETCHED[$r]=1; att_fetch_dir "$r"; }; done; done
 # Copying models restarts LM Studio; close it again so it can't sit there during
