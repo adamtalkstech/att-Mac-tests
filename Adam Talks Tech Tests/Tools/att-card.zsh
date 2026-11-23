@@ -93,11 +93,14 @@ ATT_HELPERS=("Creative Cloud" "Adobe Creative Cloud" "Dropbox" "Google Drive" "O
 att_quit_hard() { local a=$1 w=0
   [[ -z $a ]] && return 0
   pgrep -xq "$a" || return 0
-  osascript -e "tell application \"$a\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1
+  # Nov 22 8:40 PM: the quit request runs in the background, so an app stuck on a dialog can't
+  # freeze the test (the iMac sat for an hour after Real Day waiting on one)
+  local qp; ( osascript -e "tell application \"$a\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1 ) & qp=$!
   while pgrep -xq "$a" && (( w < 30 )); do
     (( w % 5 == 2 )) && att_dont_save "$a"
     sleep 1; (( w++ )); done
   if pgrep -xq "$a"; then pkill -x "$a" 2>/dev/null; sleep 2; pgrep -xq "$a" && pkill -9 -x "$a" 2>/dev/null; print "  forced $a closed"; fi
+  kill $qp 2>/dev/null
   [[ $a == Final\ Cut* ]] && pgrep -f "Final Cut[^/]*\.app/Contents/MacOS/" >/dev/null && pkill -9 -f "Final Cut[^/]*\.app/Contents/MacOS/" 2>/dev/null
   return 0; }
 att_dont_save() {   # clicks Don't Save / Delete / Don't Quit-safe buttons on a save box, if one is up
