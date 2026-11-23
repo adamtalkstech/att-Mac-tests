@@ -3,7 +3,7 @@ Updated: Nov 22 2026, 6:10 PM
 SINCE=2026-11-21 17:00
 SINCE_whisper=2026-11-22 08:45
 SINCE_appmem=2026-11-22 08:45
-REDO=appmem
+# REDO=appmem removed Nov 22 8:50 PM: the morning v1.0 App RAM cells are marked NOT CLEAN on the sheet, so the sheet puts it back where needed
 NOV 22 EVENING:
  * Run Update Scripts first on every Mac. Each Mac's list now comes from the live sheet: anything blank or
    marked RERUN / NOT CLEAN / PROVISIONAL shows up, and finished tests drop off by themselves.
