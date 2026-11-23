@@ -35,6 +35,8 @@ fcpexports|E6|hand|0|MR:3 Min Video Export Social Media 4K setting;MR:30 Min App
 lightroom|E6|hand|0|MR:Export Test 500 photos;MR:AI Denoise 50 RAW photos|Lightroom Classic exports + AI Denoise (one Mac at a time)|
 ssd|E6|hand|0|MR:Blackmagic Disk Speed Test (Read);MR:AJA System Test Lite 16GB 4K Read|Blackmagic Disk Speed + AJA (internal SSD)|
 braw|E6|hand|0|MR:Blackmagic RAW Speed Test (Metal);MR:Blackmagic RAW Speed Test 4k version metal|Blackmagic RAW Speed Test (8K + 4K, CPU + Metal)|
-idle-on|17e|hand|0|NT:Idle RAM after boot, Apple Intelligence ON|macOS by itself, Apple Intelligence ON (restart first, ~8 min)|cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh on
-idle-off|17e|hand|0|NT:Idle RAM after boot, Apple Intelligence OFF|macOS by itself, Apple Intelligence OFF (turn it off, restart, ~8 min, turn it back on after)|cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh off
+# Nov 22 (Adam: side-quest numbers): idle RAM tests off every list. Idle RAM is in App RAM's first step; GPU cap logs from App RAM.
+#idle-on|17e|hand|0|NT:Idle RAM after boot, Apple Intelligence ON|macOS by itself, Apple Intelligence ON (restart first, ~8 min)|cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh on
+#idle-off|17e|hand|0|NT:Idle RAM after boot, Apple Intelligence OFF|macOS by itself, Apple Intelligence OFF (turn it off, restart, ~8 min, turn it back on after)|cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-idle.zsh off
+# displays: only on the Neo, 16GB mini, 24/512 mini and 16" Max (SKIPT=displays everywhere else)
 displays|17f|hand|0|NT:External displays: memory used|What each extra display costs (plug displays in when it asks, ~10 min)|cd ~/Downloads/"Adam Talks Tech Tests"/"Memory Test" && zsh att-displays.zsh

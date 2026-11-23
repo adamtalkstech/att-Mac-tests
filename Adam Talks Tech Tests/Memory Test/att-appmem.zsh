@@ -179,6 +179,7 @@ print "'Mac adds' = how much more memory the whole Mac used with that app open t
 att_log "New Tests" "App RAM: Final Cut / Logic / Numbers" "$(ga finalcut) / $(ga logic) / $(ga numbers)"
 att_log "New Tests" "App RAM: Qwen 9B / 27B" "$(g qwen9b) / $(g qwen27b)"
 att_log "New Tests" "App RAM: most compressed" "$(printf %.1f $(( MAXC / 1024.0 ))) / $(printf %.1f $MAXSW) / $WORST"
+whence att_gpu_cap >/dev/null && { _cap=$(att_gpu_cap); [[ -n $_cap ]] && att_log "New Tests" "GPU memory cap" "$_cap GB of $(( $(sysctl -n hw.memsize) / 1073741824 )) GB"; }   # Nov 22: moved here from the idle test
 print "\nEvery 5-second sample: ${CSV:t}"
 } | tee "$RES"
 att_card_end

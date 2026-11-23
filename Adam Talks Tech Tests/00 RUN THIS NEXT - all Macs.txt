@@ -31,7 +31,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
 ROWS=MR:29 NT:5
 GO=sheet realday realdaycreator
-SKIPT=puget-resolve puget-premiere puget-ae puget-ps puget-lr lightroom
+SKIPT=puget-resolve puget-premiere puget-ae puget-ps puget-lr lightroom displays
 Nov 22 evening: the list above comes straight from the sheet. Puget and Lightroom are left out (256GB is too tight
 for their files). The walk-away line runs what's missing: Red Autumn, HandBrake, Qwen 9B, Gemma (new method),
 Whisper (new kit), responsiveness, App RAM v1.2, Cinebench, internal SSD, then Real Day.
@@ -58,6 +58,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[M6-MINI-32]]
 NAME=M6 MINI 32GB (loaner, overdue)
 ROWS=MR:28 NT:7
+SKIPT=displays
 GO=sheet realday realdaycreator
 Overdue loaner: RAM video tests first (stacker, App RAM, Real Day, idle RAM). Before it ships: att-upload.zsh forget.
 HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
@@ -72,6 +73,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[M5PRO-MINI]]
 NAME=M5 Pro Mac mini (loaner, back Nov 30)
 ROWS=MR:22 NT:8
+SKIPT=displays
 SINCE=2026-11-22 10:00
 GO=sheet
 REDO=xcode blender redautumn gemma geekbench cinebench logic fcpexports lightroom ssd puget-resolve
@@ -88,6 +90,7 @@ Draw Things first time: install it (Mac App Store), open once, Settings > API Se
 [[M5PRO-MINI-UPGRADED]]
 NAME=M5 Pro Mac mini, upgraded GPU
 ROWS=MR:25 NT:9
+SKIPT=displays
 SINCE=2026-11-22 10:00
 GO=sheet
 REDO=xcode blender redautumn gemma geekbench cinebench logic fcpexports lightroom ssd puget-resolve
@@ -104,6 +107,7 @@ Draw Things first time: install it (Mac App Store), open once, Settings > API Se
 [[MAX-14]]
 NAME=14" M5 Max PROLED (B&H loaner)
 ROWS=MR:31 NT:16
+SKIPT=displays
 SINCE=2026-11-21 22:00
 GO=sheet
 REDO=cinebench blender puget-resolve puget-premiere puget-ps puget-lr
@@ -138,6 +142,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[M5PRO-MBP]]
 NAME=M5 Pro MacBook Pro, mini LED (B&H loaner)
 ROWS=MR:19 NT:14
+SKIPT=displays
 SINCE=2026-11-21 22:05
 SINCE_responsiveness=2026-11-22 09:10
 GO=sheet
@@ -156,6 +161,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[M6-MBP]]
 NAME=M6 MacBook Pro (B&H loaner)
 ROWS=MR:30 NT:15
+SKIPT=displays
 GO=sheet realday
 Apple's charger, on a desk. Before it ships: att-upload.zsh forget.
 HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
@@ -170,6 +176,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[M6-IMAC]]
 NAME=M6 iMac (B&H loaner)
 ROWS=MR:33 NT:19
+SKIPT=displays
 SINCE=2026-11-21 22:05
 GO=sheet realday
 Before it ships: att-upload.zsh forget.
@@ -185,6 +192,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[PROLED-M5PRO]]
 NAME=M5 Pro PROLED MacBook Pro (yours)
 ROWS=MR:34 NT:18
+SKIPT=displays
 GO=sheet
 REDO=puget-resolve
 Apple's charger, on a desk. Puget Bench for DaVinci Resolve is a rerun (Super Scale glitched).
@@ -200,6 +208,7 @@ FIRST TIME ON THIS MAC (only if not done yet):
 [[AIR]]
 NAME=MacBook Air (yours, use the Air Kit)
 ROWS=MR:15 NT:20
+SKIPT=displays
 GO=sheet
 REDO=cinebench
 Cinebench is a rerun (single-core read 557, well below the other Airs).
@@ -223,6 +232,7 @@ App RAM will try Qwen 9B on 8GB: if it won't load or swaps hard, that's the resu
 [[STUDIO-M5MAX]]
 NAME=M5 Max Mac Studio (yours)
 ROWS=MR:23 NT:10
+SKIPT=displays
 SINCE=2026-11-22 10:00
 GO=sheet ladder
 REDO=xcode blender redautumn gemma geekbench cinebench logic fcpexports lightroom ssd puget-resolve
