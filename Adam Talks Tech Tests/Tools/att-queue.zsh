@@ -118,7 +118,10 @@ att_fetch_dir() {   # $1 = folder inside "Adam Talks Tech Tests"
 # render files, caches, duplicate model copies, models this Mac can't run). Logged to Results/space-log.txt.
 if (( $(df -k / | awk 'NR==2{print int($4/1048576)}') < 45 )); then
   print "Under 45 GB free: clearing test leftovers first (Tools/att-space.zsh auto)..."
-  zsh "$ROOT/Tools/att-space.zsh" auto | tail -4
+  KEEP=(); for t in $RUN; do KEEP+=(${(s:|:)NEEDS[$t]}); done
+  [[ " $RUN " == *" "(qwen9b|qwen27b|gemma|ladder|realdaycreator)" "* ]] && KEEP+=("AI Tests/LM Studio Models")
+  [[ " $RUN " == *" puget"* ]] && KEEP+=("Puget Test/Assets")
+  ATT_KEEP=${(j:|:)${(u)KEEP}} zsh "$ROOT/Tools/att-space.zsh" auto | grep -v "^  *[0-9.]* GB  " | tail -12
 fi
 typeset -A FETCHED
 for t in $RUN; do for r in ${(s:|:)NEEDS[$t]}; do [[ -n $r && -z ${FETCHED[$r]} ]] && { FETCHED[$r]=1; att_fetch_dir "$r"; }; done; done

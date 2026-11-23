@@ -3,9 +3,10 @@
 #  att-space.zsh - free up SSD space on a TEST Mac (v2, Nov 23 2026)
 # =============================================================================
 #  zsh att-space.zsh            full cleanup: one y/n for the safe stuff, then asks item by item
-#  zsh att-space.zsh auto       no questions: only things the tests rebuild, models this Mac can't
-#                               run, and duplicate copies. The walk-away queue runs this by itself
-#                               when the Mac is under 45 GB free.
+#  zsh att-space.zsh auto       no questions: things the tests rebuild, models this Mac can't run,
+#                               duplicate copies; then, if still under 45 GB, big test folders that a
+#                               plugged-in drive has a full copy of and this run doesn't need. The
+#                               walk-away queue runs this by itself when the Mac is under 45 GB free.
 #  zsh att-space.zsh report     only shows what's taking space, deletes nothing
 #
 #  v2 (Adam: "make it very robust to clear the files"):
@@ -152,6 +153,26 @@ if (( go )); then
     fi
   fi
   print "  Now $(gb) GB free."
+fi
+
+# ---- 1b. AUTO, still under 45 GB: offload big test folders a plugged-in drive has a FULL copy of,
+#      but never one this run's tests need (the queue passes them in ATT_KEEP, "|"-separated).
+#      The queue copies a folder back by itself the next time a test needs it.
+if [[ $MODE == auto ]] && (( $(gb) < ${ATT_SPACE_TARGET:-45} )); then
+  ADRV=( /Volumes/*/"Adam Talks Tech Tests"(N/) )
+  if (( ${#ADRV} )); then
+    print "\nStill under ${ATT_SPACE_TARGET:-45} GB: offloading test folders the drive has a full copy of"
+    for rel in "AI Tests/LM Studio Models" "Puget Test/Assets" "Lightroom Test" "Image Gen Test" "Logic Test - Big Session" "Final Cut Test" "HandBrake Test" "WebKit Test" "Apps & Installers"; do
+      (( $(gb) >= ${ATT_SPACE_TARGET:-45} )) && break
+      p="$ROOT/$rel"; [[ -e $p ]] || continue; (( $(kb "$p") < 1048576 )) && continue
+      [[ "|${ATT_KEEP}|" == *"|$rel|"* ]] && { print "  keeping $rel (a test in this run needs it)"; continue; }
+      have=0; for d in $ADRV; do [[ -d "$d/$rel" ]] && (( $(kb "$d/$rel") >= $(kb "$p") * 98 / 100 )) && { have=1; break; }; done
+      (( have )) || { print "  keeping $rel (no full copy on the drive)"; continue; }
+      print "  $rel ($(fmt $(kb "$p")) GB, copy on ${${d#/Volumes/}%%/*})"; zap "offloaded $rel" "$p"
+    done
+  else
+    print "\nStill under ${ATT_SPACE_TARGET:-45} GB and no test drive plugged in: plug one in so big test folders can be offloaded."
+  fi
 fi
 
 # ---- 2. BIG ITEMS: asked one by one (never in auto mode) ----
