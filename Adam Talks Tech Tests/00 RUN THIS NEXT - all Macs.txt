@@ -31,6 +31,10 @@ FIRST TIME ON THIS MAC (only if not done yet):
 NAME=M6 MINI 24GB 256GB (loaner, overdue)
 ROWS=MR:29 NT:5
 GO=sheet realday realdaycreator
+REDO=gemma handbrake
+SINCE_gemma=2026-11-22 22:15
+SINCE_handbrake=2026-11-22 22:15
+# ^ Nov 22 10:15 PM: Gemma was stopped mid-run and HandBrake had no video yet; only a run after 10:15 PM counts
 SKIPT=puget-resolve puget-premiere puget-ae puget-ps puget-lr lightroom displays
 Nov 22 evening: the list above comes straight from the sheet. Puget and Lightroom are left out (256GB is too tight
 for their files). The walk-away line runs what's missing: Red Autumn, HandBrake, Qwen 9B, Gemma (new method),
