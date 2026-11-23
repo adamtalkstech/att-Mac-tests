@@ -47,6 +47,13 @@ att_numbers_wait() {
   return 1
 }
 
+# Run an AppleScript but never let it hang a test: killed after $1 seconds (Nov 22).
+att_osa_capped() { local secs=$1 out=$(mktemp -t attosa) pid w=0; shift
+  osascript -e "$1" > "$out" 2>/dev/null & pid=$!
+  while kill -0 $pid 2>/dev/null && (( w < secs * 2 )); do sleep 0.5; (( w++ )); done
+  kill -0 $pid 2>/dev/null && { kill $pid 2>/dev/null; sleep 0.5; kill -9 $pid 2>/dev/null; }
+  cat "$out"; rm -f "$out"; }
+
 # Wait until Final Cut has the library open and has settled. $1 app name, $2 library path
 # The real process name of Final Cut (the Creator Studio version isn't called "Final Cut Pro"). Nov 21.
 att_fcp_proc() {
@@ -105,30 +112,56 @@ att_fcp_open_project() {
     tell application \"System Events\" to keystroke \"2\" using command down" >/dev/null 2>&1
   sleep 2
   att_fcp_has_project "$1" && { print "  Project is open in the timeline."; return 0; }
-  # Opening a library doesn't open its project (Adam, Nov 21), so: filter the browser to the
-  # project name, find it on screen, and double-click it (Tools/att-click.swift, built once).
+  # Opening a library doesn't open its project (Adam, Nov 21), so open it ourselves.
+  # Nov 22 (Adam: "Final Cut locking things up"): the old way asked Final Cut for the "entire contents"
+  # of its window, which can be tens of thousands of items and beachballs Final Cut for minutes.
+  # Now: menus + keys only (cheap), and any UI lookup is capped at 15 s and killed if it runs long.
   local clk=$HOME/.att/att-click pos
   [[ -x $clk ]] || { mkdir -p ${clk:h}; swiftc -O "$ATT_UI_DIR/att-click.swift" -o "$clk" 2>/dev/null; }
-  osascript -e "tell application \"System Events\" to tell process \"$app\"
+  # 1. Filter the browser to the project: Cmd-1 (browser), Cmd-F (search field), type, Return
+  att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
     set frontmost to true
     keystroke \"1\" using command down
     delay 1
-    try
-      set f to first text field of (entire contents of window 1) whose subrole is \"AXSearchField\"
-      set focused of f to true
-      set value of f to \"$name\"
-      keystroke return
-    end try
-  end tell" >/dev/null 2>&1
+    keystroke \"f\" using command down
+    delay 0.5
+    keystroke \"a\" using command down
+    keystroke \"$name\"
+    delay 0.5
+    keystroke return
+  end tell" >/dev/null
   sleep 3
-  pos=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
-    set hits to (UI elements of (entire contents of window 1) whose (role is not \"AXTextField\") and (name is \"$name\" or value is \"$name\" or description is \"$name\"))
-    if (count of hits) = 0 then return \"\"
-    set h to item 1 of hits
-    set {px, py} to position of h
-    set {sx, sy} to size of h
-    return ((px + sx / 2) as integer as text) & \" \" & ((py + sy / 2) as integer as text)
-  end tell" 2>/dev/null)
+  # 2. Select what's left in the browser and open it from the Clip menu (no window crawling)
+  att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
+    set frontmost to true
+    keystroke \"1\" using command down
+    delay 0.5
+    keystroke \"a\" using command down
+    delay 0.5
+    repeat with mname in {\"Open in Timeline\", \"Open Clip\", \"Open Project\"}
+      try
+        click menu item (mname as text) of menu 1 of menu bar item \"Clip\" of menu bar 1
+        exit repeat
+      end try
+    end repeat
+  end tell" >/dev/null
+  sleep 4
+  att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline."; return 0; }
+  # 3. Last try: find the project's tile in the browser only (not the whole window), capped at 15 s, double-click it
+  pos=$(att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
+    repeat with sa in (scroll areas of splitter groups of window 1)
+      try
+        set hits to (UI elements of sa whose (name is \"$name\" or description is \"$name\"))
+        if (count of hits) > 0 then
+          set h to item 1 of hits
+          set {px, py} to position of h
+          set {sx, sy} to size of h
+          return ((px + sx / 2) as integer as text) & \" \" & ((py + sy / 2) as integer as text)
+        end if
+      end try
+    end repeat
+    return \"\"
+  end tell")
   if [[ -n $pos && -x $clk ]]; then
     "$clk" ${=pos} 2; sleep 4
     att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline (double-clicked it)."; return 0; }

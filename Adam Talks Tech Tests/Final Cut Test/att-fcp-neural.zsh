@@ -51,14 +51,14 @@ seg_bytes() { du -sk "$SEG" 2>/dev/null | awk '{print $1+0}'; }
 click_analyze() {
   local app=$(att_fcp_proc "$FCP_NAME") r try
   for try in 1 2; do
-    r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
+    r=$(att_osa_capped 60 "tell application \"System Events\" to tell process \"$app\"
       set frontmost to true
       delay 0.5
       keystroke \"2\" using command down
       delay 0.7
       keystroke \"a\" using command down
       delay 1.5
-      repeat with el in (entire contents of window 1)
+      repeat with el in (entire contents of window 1) -- capped at 60 s (Nov 22: this crawl can beachball Final Cut)
         try
           if (role of el is \"AXButton\") then
             set n to \"\"
@@ -77,7 +77,7 @@ click_analyze() {
         end try
       end repeat
       return \"NOBUTTON\"
-    end tell" 2>/dev/null)
+    end tell")
     [[ $r == OK ]] && { print OK; return 0; }
     # Inspector may be hidden: Cmd-4 shows it, then look again
     osascript -e "tell application \"System Events\" to tell process \"$app\" to keystroke \"4\" using command down" >/dev/null 2>&1; sleep 2
