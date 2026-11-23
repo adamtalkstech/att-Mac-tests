@@ -63,7 +63,7 @@ SH_REDO=$( [[ -n $key ]] && sec | awk '/^REDO=/ {sub(/^REDO=/,""); print; exit}'
 # REDO= at the top of the all-Macs file (before the first [[Mac]]) applies to every Mac.
 SH_REDO="$SH_REDO $(awk '/^\[\[/ {exit} /^REDO=/ {sub(/^REDO=/,""); print; exit}' "$ALL")"
 SH_SKIP=$( [[ -n $key ]] && sec | awk '/^SKIPT=/ {sub(/^SKIPT=/,""); print; exit}')
-SH_WALK=(); SH_HAND=(); SH_NOTE=""; SH_ROWNAMES=()
+SH_WALK=(); SH_HAND=(); SH_NOTE=""; SH_ROWNAMES=(); SH_FROMSHEET=()
 if [[ -n $SH_ROWS ]]; then
   r_mr=${${(M)${=SH_ROWS}:#MR:*}#MR:}; r_nt=${${(M)${=SH_ROWS}:#NT:*}#NT:}
   mkdir -p $HOME/.att
@@ -81,7 +81,7 @@ if [[ -n $SH_ROWS ]]; then
     while IFS= read -r ln; do
       case $ln in
         ROW\|*) SH_ROWNAMES+=("${${ln#ROW|}/|/: }") ;;
-        WALK\|*) SH_WALK+=("${${ln#WALK|}%%|*}") ;;
+        WALK\|*) SH_WALK+=("${${ln#WALK|}%%|*}"); [[ ${ln##*|} == redo ]] || SH_FROMSHEET+=("${${ln#WALK|}%%|*}") ;;
         HAND\|*) SH_HAND+=("${ln#HAND|}") ;;
       esac
     done < <(osascript -l JavaScript "$TOOLS/att-sheet-gaps.js" $HOME/.att/sheet_MR.csv $HOME/.att/sheet_NT.csv \
@@ -104,7 +104,9 @@ if [[ -n $GO ]]; then
     T_SINCE_S=$(since_for $t)
     # Nov 22 (reruns): when the sheet itself says this test is still needed (blank, RERUN, NOT CLEAN, REDO...),
     # an older result on this Mac doesn't count: only one from the last 30 min (ran, sheet not caught up yet).
-    if (( ${SH_WALK[(Ie)$t]} )); then fresh=$(( $(date +%s) - 1800 )); (( ${T_SINCE_S:-$SINCE_S} < fresh )) && T_SINCE_S=$fresh; fi
+    # Nov 22 7:30 PM: only when the SHEET itself shows the gap (blank / NOT CLEAN / old method). A REDO= item has
+    # nothing on the sheet to clear it, so a run after SINCE counts as done (otherwise it reran forever).
+    if (( ${SH_FROMSHEET[(Ie)$t]} )); then fresh=$(( $(date +%s) - 1800 )); (( ${T_SINCE_S:-$SINCE_S} < fresh )) && T_SINCE_S=$fresh; fi
     hit=( "$RES"/${~PAT[$t]:-NOMATCH}(N+newer) )
     # Nov 22: a Whisper run that stopped on an old kit doesn't count as done
     [[ $t == whisper ]] && hit=( ${(f)"$(for h in $hit; do grep -q "Old Whisper kit" "$h" 2>/dev/null || print -r -- "$h"; done)"} )
