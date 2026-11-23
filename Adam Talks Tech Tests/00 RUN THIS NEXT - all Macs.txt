@@ -106,8 +106,8 @@ NAME=14" M5 Max PROLED (B&H loaner)
 ROWS=MR:31 NT:16
 SINCE=2026-11-21 22:00
 GO=sheet
-REDO=cinebench puget-resolve puget-premiere puget-ps puget-lr
-Apple's charger, on a desk. Cinebench + Puget are reruns (Nov 20 runs were on a dock). LM Studio guardrails back to Relaxed.
+REDO=cinebench blender puget-resolve puget-premiere puget-ps puget-lr
+Apple's charger, on a desk. Cinebench + Puget are reruns (Nov 20 runs were on a dock); Blender too (background slowed its CPU run). LM Studio guardrails back to Relaxed.
 Draw Things shows as PROVISIONAL: rerun it on a cold Mac (first thing after a restart).
 Before it ships: att-upload.zsh forget.
 HOW: the walk-away line runs every walk-away test listed above. Then do the hand-run list above one at a time.
