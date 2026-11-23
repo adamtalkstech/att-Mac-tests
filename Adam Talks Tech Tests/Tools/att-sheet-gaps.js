@@ -20,13 +20,14 @@ function gaps(mrText,ntText,catText,rowMR,rowNT,ram,redo,skip){
     var key=p[0],step=p[1],kind=p[2],minram=+p[3]||0,cols=p[4].split(';'),label=p[5],cmd=p[6]||'';
     if(S.indexOf(key)>=0)return; if(minram&&+ram&&+ram<minram)return;
     var why='';
-    if(R.indexOf(key)>=0||R.indexOf('all')>=0)why='redo';
     cols.forEach(function(c){if(why)return;var m=c.match(/^(MR|NT):(.*)$/);if(!m)return;var T=tabs[m[1]];if(!T.r||!T.h.length)return;
       var want=m[2],eq=null,e=want.indexOf('=');if(e>0){eq=want.slice(e+1).trim();want=want.slice(0,e)}
       want=norm(want);var ci=T.h.indexOf(want);if(ci<0){for(var j=0;j<T.h.length;j++){if(T.h[j].indexOf(want)==0){ci=j;break}}}
       if(ci<0)return; var v=String(T.r[ci]||'').trim();
       if(!v||v=='-'||v=='?')why='blank';else if(BAD.test(v))why='marked: '+v.slice(0,40);
       else if(eq!==null&&v.replace(/,/g,'')!=eq)why='old method ('+v+')'});
+    // Nov 22: a sheet mark wins over REDO=, so a marked rerun can't be cleared by an older local run
+    if(!why&&(R.indexOf(key)>=0||R.indexOf('all')>=0))why='redo';
     if(!why)return;
     out.push(kind=='walk'?['WALK',key,step,label,why].join('|'):['HAND',key,step,label,cmd,why].join('|'))});
   return out.join('\n')}

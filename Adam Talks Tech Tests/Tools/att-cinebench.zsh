@@ -3,10 +3,10 @@
 #  att-cinebench.zsh - Cinebench 2026 with no clicking (Run Order step 7, v1 Nov 22 2026)
 # =============================================================================
 #  Runs Cinebench's own command-line mode (Maxon's g_Cinebench...=true options):
-#  CPU multi, CPU single, then GPU, one pass each (same as one click in the app),
+#  CPU multi and CPU single as 10-minute runs (Maxon default), then GPU one pass,
 #  with the usual quit-apps + pause scanning + cooldown before each.
 #  Prints a photo card with LOG lines, so the scores go into the Mac's Main Results row.
-#  ~10-15 min. Also runs in the walk-away queue as "cinebench".
+#  ~30-35 min. Also runs in the walk-away queue as "cinebench".
 #  FIRST TIME: compare the card once with a normal Cinebench run in the app. If the app's
 #  numbers differ by more than ~2%, tell Claude (the card is held until then if a score is missing).
 # =============================================================================
@@ -18,11 +18,15 @@ APP=$(print -l /Applications/Cinebench*.app(N) | head -1)
 EXE=$(print -l "$APP"/Contents/MacOS/*(N*) | grep -i -m1 cinebench)
 [[ -x $EXE ]] || { print "Cinebench 2026 isn't installed (free, Mac App Store or maxon.net). Install it, open it once, quit it, rerun."; exit 1; }
 osascript -e 'tell application "Cinebench" to quit' >/dev/null 2>&1
+# Nov 22 (Adam: "I always do the 10 min"): CPU multi + single use Maxon's default 10-minute minimum
+# (the test repeats until 10 min have passed, like the app's default); GPU stays one pass.
+CPU_SECS=${CPU_SECS:-600}
 run_cb() {   # $1 label, $2 option, $3 "again" after the first -> score in $REPLY (or empty), keeps the raw log
-  local log="$OUT/.cinebench_${STAMP}_${1// /-}.log" s
+  local log="$OUT/.cinebench_${STAMP}_${1// /-}.log" s dur=1
+  [[ $2 == g_CinebenchCpu* ]] && dur=$CPU_SECS
   if [[ $3 == again ]]; then att_cooldown --again; else att_cooldown; fi
-  print "Running Cinebench $1 (one pass) ..."
-  "$EXE" "$2=true" g_CinebenchMinimumTestDuration=1 > "$log" 2>&1
+  print "Running Cinebench $1 ($( (( dur > 1 )) && print "$(( dur / 60 ))-minute run" || print "one pass")) ..."
+  "$EXE" "$2=true" g_CinebenchMinimumTestDuration=$dur > "$log" 2>&1
   # Cinebench prints e.g. "CB 1234.56 (0.00)". Take the last CB number in the log.
   s=$(grep -Eo 'CB[^0-9]{0,4}[0-9]+(\.[0-9]+)?' "$log" | tail -1 | grep -Eo '[0-9]+(\.[0-9]+)?$')
   [[ -z $s ]] && s=$(grep -iE 'score' "$log" | grep -Eo '[0-9]{3,}(\.[0-9]+)?' | tail -1)
@@ -33,7 +37,7 @@ run_cb "CPU single" g_CinebenchCpu1Test again; SINGLE=$REPLY
 run_cb "GPU" g_CinebenchGpuTest again;         GPU=$REPLY
 att_resume_bg
 F="$OUT/cinebench_$STAMP.txt"
-{ att_card_start "Cinebench 2026 (command line, one pass each)"
+{ att_card_start "Cinebench 2026 (command line: CPU $(( CPU_SECS / 60 ))-min runs, GPU one pass)"
   print "CPU multi:  ${MULTI:-?}"
   print "CPU single: ${SINGLE:-?}"
   print "GPU:        ${GPU:-?}"

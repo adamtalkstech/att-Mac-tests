@@ -41,7 +41,7 @@ DIR=(ssdint "SSD Test" cinebench "Tools" xcode "Xcode Test" blender "Blender Tes
 CMD=(ssdint "att-ssd-internal.zsh" cinebench "att-cinebench.zsh" xcode "xcode-bench.sh" blender "blender-bench.sh" redautumn "blender-bench.sh redautumn" handbrake "handbrake-bench.zsh"
      sustained "sustained-test.sh" qwen9b "lmstudio-bench.sh qwen9b" qwen27b "lmstudio-bench.sh qwen27b" gemma "lmstudio-bench.sh gemma"
      ladder "lmstudio-bench.sh ladder" whisper "lmstudio-bench.sh whisper" bandwidth "att-bandwidth.zsh" responsiveness "att-responsiveness.zsh" appmem "att-appmem.zsh" realday "att-realday.zsh everyday" realdaycreator "att-realday.zsh creator")
-MINS=(ssdint 20 cinebench 15 xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 10 bandwidth 4 responsiveness 50 appmem 25 realday 70 realdaycreator 80)
+MINS=(ssdint 20 cinebench 35 xcode 10 blender 15 redautumn 12 handbrake 15 sustained 35 qwen9b 20 qwen27b 20 gemma 6 ladder 20 whisper 10 bandwidth 4 responsiveness 50 appmem 25 realday 70 realdaycreator 80)
 
 if [[ -n $QUEUE ]]; then LIST=(${=QUEUE})
 else
