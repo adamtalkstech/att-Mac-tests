@@ -24,7 +24,8 @@ cleanup() { rm -rf "$W"; }
 trap 'cleanup; att_resume_bg; exit 130' INT TERM
 cleanup; mkdir -p "$W"
 freegb() { df -k "$HOME" | awk 'NR==2{printf "%d", $4/1048576}'; }
-FREE0=$(freegb); DISK=$(diskutil info / 2>/dev/null | awk -F': *' '/Container Total Space|Disk Size/ {print $2; exit}' | cut -d'(' -f1)
+FREE0=$(freegb); TOTALGB=$(df -k / | awk 'NR==2{printf "%.0f", $2/1048576}'); PFULL=$(( TOTALGB > 0 ? 100 - FREE0 * 100 / TOTALGB : 0 ))   # Nov 22: fullness changes sustained writes
+DISK=$(diskutil info / 2>/dev/null | awk -F': *' '/Container Total Space|Disk Size/ {print $2; exit}' | cut -d'(' -f1)
 (( FREE0 < 40 )) && { print "!! Only ${FREE0} GB free. Needs at least 40 GB for this test. Free some space (Tools/att-get.zsh free) and rerun."; exit 1; }
 SUS=$(( FREE0 - 25 )); (( SUS > 50 )) && SUS=50
 CP=$(( (FREE0 - 25) / 2 )); (( CP > 25 )) && CP=25
@@ -51,7 +52,8 @@ read _ CPT <<< "$($BIN copy "$W/copy-src.bin" "$W/dest/copy-src.bin")"
 cleanup; att_resume_bg
 F="$OUT/ssd-internal_$(date +%Y-%m-%d_%H-%M).txt"
 { att_card_start "Internal SSD, no clicking (Step 20)"
-  print "Drive: ${DISK:-?} total, ${FREE0} GB free at the start (cache off for every test)"
+  print "Drive: ${DISK:-?} total, ${FREE0} GB free at the start (${PFULL}% full; cache off for every test)"
+  (( PFULL > 75 )) && print "Note: the drive is ${PFULL}% full. A nearly full SSD has less fast cache, so the sustained write can slow down early. Compare against Macs at a similar fullness, or free space (Tools/att-space.zsh) and rerun."
   print "Sequential (5GB, 1MB x8, best of 3):  write ${SW:-?} MB/s | read ${SR:-?} MB/s"
   print "Random 4K QD1:   read ${R1:-?} MB/s | write ${W1:-?} MB/s   (how snappy it feels)"
   print "Random 4K QD32:  read ${R32:-?} MB/s | write ${W32:-?} MB/s  (lots of small files at once)"
@@ -62,7 +64,7 @@ F="$OUT/ssd-internal_$(date +%Y-%m-%d_%H-%M).txt"
   (( SUS < 50 )) && print "Note: only ${SUS} GB sustained write (not enough free space for 50)."
   att_log "New Tests" "Internal SSD: sequential write / read" "${SW} / ${SR}"
   att_log "New Tests" "Internal SSD: random 4K" "${R1} / ${W1} | ${R32} / ${W32}"
-  att_log "New Tests" "Internal SSD: sustained write" "${SAVG} | $([[ $CLIFF_GB == - ]] && print "no slowdown" || print "slows to ${AFTER} after ${CLIFF_GB} GB") | last min ${LAST60} ($SUS GB)"
+  att_log "New Tests" "Internal SSD: sustained write" "${SAVG} | $([[ $CLIFF_GB == - ]] && print "no slowdown" || print "slows to ${AFTER} after ${CLIFF_GB} GB") | last min ${LAST60} ($SUS GB, drive ${PFULL}% full)"
   if (( CP == 25 )); then att_log "New Tests" "25GB file copy time" "${CPT} s"
   else print "Note: the copy was only ${CP} GB (not enough free space for 25), so only the copy is left off the sheet."; fi
   att_card_end; } | tee "$F"
