@@ -2,6 +2,9 @@ FREE UP SPACE ON A TEST MAC (Nov 22 2026)
 Shows what's taking space, clears test leftovers with one y/n (SSD test scratch, Xcode builds,
 Final Cut render files, test exports, Time Machine local snapshots), then asks one by one about
 LM Studio models this Mac can't run, big installers in Downloads, and the Trash.
+Also asks about big test folders (Final Cut, Logic, Lightroom, Puget, image gen, installers, model copies,
+games): the drives keep a copy, and the walk-away queue copies a folder back from a plugged-in drive
+by itself when a test needs it.
 Never touches Results, the scripts or your own files. Run it when the Internal SSD test (step 20)
 says it needs 40 GB free.
 

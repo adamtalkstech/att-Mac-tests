@@ -62,6 +62,14 @@ for m in $HOME/.lmstudio/models/*/*(N/); do
   k=$(du -sk "$m" | cut -f1); (( k < 1048576 )) && continue
   askrm "model ${n} ${why:+(can't run here: $why)}" "$m"
 done
+# Big test folders: the test drives keep a copy, and the walk-away queue copies a folder back
+# by itself (from a plugged-in drive) when a test on this Mac's list needs it.
+for rel in "Final Cut Test" "Logic Test" "Logic Test - Big Session" "Lightroom Test" "Puget Test/Assets" "Image Gen Test" "WebKit Test" "Xcode Test/XcodeBenchmark-master" "Apps & Installers" "AI Tests/LM Studio Models"; do
+  p="$ROOT/$rel"; [[ -e $p ]] || continue
+  (( $(du -sk "$p" | cut -f1) < 1048576 )) && continue
+  askrm "test folder: $rel (on the test drives)" "$p"
+done
+[[ -d "$HOME/Downloads/Adam Talks Tech Games" ]] && askrm "games folder (Cyberpunk, War Thunder; on the drives except the OWC)" "$HOME/Downloads/Adam Talks Tech Games"
 for f in $HOME/Downloads/*.(dmg|pkg|zip)(N.); do
   (( $(stat -f %z "$f") > 500000000 )) && askrm "installer ${f:t}" "$f"
 done

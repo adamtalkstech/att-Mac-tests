@@ -98,6 +98,24 @@ fi
 if (( ${RUN[(I)whisper]} )); then
   print ""; zsh "$ROOT/Tools/att-whisper-kit.zsh" || print "!! Whisper kit isn't ready. Whisper will stop and say so (nothing gets logged)."
 fi
+# Nov 22 (Adam: "many of the files can be redownloaded from the SSD"): a test folder that was freed on this
+# Mac (Tools/att-space.zsh / att-get.zsh free) is copied back from a plugged-in test drive before the queue
+# starts. Only what's missing gets copied (rsync --ignore-existing), and only if there's room.
+typeset -A NEEDS; NEEDS=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" sustained "Blender Test"
+  handbrake "HandBrake Test" appmem "Final Cut Test|Logic Test" realdaycreator "Final Cut Test|Logic Test")
+att_fetch_dir() {   # $1 = folder inside "Adam Talks Tech Tests"
+  local rel=$1 src d have need free
+  for d in /Volumes/*/"Adam Talks Tech Tests"(N/); do [[ -d "$d/$rel" ]] && { src="$d/$rel"; break; }; done
+  [[ -n $src ]] || return 0
+  have=$(du -sk "$ROOT/$rel" 2>/dev/null | cut -f1); need=$(du -sk "$src" 2>/dev/null | cut -f1)
+  (( need - ${have:-0} < 512000 )) && return 0          # under 0.5 GB missing: nothing to do
+  free=$(df -k "$HOME" | awk 'NR==2{print $4}')
+  (( free < need - ${have:-0} + 15728640 )) && { print "!! $rel: $(( (need - ${have:-0}) / 1048576 )) GB to copy back but only $(( free / 1048576 )) GB free. Run Tools/att-space.zsh."; return 0; }
+  print "Copying $rel back from ${${src#/Volumes/}%%/*} ($(( (need - ${have:-0}) / 1048576 )) GB missing on this Mac)..."
+  mkdir -p "$ROOT/$rel"; rsync -a --ignore-existing "$src/" "$ROOT/$rel/" && print "  done."
+}
+typeset -A FETCHED
+for t in $RUN; do for r in ${(s:|:)NEEDS[$t]}; do [[ -n $r && -z ${FETCHED[$r]} ]] && { FETCHED[$r]=1; att_fetch_dir "$r"; }; done; done
 # Copying models restarts LM Studio; close it again so it can't sit there during
 # the Blender/HandBrake tests (the AI tests open it themselves when they need it).
 if pgrep -xq "LM Studio"; then
