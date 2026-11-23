@@ -126,8 +126,12 @@ CALL_FROM=0; CALL_TO=0; [[ $PILE == light ]] && { CALL_FROM=20; CALL_TO=40; }; [
 CALL_URL="https://webrtc.github.io/samples/src/content/capture/canvas-pc/"   # canvas -> WebRTC encode -> decode, no camera prompt
 if [[ -n $PBOOTH && $PILE != work ]] && (( HAS_CAM )); then step "open: Photo Booth (camera on, call stand-in)"; open -a "$PBOOTH"; sleep 5; APPS+=("Photo Booth"); fi
 if [[ $PILE == (creator|work) ]]; then
-  step "open: Final Cut"; open -a "$FCP_APP" "$LIB"; att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; att_fcp_open_project "$FCP_NAME" "$FCP_PROJECT"
-  APPS+=("$(att_fcp_proc "$FCP_NAME")")
+  step "open: Final Cut"; open -a "$FCP_APP" "$LIB"; FCP_OK=0
+  att_fcp_wait "$FCP_NAME" "$LIB" && sleep 5 && att_fcp_open_project "$FCP_NAME" "$FCP_PROJECT" && FCP_OK=1
+  if (( FCP_OK )); then APPS+=("$(att_fcp_proc "$FCP_NAME")")
+  else   # Nov 23: no project / Final Cut hung -> leave Final Cut out of the day, card held, no export
+    pkill -9 -f "Final Cut[^/]*\.app/Contents/MacOS/" 2>/dev/null; FCP_FAIL=1
+    print "  Final Cut left out of this day (project didn't open). The card is held so the sheet asks for a rerun."; fi
 fi
 if [[ $PILE == creator ]]; then
   if [[ -n $LOGIC_APP && -n $LOGIC_PRJ ]]; then step "open: Logic"; open -a "$LOGIC_APP" "$LOGIC_PRJ"; sleep 60; APPS+=("${${LOGIC_APP:t}%.app}"); fi
@@ -186,7 +190,7 @@ EXP=""
 if [[ $PILE == (creator|work) ]]; then
   step "final cut export at the end of the day"
   rm -rf "$ROOT/Export"/*(N) 2>/dev/null; mkdir -p "$ROOT/Export"
-  if att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
+  if (( FCP_OK )) && att_fcp_share "$FCP_NAME" "$ROOT/Export"; then
     ATT_STEP_OVERRIDE=17d zsh "$ROOT/Tools/att-export-timer.zsh" "" "FCP 3-min 4K, real day creator ($MACNAME)" START=$SHARE_START
     EXP=$(tail -1 "$ROOT/Results/$MACNAME/Exports/exports.csv" 2>/dev/null | sed -E 's/"[^"]*"//g' | awk -F, '{print $5}')
   fi
@@ -216,6 +220,7 @@ SWAP=$(awk -v a="$(val 'Peak swap GB')" -v b="$(val 'Swap at start GB')" 'BEGIN{
 {
 att_card_start "RAM: Real Day, $PILE pile, $(( DURATION / 60 )) min (Step 17d)"
 [[ $TIMER == ms ]] || print "!! Timed with the old AppleScript check (the ms timer did not build: needs Command Line Tools). Not logged."
+[[ -n $FCP_FAIL ]] && print "!! Final Cut's project didn't open, so Final Cut wasn't part of this day: run it again. Not logged."
 print "Open all day: ${(j:, :)APPS}"
 print "App switch (Step 17b check): avg ${A_ALL} ms, worst ${W_ALL} ms over ${N_ALL} switches"
 print "   first 10 min avg ${A_FIRST} ms  ->  last 10 min avg ${A_LAST} ms   (no answer: $NOANS)"

@@ -22,7 +22,7 @@ func frame(_ e: AXUIElement) -> CGRect? {
   AXValueGetValue(p as! AXValue, .cgPoint, &pt); AXValueGetValue(s as! AXValue, .cgSize, &sz)
   return CGRect(origin: pt, size: sz) }
 func find(_ e: AXUIElement, _ depth: Int) -> AXUIElement? {
-  if depth > 30 || seen > 60000 || Date().timeIntervalSince(t0) > limit { return nil }
+  if depth > 30 || seen > 15000 || Date().timeIntervalSince(t0) > limit { return nil }
   seen += 1
   if str(e, kAXRoleAttribute) != "AXTextField" {
     for k in [kAXTitleAttribute, kAXDescriptionAttribute, kAXValueAttribute] {
@@ -30,7 +30,7 @@ func find(_ e: AXUIElement, _ depth: Int) -> AXUIElement? {
   for c in kids(e) { if let r = find(c, depth + 1) { return r } }
   return nil }
 let app = AXUIElementCreateApplication(pid)
-AXUIElementSetMessagingTimeout(app, 3)
+AXUIElementSetMessagingTimeout(app, 1)   // Nov 23: 1 s per call, 15k items max
 var wins: CFTypeRef?
 AXUIElementCopyAttributeValue(app, kAXWindowsAttribute as CFString, &wins)
 for w in (wins as? [AXUIElement]) ?? [] {

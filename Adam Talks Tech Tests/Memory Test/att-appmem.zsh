@@ -95,12 +95,15 @@ fi
 if want finalcut && [[ -n $FCP_APP && -e $LIB ]]; then
   phase finalcut "^${FCP_NAME}" "Final Cut (library + 3-min project playing)"; open -a "$FCP_APP" "$LIB"
   if (( UIOK )); then
-    att_fcp_wait "$FCP_NAME" "$LIB"; sleep 5; att_fcp_open_project "$FCP_NAME" "$FCP_PROJECT"
-    osascript -e "tell application \"System Events\" to tell process \"$(att_fcp_proc "$FCP_NAME")\" to set frontmost to true
-      delay 0.5
-      tell application \"System Events\" to key code 49" >/dev/null 2>&1   # space = play
-    print "  playing the timeline"; hold 60
-    osascript -e 'tell application "System Events" to key code 49' >/dev/null 2>&1
+    FCP_OK=0
+    if att_fcp_wait "$FCP_NAME" "$LIB" && sleep 5 && att_fcp_open_project "$FCP_NAME" "$FCP_PROJECT"; then FCP_OK=1; fi
+    if (( FCP_OK )); then
+      att_osa_capped 8 "tell application \"System Events\" to tell process \"$(att_fcp_proc "$FCP_NAME")\" to set frontmost to true
+        delay 0.5
+        tell application \"System Events\" to key code 49" >/dev/null   # space = play
+      print "  playing the timeline"; hold 60
+      att_osa_capped 8 'tell application "System Events" to key code 49' >/dev/null
+    else FCP_SKIPPED=1; print "  Final Cut part skipped (project didn't open or Final Cut hung): left blank so it reruns."; fi
   else sleep 90; fi
   hold 20; phase_end; quit_hard "$FCP_NAME"; pgrep -f "Final Cut[^/]*\.app/Contents/MacOS/" >/dev/null && pkill -f "Final Cut[^/]*\.app/Contents/MacOS/"; between
 elif want finalcut; then print "  (Final Cut or the Final Cut Test library isn't on this Mac: skipped. The stacker copies the library over.)"; fi
@@ -176,7 +179,8 @@ att_log "New Tests" "App RAM: Safari 20 / 80 tabs" "$(gr safari20) / $(gr safari
 ga() { [[ -n ${ADD[$1]} ]] && printf "%.1f" $(( ADD[$1] / 1024.0 )) || printf -- "-"; }
 (( ${LOGIC_OK:-1} )) || { print "Note: Logic's project didn't open (first-launch window?), so Logic's number is left out. Open Logic once, rerun."; ADD[logic]=""; }
 print "'Mac adds' = how much more memory the whole Mac used with that app open than idle (the app plus macOS's video/audio helpers)."
-att_log "New Tests" "App RAM: Final Cut / Logic / Numbers" "$(ga finalcut) / $(ga logic) / $(ga numbers)"
+FCPV=$(ga finalcut); [[ -n $FCP_SKIPPED ]] && FCPV="-"
+att_log "New Tests" "App RAM: Final Cut / Logic / Numbers" "$FCPV / $(ga logic) / $(ga numbers)"
 att_log "New Tests" "App RAM: Qwen 9B / 27B" "$(g qwen9b) / $(g qwen27b)"
 att_log "New Tests" "App RAM: most compressed" "$(printf %.1f $(( MAXC / 1024.0 ))) / $(printf %.1f $MAXSW) / $WORST"
 whence att_gpu_cap >/dev/null && { _cap=$(att_gpu_cap); [[ -n $_cap ]] && att_log "New Tests" "GPU memory cap" "$_cap GB of $(( $(sysctl -n hw.memsize) / 1073741824 )) GB"; }   # Nov 22: moved here from the idle test

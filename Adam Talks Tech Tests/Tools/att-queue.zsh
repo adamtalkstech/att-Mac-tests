@@ -101,6 +101,7 @@ fi
 # Nov 22 (Adam: "many of the files can be redownloaded from the SSD"): a test folder that was freed on this
 # Mac (Tools/att-space.zsh / att-get.zsh free) is copied back from a plugged-in test drive before the queue
 # starts. Only what's missing gets copied (rsync --ignore-existing), and only if there's room.
+export ATT_UNATTENDED=1   # Nov 23: tests never wait for a person inside the walk-away run
 typeset -A NEEDS; NEEDS=(xcode "Xcode Test" blender "Blender Test" redautumn "Blender Test" sustained "Blender Test"
   handbrake "HandBrake Test" appmem "Final Cut Test|Logic Test" realdaycreator "Final Cut Test|Logic Test")
 att_fetch_dir() {   # $1 = folder inside "Adam Talks Tech Tests"

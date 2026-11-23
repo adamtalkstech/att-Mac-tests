@@ -49,11 +49,12 @@ att_numbers_wait() {
 }
 
 # Run an AppleScript but never let it hang a test: killed after $1 seconds (Nov 22).
-att_osa_capped() { local secs=$1 out=$(mktemp -t attosa) pid w=0; shift
+att_osa_capped() { local secs=$1 out=$(mktemp -t attosa) pid w=0 rc=0; shift
   osascript -e "$1" > "$out" 2>/dev/null & pid=$!
   while kill -0 $pid 2>/dev/null && (( w < secs * 2 )); do sleep 0.5; (( w++ )); done
-  kill -0 $pid 2>/dev/null && { kill $pid 2>/dev/null; sleep 0.5; kill -9 $pid 2>/dev/null; }
-  cat "$out"; rm -f "$out"; }
+  if kill -0 $pid 2>/dev/null; then kill $pid 2>/dev/null; sleep 0.5; kill -9 $pid 2>/dev/null; rc=124
+  else wait $pid 2>/dev/null; rc=$?; fi
+  cat "$out"; rm -f "$out"; return $rc; }
 
 # Wait until Final Cut has the library open and has settled. $1 app name, $2 library path
 # The real process name of Final Cut (the Creator Studio version isn't called "Final Cut Pro"). Nov 21.
@@ -63,11 +64,36 @@ att_fcp_proc() {
 }
 att_fcp_pid() { pgrep -f "Final Cut[^/]*\.app/Contents/MacOS/" | head -1; }
 
+# Nov 23 (Adam: "the M5 Pro locked up again", in App RAM's Final Cut step): never let a busy Final Cut take
+# the run (or the Mac) down with it. Every UI call to Final Cut is capped, and a Final Cut that stops
+# answering for ATT_FCP_HANG seconds (default 90) is force-quit, System Events is reset, and the step is skipped.
+att_fcp_alive() {   # does Final Cut itself answer a trivial Apple event within 6 s?
+  local p=$(att_fcp_pid) ap bid; [[ -n $p ]] || return 1
+  ap=$(ps -o comm= -p $p 2>/dev/null); ap=${ap%%/Contents/MacOS/*}
+  bid=$(defaults read "$ap/Contents/Info" CFBundleIdentifier 2>/dev/null); [[ -n $bid ]] || return 0
+  [[ -n $(att_osa_capped 6 "tell application id \"$bid\" to get version") ]]
+}
+att_fcp_rescue() {   # $1 = why
+  print "  !! Final Cut stopped responding ($1): force-quitting it and skipping this Final Cut step."
+  pkill -9 -f "Final Cut[^/]*\.app/Contents/MacOS/" 2>/dev/null
+  killall -9 "System Events" 2>/dev/null   # drop any UI request still queued against Final Cut
+  sleep 3; ATT_FCP_HUNG=1
+}
+att_fcp_watch() {   # returns 1 (and rescues) if Final Cut has been unresponsive for ATT_FCP_HANG s
+  local t0=$EPOCHSECONDS
+  while ! att_fcp_alive; do
+    [[ -z $(att_fcp_pid) ]] && return 1
+    (( EPOCHSECONDS - t0 >= ${ATT_FCP_HANG:-90} )) && { att_fcp_rescue "${1:-busy}"; return 1; }
+    sleep 3
+  done
+  return 0
+}
+
 att_fcp_wait() {
   local app=$1 lib=$2 t0=$EPOCHSECONDS quiet=0 cpu pid
   while (( EPOCHSECONDS - t0 < 600 )); do
     app=$(att_fcp_proc "$1")
-    osascript -e "tell application \"System Events\" to tell process \"$app\"
+    att_osa_capped 8 "tell application \"System Events\" to tell process \"$app\"
       repeat with w in windows
         try
           if exists button \"Update\" of w then click button \"Update\" of w
@@ -78,7 +104,8 @@ att_fcp_wait() {
           end repeat
         end try
       end repeat
-    end tell" >/dev/null 2>&1
+    end tell" >/dev/null
+    (( EPOCHSECONDS - t0 > 60 )) && ! att_fcp_watch "opening the library" && return 2
     if lsof -c "Final Cut" 2>/dev/null | grep -q "${lib:t}"; then
       pid=$(att_fcp_pid)
       cpu=$(ps -o %cpu= -p $pid 2>/dev/null | awk '{printf "%d", $1}')
@@ -93,14 +120,14 @@ att_fcp_wait() {
 # Is a project open in Final Cut's timeline? (= File > Share > Apple Devices 4K is enabled)
 att_fcp_has_project() {
   local app=$(att_fcp_proc "$1")
-  [[ $(osascript -e "tell application \"System Events\" to tell process \"$app\"
+  [[ $(att_osa_capped 8 "tell application \"System Events\" to tell process \"$app\"
     try
       repeat with mi in menu items of menu 1 of menu item \"Share\" of menu \"File\" of menu bar 1
         if (name of mi) starts with \"Apple Devices 4K\" then return (enabled of mi) as text
       end repeat
     end try
     return \"false\"
-  end tell" 2>/dev/null) == true ]]
+  end tell") == true ]]
 }
 # Make sure project $2 is open in the timeline BEFORE anything is timed (Nov 21: Final Cut reopened the
 # library with no project in the timeline, so Share was greyed out at export time). Tries to open it
@@ -108,9 +135,10 @@ att_fcp_has_project() {
 att_fcp_open_project() {
   local name=$2 app i
   app=$(att_fcp_proc "$1")
-  osascript -e "tell application \"System Events\" to tell process \"$app\" to set frontmost to true
+  att_fcp_watch "before opening the project" || return 2
+  att_osa_capped 8 "tell application \"System Events\" to tell process \"$app\" to set frontmost to true
     delay 0.5
-    tell application \"System Events\" to keystroke \"2\" using command down" >/dev/null 2>&1
+    tell application \"System Events\" to keystroke \"2\" using command down" >/dev/null
   sleep 2
   att_fcp_has_project "$1" && { print "  Project is open in the timeline."; return 0; }
   # Opening a library doesn't open its project (Adam, Nov 21), so open it ourselves.
@@ -147,6 +175,7 @@ att_fcp_open_project() {
     end repeat
   end tell" >/dev/null
   sleep 4
+  att_fcp_watch "searching the browser" || return 2
   att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline."; return 0; }
   # 2b. Nov 23: Real Day creator never got a project open (export "?"). Find the project's tile with a
   # fast in-process Accessibility search (capped at 25 s, no Final Cut beachball) and double-click it.
@@ -154,30 +183,18 @@ att_fcp_open_project() {
   [[ -x $axf && ! $ATT_UI_DIR/att-axfind.swift -nt $axf ]] || swiftc -O "$ATT_UI_DIR/att-axfind.swift" -o "$axf" 2>/dev/null
   fpid=$(att_fcp_pid)
   if [[ -x $axf && -n $fpid ]]; then
-    print "  Looking for '$name' in Final Cut's browser: $("$axf" $fpid "$name" 25)"
-    sleep 4; att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline (double-clicked it)."; return 0; }
-  fi
-  # 3. Last try: find the project's tile in the browser only (not the whole window), capped at 15 s, double-click it
-  pos=$(att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
-    repeat with sa in (scroll areas of splitter groups of window 1)
-      try
-        set hits to (UI elements of sa whose (name is \"$name\" or description is \"$name\"))
-        if (count of hits) > 0 then
-          set h to item 1 of hits
-          set {px, py} to position of h
-          set {sx, sy} to size of h
-          return ((px + sx / 2) as integer as text) & \" \" & ((py + sy / 2) as integer as text)
-        end if
-      end try
-    end repeat
-    return \"\"
-  end tell")
-  if [[ -n $pos && -x $clk ]]; then
-    "$clk" ${=pos} 2; sleep 4
+    print "  Looking for '$name' in Final Cut's browser: $("$axf" $fpid "$name" 12)"
+    sleep 4; att_fcp_watch "after the browser search" || return 2
     att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline (double-clicked it)."; return 0; }
   fi
+  # (Nov 23: the old step 3, an AppleScript "whose" search of Final Cut's browser, is gone: Final Cut kept
+  #  working on it after the 15 s cap killed osascript, which is how the M5 Pro mini locked up.)
   [[ -x $clk ]] || print "  (Couldn't build the click helper: needs Xcode or the Command Line Tools.)"
-  [[ -z $pos ]] && print "  (Couldn't find '$name' in the Final Cut browser.)"
+  print "  (Couldn't open '$name' by itself.)"
+  if [[ -n $ATT_UNATTENDED ]]; then   # walk-away run: never sit waiting for a person
+    print "  ** Skipping the Final Cut part: no project in the timeline. (Fix once: open the library, double-click '$name', quit Final Cut.)"
+    return 1
+  fi
   whence att_say >/dev/null && att_say "Final Cut needs you once. Double click the project, $name."
   print "  ** Final Cut has no project in the timeline. Double-click '$name' in the Final Cut browser now."
   print "     (Nothing is being timed yet; the test carries on by itself once it's open.)"
@@ -196,7 +213,7 @@ att_fcp_share() {
   # Cmd-1 then Cmd-2 (browser, then timeline), wait, check again.
   local try
   for try in {1..12}; do
-  r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
+  r=$(att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
     set frontmost to true
     try
       perform action \"AXRaise\" of window 1
@@ -223,7 +240,7 @@ att_fcp_share() {
   [[ $r == OK ]] || { print "  Share menu: $r"; return 1; }
   # Share window: click Next
   for i in {1..40}; do
-    r=$(osascript -e "tell application \"System Events\" to tell process \"$app\"
+    r=$(att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
       repeat with w in windows
         try
           set bs to (buttons of w whose name starts with \"Next\")
@@ -234,13 +251,13 @@ att_fcp_share() {
         end try
       end repeat
       return \"no\"
-    end tell" 2>/dev/null)
+    end tell")
     [[ $r == OK ]] && break; sleep 0.5
   done
   [[ $r == OK ]] || { print "  Couldn't find the Next button."; return 1; }
   sleep 2
   # Save sheet: go to the folder, then Save
-  osascript -e "tell application \"System Events\" to tell process \"$app\"
+  att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
     keystroke \"g\" using {command down, shift down}
     delay 1
     keystroke \"$dir\"
@@ -250,7 +267,7 @@ att_fcp_share() {
   end tell" >/dev/null 2>&1 || return 1
   SHARE_START=$EPOCHREALTIME
   local mark=$(mktemp); touch "$mark"
-  osascript -e "tell application \"System Events\" to tell process \"$app\" to keystroke return" >/dev/null 2>&1 || return 1
+  att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\" to keystroke return" >/dev/null 2>&1 || return 1
   # Confirm it really started: a file shows up within 90 s. Final Cut sometimes ignores the
   # Go-to-folder step and saves to its last/default folder (Documents or Movies), so look there too.
   ATT_EXPORT_DIR="$dir"
