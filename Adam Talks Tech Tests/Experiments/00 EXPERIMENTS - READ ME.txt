@@ -1,0 +1,19 @@
+EXPERIMENTS (Adam, Nov 22 2026)
+New test ideas live here until they're proven. They are NOT in Run This Next, the walk-away queue or the
+Main Results / New Tests tabs. Results go to the "Experiments" tab of the Mac Tests sheet only.
+
+An experiment graduates to a real test (catalog + Run Order step + its own sheet column) only after:
+  1. it has run on at least 2-3 different Macs and the numbers make sense against each other,
+  2. a repeat run on the same Mac lands within ~3%,
+  3. Adam says it's in.
+Then it runs on every Mac like the other tests.
+
+PLANNED / IN PROGRESS
+  E1  Dual Neural Engine (M6): Whisper with the encoder (Neural Engine part) timed on its own, plus two
+      transcriptions at once. Question: does the M6's dual 16-core Neural Engine show up, vs one 16-core
+      engine on M5 / M5 Pro / M5 Max, and the 32-core on the M5 Ultra? Run on: M6 mini, M6 MBP, an M5 Pro,
+      an M5 Max (and the M5 Ultra when it's back).
+  E2  Full vs empty SSD: the same Mac's Internal SSD test at ~85% full and again at ~40% full. Question: does
+      a nearly full SSD slow sustained writes? (The iMac slowed at 45 GB while 85% full.) Run on: iMac, 24/256 mini.
+  E3  App RAM Safari 80 tabs, reworked: median of 3 runs + Safari's own processes instead of whole-Mac
+      memory (the Studio logged 23.5 GB vs Activity Monitor's 15.0; whole-Mac numbers grow with RAM size).

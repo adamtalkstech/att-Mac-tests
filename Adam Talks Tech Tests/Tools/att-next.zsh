@@ -165,6 +165,8 @@ LINE="============================================================"
   fi
   freeg=$(df -g "$HOME" 2>/dev/null | awk 'NR==2{print $4}')
   [[ -n $freeg ]] && (( freeg < 60 )) && fix+=("Only ${freeg} GB free: the stacker copies a 45 GB Final Cut library. Free space with Tools/att-get.zsh free")
+  # Nov 22: the Internal SSD test (step 20) quietly exits under 40 GB free, so the minis never got it
+  [[ -n $freeg ]] && (( freeg < 45 )) && fix+=("Only ${freeg} GB free: Internal SSD (step 20) needs 40 GB, so it will be skipped. Run first:  cd ~/Downloads/\"Adam Talks Tech Tests\"/Tools && zsh att-space.zsh")
   if pmset -g batt 2>/dev/null | grep -q InternalBattery; then
     pmset -g batt | head -1 | grep -q "AC Power" || fix+=("On battery: plug Apple's charger straight into the Mac (no dock), on a desk, not the couch")
   fi
