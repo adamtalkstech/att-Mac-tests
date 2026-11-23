@@ -74,8 +74,8 @@ att_prime() {   # att_prime <test names...>   e.g. att_prime appmem responsivene
   if (( ${#new} )); then
     whence att_say >/dev/null && att_say "Click through the welcome windows, then press Return in Terminal."
     print -n "  Press Return when every app is past its welcome screens (they get closed after). "; read -r
-    for p in $new; do osascript -e "tell application \"${${p:t}%.app}\" to quit saving no" >/dev/null 2>&1 \
-      || osascript -e "tell application \"${${p:t}%.app}\" to quit" >/dev/null 2>&1; print -r -- "$p" >> "$ATT_PRIMED"; done
+    for p in $new; do if whence att_quit_hard >/dev/null; then att_quit_hard "${${p:t}%.app}"; else osascript -e "tell application \"${${p:t}%.app}\" to quit saving no" >/dev/null 2>&1 \
+      || osascript -e "tell application \"${${p:t}%.app}\" to quit" >/dev/null 2>&1; fi; print -r -- "$p" >> "$ATT_PRIMED"; done
     sleep 3
   fi
   print "  First-time prompts done. Nothing else should need you."

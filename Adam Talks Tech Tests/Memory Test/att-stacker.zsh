@@ -85,7 +85,7 @@ step()  { print -r -- "$1" > /tmp/att-step; print "\n[$(date +%H:%M:%S)] STEP: $
 ask()   { print -n "  >> $1 Press Return. "; read -r; }
 timed() { local t0=$EPOCHREALTIME; print -n -u2 "  >> $1 Press Return the moment it's done. "; read -r; printf "%.1f" $(( EPOCHREALTIME - t0 )); }
 open_tabs() { local n=$1 i; for (( i = 1; i <= n; i++ )); do open -a Safari "${SITES[$i]}"; sleep 3; done; }
-quit_app()  { osascript -e "tell application \"$1\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$1\" to quit" >/dev/null 2>&1; sleep 3; }
+quit_app()  { if whence att_quit_hard >/dev/null; then att_quit_hard "$1"; else osascript -e "tell application \"$1\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$1\" to quit" >/dev/null 2>&1; sleep 3; fi; }
 # Deletes old test exports (Nov 21: they were piling up in _To Delete at ~350MB each).
 clear_export() { local e="$ROOT/Export"; mkdir -p "$e"
   rm -rf "$ROOT/_To Delete"/old\ exports\ *(N) 2>/dev/null

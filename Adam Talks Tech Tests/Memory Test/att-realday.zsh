@@ -160,7 +160,7 @@ att_appmem_stop; kill -TERM $LOGPID 2>/dev/null; wait $LOGPID 2>/dev/null; trap 
 osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1
 [[ $PILE == creator ]] && "$LMS" unload --all >/dev/null 2>&1
 for a in $APPS "Google Chrome"; do osascript -e "tell application \"$a\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
-sleep 5; for a in Safari "Google Chrome" "Photo Booth" Notes Calendar "LM Studio" "Pixelmator Pro"; do pgrep -xq "$a" && pkill -x "$a" 2>/dev/null; done
+sleep 5; for a in $APPS Safari "Google Chrome" "Photo Booth" Notes Calendar "LM Studio" "Pixelmator Pro"; do pgrep -xq "$a" && { whence att_quit_hard >/dev/null && att_quit_hard "$a" || pkill -9 -x "$a" 2>/dev/null; }; done   # Nov 22: Logic/Final Cut/Numbers were staying open
 
 MCSV=$(ls -t "$OUT"/*_realday_${PILE}.csv 2>/dev/null | head -1)
 val() { awk -F, -v k="$1" '$1==k{print $2}' "$MCSV" 2>/dev/null | tail -1; }

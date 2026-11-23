@@ -163,7 +163,7 @@ close_test_apps() {   # Nov 21: close all 80 tabs first (Safari can ask before q
   osascript -e 'tell application "Safari" to close every window' >/dev/null 2>&1
   for a in $APPS "Safari"; do osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1; done
   sleep 5
-  for a in $APPS "Safari"; do pgrep -xq "$a" && { print "  $a didn't quit, forcing it"; pkill -x "$a" 2>/dev/null; }; done
+  for a in $APPS "Safari"; do pgrep -xq "$a" && { print "  $a didn't quit, forcing it"; whence att_quit_hard >/dev/null && att_quit_hard "$a" || pkill -9 -x "$a" 2>/dev/null; }; done
   return 0
 }
 

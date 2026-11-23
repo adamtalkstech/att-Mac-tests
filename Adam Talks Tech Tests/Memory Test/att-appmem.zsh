@@ -59,11 +59,7 @@ phase_end() { local s=$(swap_gb); print -r -- "END~$PH_CUR~$s~$(plev)" >> "$PH";
 hold() { local s=${1:-$HOLD}; print "  holding ${s}s..."; sleep $s; }
 between() { print -r -- "between" > /tmp/att-step; sleep 15; }
 open_tabs() { local a=$1 from=$2 to=$3 i; for (( i = from; i <= to; i++ )); do open -a "$a" "${SITES[$i]}"; sleep 3; done; }
-quit_hard() { local a=$1 w=0
-  osascript -e "tell application \"$a\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1
-  while pgrep -xq "$a" && (( w < 30 )); do sleep 1; (( w++ )); done
-  pgrep -xq "$a" && { pkill -x "$a" 2>/dev/null; sleep 2; pgrep -xq "$a" && pkill -9 -x "$a" 2>/dev/null; print "  forced $a closed"; }
-  return 0; }
+quit_hard() { att_quit_hard "$1"; }   # Nov 22: shared version in att-card (presses Don't Save, then forces)
 
 (( ${#SITES} >= 80 )) || { print "Couldn't read the 80 test sites from att-tabtest.zsh."; exit 1; }
 print "================ ATT App RAM appetite (Step 17c) ================"

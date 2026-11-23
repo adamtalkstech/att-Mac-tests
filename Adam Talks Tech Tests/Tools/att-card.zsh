@@ -86,6 +86,41 @@ att_card_end() {
 #  Polite quit only: an app with unsaved work asks you first and stays open.
 #  Skip it with NOQUIT=1.
 ATT_HELPERS=("Creative Cloud" "Adobe Creative Cloud" "Dropbox" "Google Drive" "OneDrive" "Backblaze" "Spotify" "Discord" "Slack" "zoom.us" "Microsoft Teams" "Steam" "Logi Options+" "Elgato Stream Deck" "Stream Deck" "Docker Desktop" "Music" "Photos" "Mail" "Messages")
+# Nov 22 (Adam: "Logic or stuff getting stuck open"): close an app the TEST opened, for real.
+#  Asks it to quit without saving, presses Don't Save on any save box, waits up to 30 s
+#  (Logic's 600-track project is slow to close), then force-quits. Test files are never
+#  saved, so nothing is lost. Use only for apps the test itself opened.
+att_quit_hard() { local a=$1 w=0
+  [[ -z $a ]] && return 0
+  pgrep -xq "$a" || return 0
+  osascript -e "tell application \"$a\" to quit saving no" >/dev/null 2>&1 || osascript -e "tell application \"$a\" to quit" >/dev/null 2>&1
+  while pgrep -xq "$a" && (( w < 30 )); do
+    (( w % 5 == 2 )) && att_dont_save "$a"
+    sleep 1; (( w++ )); done
+  if pgrep -xq "$a"; then pkill -x "$a" 2>/dev/null; sleep 2; pgrep -xq "$a" && pkill -9 -x "$a" 2>/dev/null; print "  forced $a closed"; fi
+  [[ $a == Final\ Cut* ]] && pgrep -f "Final Cut[^/]*\.app/Contents/MacOS/" >/dev/null && pkill -9 -f "Final Cut[^/]*\.app/Contents/MacOS/" 2>/dev/null
+  return 0; }
+att_dont_save() {   # clicks Don't Save / Delete / Don't Quit-safe buttons on a save box, if one is up
+  osascript >/dev/null 2>&1 <<OSA
+tell application "System Events" to tell process "$1"
+  repeat with w in windows
+    try
+      repeat with b in (buttons of sheet 1 of w & buttons of w)
+        if name of b is in {"Don’t Save", "Don't Save", "Delete", "Don’t Save All", "Discard Changes"} then click b
+      end repeat
+    end try
+  end repeat
+end tell
+OSA
+}
+# A stuck app is safe to force-quit when the only thing open in it is a test file (or nothing).
+ATT_TEST_DOCS='NewLogicBenchmark|ATT Stack Test|Test Library|Untitled|Choose a Project|Project Chooser|Welcome|What.s New'
+att_only_test_docs() { local n=$1 wins
+  wins=$(osascript -e "tell application \"System Events\" to get name of every window of process \"$n\"" 2>/dev/null)
+  [[ -z $wins ]] && return 0
+  local w; for w in ${(s:, :)wins}; do [[ $w =~ "($ATT_TEST_DOCS)" ]] || [[ $w == "$n" ]] || return 1; done
+  return 0; }
+
 att_quit_apps() {
   [[ $NOQUIT == 1 ]] && { print "Quitting other apps skipped (NOQUIT=1)."; return 0; }
   local -a keep names ids closed stuck
@@ -116,6 +151,7 @@ att_quit_apps() {
   local -a still=()
   for n in $stuck; do
     if (( ${safe[(Ie)$n]} )); then pkill -x "$n" 2>/dev/null; sleep 1; pgrep -xq "$n" && pkill -9 -x "$n" 2>/dev/null; print "Force-quit $n (wouldn't close; nothing to save)."
+    elif att_only_test_docs "$n"; then att_quit_hard "$n"; print "Force-quit $n (only test files were open in it)."
     else still+=("$n"); fi
   done
   stuck=($still)
