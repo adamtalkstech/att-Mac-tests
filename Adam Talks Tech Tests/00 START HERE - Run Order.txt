@@ -1,4 +1,11 @@
-ATT MAC TESTS - RUN ORDER  (Nov 21 2026)
+ATT MAC TESTS - RUN ORDER  (Nov 23 2026)
+
+>>> THE ONE COMMAND (after Update Scripts): runs every walk-away test this Mac still needs, in order,
+>>> and opens "00 RUN THIS NEXT (this Mac).txt" with EVERY step below marked
+>>> ✓ done / → walk-away / ✋ by hand / – not for this Mac. Nothing gets missed.
+>>>       zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+>>> Keep a test drive plugged in: it clears space and copies back test files by itself.
+
 Short version. Every step is ONE command: copy the whole line, paste in Terminal.
 Long version with every setting and fix: _Read Me First/Run Order - full details.txt
 Step numbers are the same as before, so "step 14c" still means Gemma.
@@ -18,11 +25,13 @@ A. SET UP THE MAC  (first time on a Mac, then just step 2b each day)
           zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-versions.zsh
 
 ==================================================================
-B. WALK-AWAY TESTS  (one command runs them all, ~2.5-3 hours)
+B. WALK-AWAY TESTS  (one command runs only what this Mac still needs; up to ~7 hours on a fresh Mac)
 ==================================================================
-[ ] QUEUE: 8 Xcode, 9 Blender, 9b Red Autumn, 10 sustained, 11 HandBrake,
-           14a Qwen 9B, 14b Qwen 27B, 14c Gemma, 14d ladder (32GB+ only)
-          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
+[ ] QUEUE: 14e bandwidth, 14f Whisper, 7 Cinebench, 8 Xcode, 9 Blender, 9b Red Autumn, 11 HandBrake,
+           10 sustained, 14a Qwen 9B, 14b Qwen 27B, 14c Gemma, 14d ladder (36GB+), 20 Internal SSD,
+           17c App RAM, 17b responsiveness, 17d Real Day everyday + creator
+          zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-next.zsh go
+    - Every test in it, by hand:  zsh ~/Downloads/"Adam Talks Tech Tests"/Tools/att-queue.zsh
     - Type the password once. Keep a test drive plugged in for the first minute
       or two (it copies the AI models), then it says you can unplug it.
     - Already done some? Leave them out:   SKIP="xcode blender" zsh ...att-queue.zsh

@@ -187,6 +187,34 @@ LINE="============================================================"
     print "✓ Apps, permissions, macOS and free space look ready"
   fi
   print ""
+  # Nov 23 (Adam: "make sure nothing is missed"): every step in the Run Order for this Mac, one line each,
+  # with where it stands. Built from Tools/att-tests-catalog.txt + the sheet gaps + this Mac's results.
+  if [[ -n $SH_ROWS && $SH_NOTE != *"no internet"* ]]; then
+    typeset -a CL; typeset -A HANDK; local_n_todo=0; local_n_q=0; local_n_ok=0
+    for h in $SH_HAND; do HANDK[${h%%|*}]=1; done
+    while IFS='|' read -r ck cst ckind cram ccols clabel ccmd; do
+      [[ -z $ck || $ck == \#* ]] && continue
+      [[ $cst == E* ]] && continue                       # extras (E1-E6) only when a video needs them
+      sk=${cst//[^0-9]/}; sk=$(printf "%03d%s" ${sk:-0} ${cst//[0-9]/})
+      if [[ " $SH_SKIP " == *" $ck "* ]]; then mark="–  skipped on this Mac"
+      elif (( cram > 0 && ram < cram )); then mark="–  needs ${cram}GB+ RAM"
+      elif [[ $ckind == walk ]]; then
+        if [[ " $GO " == *" $ck "* ]]; then mark="→  in the walk-away run"; (( local_n_q++ ))
+        elif (( ${DONE_GO[(Ie)$ck]} )); then mark="✓  ran, uploading"; (( local_n_ok++ ))
+        elif (( ${SH_WALK[(Ie)$ck]} )); then mark="→  needed (run: att-next.zsh go)"; (( local_n_q++ ))
+        else mark="✓  on the sheet"; (( local_n_ok++ )); fi
+      else
+        if [[ -n ${HANDK[$ck]} ]]; then mark="✋  do by hand"; (( local_n_todo++ ))
+        else mark="✓  on the sheet"; (( local_n_ok++ )); fi
+      fi
+      CL+=("$sk"$'\t'"$(printf '   %-4s %-40s %s' "$cst" "${clabel[1,40]}" "$mark")")
+    done < "$TOOLS/att-tests-catalog.txt"
+    print -r -- "------------------------------------------------------------"
+    print " EVERY RUN ORDER STEP ON THIS MAC  (✓ $local_n_ok done · → $local_n_q walk-away · ✋ $local_n_todo by hand)"
+    print -r -- "------------------------------------------------------------"
+    print -rl -- ${(f)"$(print -rl -- $CL | sort | cut -f2-)"}
+    print ""
+  fi
   print -r -- "------------------------------------------------------------"
   print " THIS MAC'S TESTS (in order)"
   print -r -- "------------------------------------------------------------"
