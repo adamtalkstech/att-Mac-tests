@@ -148,6 +148,15 @@ att_fcp_open_project() {
   end tell" >/dev/null
   sleep 4
   att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline."; return 0; }
+  # 2b. Nov 23: Real Day creator never got a project open (export "?"). Find the project's tile with a
+  # fast in-process Accessibility search (capped at 25 s, no Final Cut beachball) and double-click it.
+  local axf=$HOME/.att/att-axfind fpid
+  [[ -x $axf && ! $ATT_UI_DIR/att-axfind.swift -nt $axf ]] || swiftc -O "$ATT_UI_DIR/att-axfind.swift" -o "$axf" 2>/dev/null
+  fpid=$(att_fcp_pid)
+  if [[ -x $axf && -n $fpid ]]; then
+    print "  Looking for '$name' in Final Cut's browser: $("$axf" $fpid "$name" 25)"
+    sleep 4; att_fcp_has_project "$1" && { print "  Opened '$name' in the timeline (double-clicked it)."; return 0; }
+  fi
   # 3. Last try: find the project's tile in the browser only (not the whole window), capped at 15 s, double-click it
   pos=$(att_osa_capped 15 "tell application \"System Events\" to tell process \"$app\"
     repeat with sa in (scroll areas of splitter groups of window 1)

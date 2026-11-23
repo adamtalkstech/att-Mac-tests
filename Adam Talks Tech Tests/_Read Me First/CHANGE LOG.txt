@@ -1,3 +1,4 @@
+Nov 23 (6:10 AM): Final Cut project opening (Real Day creator, App RAM, stacker): if the menu route doesn't open it, a fast in-process Accessibility search (Tools/att-axfind.swift, capped 25 s) finds the project tile and double-clicks it. Real Day creator's export showed 'FCP ?' on every Mac because the project never opened (Final Cut sat at 0.3 GB).
 Nov 23 (6 AM): Whisper holds a Neural Engine result that's more than 3x slower than the GPU run (Core ML fell back to the CPU on the iMac and 24/256 mini, both low on space).
 ATT MAC TESTS - CHANGE LOG
 Newest first. Every script prints its version; match it to this list.
