@@ -791,6 +791,13 @@ test_whisper() {
   else
     warn "Core ML build or encoder missing in $WHISPER_DIR. Rerun whisper-coreml-setup.sh."
   fi
+  # Nov 23: a Neural Engine run far slower than the GPU run means Core ML fell back to the CPU
+  # (iMac 871 s and 24/256 mini 302 s vs ~17 s on the GPU, both low on free space). Held, not logged.
+  if [[ ${RES_STATUS[whisper:coreml]} == OK && ${RES_STATUS[whisper:metal]} == OK ]] && \
+     awk -v c=${RES_TOTAL[whisper:coreml]} -v g=${RES_TOTAL[whisper:metal]} 'BEGIN{exit !(c > 3*g)}'; then
+    warn "Neural Engine run took $(printf %.0f ${RES_TOTAL[whisper:coreml]}) s vs $(printf %.0f ${RES_TOTAL[whisper:metal]}) s on the GPU: Core ML ran on the CPU, not the Neural Engine. Free space (Tools/att-space.zsh), restart, rerun."
+    RES_STATUS[whisper:coreml]="NOT ANE"
+  fi
   local t=$'\t' cm cc
   cm=$( [[ ${RES_STATUS[whisper:metal]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:metal]})s / ${RES_TPS[whisper:metal]}" || print -n "-")
   cc=$( [[ ${RES_STATUS[whisper:coreml]} == OK ]] && print -n "$(printf %.1f ${RES_TOTAL[whisper:coreml]})s / ${RES_TPS[whisper:coreml]}$([[ ${RES_IN[whisper:coreml]} == n/a ]] || print -n " / ANE ${RES_IN[whisper:coreml]:-?} W")" || print -n "${RES_STATUS[whisper:coreml]:--} (don't log)")

@@ -1,3 +1,4 @@
+Nov 23 (6 AM): Whisper holds a Neural Engine result that's more than 3x slower than the GPU run (Core ML fell back to the CPU on the iMac and 24/256 mini, both low on space).
 ATT MAC TESTS - CHANGE LOG
 Newest first. Every script prints its version; match it to this list.
 ==========================================================================
